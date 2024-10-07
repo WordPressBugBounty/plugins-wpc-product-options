@@ -4,8 +4,8 @@ Donate link: https://wpclever.net
 Tags: woocommerce, wpc, options, product options, product addons
 Requires at least: 4.0
 Tested up to: 6.6
-Version: 1.7.4
-Stable tag: 1.7.4
+Version: 1.7.5
+Stable tag: 1.7.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -87,6 +87,10 @@ Please try other plugins from us:
 5. When adding/editing the product you can choose the Product Options tab then add some options as you want
 
 == Changelog ==
+
+= 1.7.5 =
+* Updated: Optimized the code
+* Added: Filter hooks: wpcpo_ignore_recalculate_price, wpcpo_clear_request_data
 
 = 1.7.4 =
 * Updated: Compatible with WPC Smart Messages

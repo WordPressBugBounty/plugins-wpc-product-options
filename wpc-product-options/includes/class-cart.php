@@ -21,7 +21,7 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 			add_filter( 'woocommerce_add_to_cart_validation', [ $this, 'add_to_cart_validation' ], 10, 2 );
 
 			// Add item data to the cart
-			add_filter( 'woocommerce_add_cart_item_data', [ $this, 'add_cart_item_data' ], 10, 2 );
+			add_filter( 'woocommerce_add_cart_item_data', [ $this, 'add_cart_item_data' ], 11, 2 );
 
 			// Get item data to display
 			add_filter( 'woocommerce_get_item_data', [ $this, 'get_item_data' ], 10, 2 );
@@ -162,7 +162,9 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 						$post_options[] = $data;
 					}
 
-					unset( $_REQUEST[ $key ] );
+					if ( apply_filters( 'wpcpo_clear_request_data', true, $cart_item_data, $product_id ) ) {
+						unset( $_REQUEST[ $key ] );
+					}
 				}
 			}
 
@@ -291,6 +293,10 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 
 			foreach ( $cart_object->cart_contents as $cart_item_key => $cart_item ) {
 				if ( ! empty( $cart_item['wpcpo-options'] ) ) {
+					if ( apply_filters( 'wpcpo_ignore_recalculate_price', false, $cart_item_key, $cart_item ) ) {
+						continue;
+					}
+
 					$quantity         = (float) apply_filters( 'wpcpo_cart_item_qty', $cart_item['quantity'], $cart_item );
 					$price_bc         = $price = $cart_item['wpcpo_price_before_calc'] ?? (float) apply_filters( 'wpcpo_cart_item_price', $cart_item['data']->get_price(), $cart_item );
 					$regular_price_bc = $regular_price = $cart_item['wpcpo_regular_price_before_calc'] ?? (float) apply_filters( 'wpcpo_cart_item_regular_price', $cart_item['data']->get_regular_price(), $cart_item );
