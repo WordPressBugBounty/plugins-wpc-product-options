@@ -191,12 +191,16 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 		public function upload_dir( $path_data ) {
 			global $woocommerce;
 
+			$date_str = date( 'Ymd' );
+			$user_str = md5( $woocommerce->session->get_customer_id() );
+			$folder   = trim( apply_filters( 'wpcpo_upload_folder', $date_str . '/' . $user_str ), '/' );
+
 			if ( empty( $path_data['subdir'] ) ) {
-				$path_data['path']   = $path_data['path'] . '/wpcpo_uploads/' . md5( $woocommerce->session->get_customer_id() );
-				$path_data['url']    = $path_data['url'] . '/wpcpo_uploads/' . md5( $woocommerce->session->get_customer_id() );
-				$path_data['subdir'] = '/wpcpo_uploads/' . md5( $woocommerce->session->get_customer_id() );
+				$path_data['path']   = $path_data['path'] . '/wpcpo_uploads/' . $folder;
+				$path_data['url']    = $path_data['url'] . '/wpcpo_uploads/' . $folder;
+				$path_data['subdir'] = '/wpcpo_uploads/' . $folder;
 			} else {
-				$subdir              = '/wpcpo_uploads/' . md5( $woocommerce->session->get_customer_id() );
+				$subdir              = '/wpcpo_uploads/' . $folder;
 				$path_data['path']   = str_replace( $path_data['subdir'], $subdir, $path_data['path'] );
 				$path_data['url']    = str_replace( $path_data['subdir'], $subdir, $path_data['url'] );
 				$path_data['subdir'] = str_replace( $path_data['subdir'], $subdir, $path_data['subdir'] );
