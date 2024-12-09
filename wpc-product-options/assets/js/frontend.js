@@ -88,7 +88,7 @@
             wpcpo_update_total($total);
           });
 
-  $(document).on('change', 'input.qty', function() {
+  $(document).on('change keyup', 'form.cart [name=quantity]', function() {
     let $this = $(this);
 
     if ($this.closest('.woosb-product').length ||
@@ -299,7 +299,7 @@ function wpcpo_get_field_price($field, product_price, quantity = 1, total = 0) {
 
 function wpcpo_update_total($total) {
   let qty = parseFloat(
-          $total.closest('form.cart').find('.quantity .qty').val()),
+          $total.closest('form.cart').find('[name=quantity]').val()),
       price = parseFloat($total.attr('data-price')), type = $total.data('type'),
       name = $total.data('product-name'), total = price * qty,
       fields = $total.closest('.wpcpo-wrapper').

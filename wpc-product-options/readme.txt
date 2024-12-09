@@ -3,9 +3,9 @@ Contributors: wpclever
 Donate link: https://wpclever.net
 Tags: woocommerce, wpc, options, product options, product addons
 Requires at least: 4.0
-Tested up to: 6.6
-Version: 1.7.6
-Stable tag: 1.7.6
+Tested up to: 6.7
+Version: 1.7.7
+Stable tag: 1.7.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -87,6 +87,9 @@ Please try other plugins from us:
 5. When adding/editing the product you can choose the Product Options tab then add some options as you want
 
 == Changelog ==
+
+= 1.7.7 =
+* Updated: Compatible with WP 6.7 & Woo 9.4
 
 = 1.7.6 =
 * Added: The date to upload folder name

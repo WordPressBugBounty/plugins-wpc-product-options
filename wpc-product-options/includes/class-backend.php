@@ -60,6 +60,9 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
 		}
 
 		public function init() {
+			// load text-domain
+			load_plugin_textdomain( 'wpc-product-options', false, basename( WPCPO_DIR ) . '/languages/' );
+
 			$this->register_postype();
 		}
 
