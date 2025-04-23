@@ -3,7 +3,7 @@ defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 	class Wpcpo_Frontend {
-		private static $apply = [];
+		private static $options = [];
 		protected static $instance = null;
 
 		public static function instance() {
@@ -44,8 +44,8 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 					$apply_for = get_post_meta( $post_id, 'wpcpo-apply-for', true ) ?: 'none';
 					$apply     = (array) get_post_meta( $post_id, 'wpcpo-apply', true ) ?: [];
 
-					self::$apply[ $post_id ]['apply_for'] = $apply_for;
-					self::$apply[ $post_id ]['apply']     = $apply;
+					self::$options[ $post_id ]['apply_for'] = $apply_for;
+					self::$options[ $post_id ]['apply']     = $apply;
 				}
 			}
 
@@ -125,6 +125,7 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 				'price_decimal_separator'  => wc_get_price_decimal_separator(),
 				'price_thousand_separator' => wc_get_price_thousand_separator(),
 				'trim_zeros'               => apply_filters( 'woocommerce_price_trim_zeros', false ),
+				'change_url'               => apply_filters( 'wpcpo_change_url', false ),
 				'quantity_symbol'          => '&times;',
 				'is_rtl'                   => is_rtl(),
 			] );
@@ -186,13 +187,13 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 				return [];
 			} else {
 				// global
-				foreach ( self::$apply as $_id => $item ) {
-					if ( $item['apply_for'] !== 'none' ) {
-						if ( $item['apply_for'] === 'all' ) {
-							$fields = array_merge( $fields, self::get_fields_in_product( $_id ) );
+				foreach ( self::$options as $option_id => $option ) {
+					if ( $option['apply_for'] !== 'none' ) {
+						if ( $option['apply_for'] === 'all' ) {
+							$fields = array_merge( $fields, self::get_fields_in_product( $option_id ) );
 						} else {
-							if ( has_term( $item['apply'], $item['apply_for'], $product_id ) ) {
-								$fields = array_merge( $fields, self::get_fields_in_product( $_id ) );
+							if ( has_term( $option['apply'], $option['apply_for'], $product_id ) ) {
+								$fields = array_merge( $fields, self::get_fields_in_product( $option_id ) );
 							}
 						}
 					}

@@ -195,8 +195,11 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
 				'jquery',
 				'wc-enhanced-select',
 				'jquery-ui-sortable',
-				'selectWoo'
+				'selectWoo',
 			], WPCPO_VERSION, true );
+			wp_localize_script( 'wpcpo-backend', 'wpcpo_vars', apply_filters( 'wpcpo_vars', [
+				'nonce' => wp_create_nonce( 'wpcpo-security' ),
+			] ) );
 		}
 
 		function register_settings() {
@@ -220,9 +223,12 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
                     <p>
 						<?php printf( /* translators: stars */ esc_html__( 'Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating.', 'wpc-product-options' ), '<span style="color:#ffb900">&#9733;&#9733;&#9733;&#9733;&#9733;</span>' ); ?>
                         <br/>
-                        <a href="<?php echo esc_url( WPCPO_REVIEWS ); ?>" target="_blank"><?php esc_html_e( 'Reviews', 'wpc-product-options' ); ?></a> |
-                        <a href="<?php echo esc_url( WPCPO_CHANGELOG ); ?>" target="_blank"><?php esc_html_e( 'Changelog', 'wpc-product-options' ); ?></a> |
-                        <a href="<?php echo esc_url( WPCPO_DISCUSSION ); ?>" target="_blank"><?php esc_html_e( 'Discussion', 'wpc-product-options' ); ?></a>
+                        <a href="<?php echo esc_url( WPCPO_REVIEWS ); ?>"
+                           target="_blank"><?php esc_html_e( 'Reviews', 'wpc-product-options' ); ?></a> |
+                        <a href="<?php echo esc_url( WPCPO_CHANGELOG ); ?>"
+                           target="_blank"><?php esc_html_e( 'Changelog', 'wpc-product-options' ); ?></a> |
+                        <a href="<?php echo esc_url( WPCPO_DISCUSSION ); ?>"
+                           target="_blank"><?php esc_html_e( 'Discussion', 'wpc-product-options' ); ?></a>
                     </p>
                 </div>
 				<?php if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] ) { ?>
@@ -232,13 +238,17 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
 				<?php } ?>
                 <div class="wpclever_settings_page_nav">
                     <h2 class="nav-tab-wrapper">
-                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-wpcpo&tab=settings' ) ); ?>" class="<?php echo esc_attr( $active_tab === 'settings' ? 'nav-tab nav-tab-active' : 'nav-tab' ); ?>">
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-wpcpo&tab=settings' ) ); ?>"
+                           class="<?php echo esc_attr( $active_tab === 'settings' ? 'nav-tab nav-tab-active' : 'nav-tab' ); ?>">
 							<?php esc_html_e( 'Settings', 'wpc-product-options' ); ?>
                         </a>
-                        <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=wpc_product_option' ) ); ?>" class="nav-tab">
+                        <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=wpc_product_option' ) ); ?>"
+                           class="nav-tab">
 							<?php esc_html_e( 'Product Options', 'wpc-product-options' ); ?>
                         </a>
-                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-wpcpo&tab=premium' ) ); ?>" class="<?php echo esc_attr( $active_tab === 'premium' ? 'nav-tab nav-tab-active' : 'nav-tab' ); ?>" style="color: #c9356e">
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-wpcpo&tab=premium' ) ); ?>"
+                           class="<?php echo esc_attr( $active_tab === 'premium' ? 'nav-tab nav-tab-active' : 'nav-tab' ); ?>"
+                           style="color: #c9356e">
 							<?php esc_html_e( 'Premium Version', 'wpc-product-options' ); ?>
                         </a>
                         <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-kit' ) ); ?>" class="nav-tab">
@@ -278,7 +288,8 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
 					<?php } elseif ( $active_tab === 'premium' ) { ?>
                         <div class="wpclever_settings_page_content_text">
                             <p>Get the Premium Version just $29!
-                                <a href="https://wpclever.net/downloads/product-options/?utm_source=pro&utm_medium=wpcpo&utm_campaign=wporg" target="_blank">https://wpclever.net/downloads/product-options/</a>
+                                <a href="https://wpclever.net/downloads/product-options/?utm_source=pro&utm_medium=wpcpo&utm_campaign=wporg"
+                                   target="_blank">https://wpclever.net/downloads/product-options/</a>
                             </p>
                             <p><strong>Extra features for Premium Version:</strong></p>
                             <ul style="margin-bottom: 0">
@@ -295,12 +306,15 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
                     <div class="wpclever_settings_page_suggestion_content">
                         <div>
                             To display custom engaging real-time messages on any wished positions, please install
-                            <a href="https://wordpress.org/plugins/wpc-smart-messages/" target="_blank">WPC Smart Messages</a> plugin. It's free!
+                            <a href="https://wordpress.org/plugins/wpc-smart-messages/" target="_blank">WPC Smart
+                                Messages</a> plugin. It's free!
                         </div>
                         <div>
                             Wanna save your precious time working on variations? Try our brand-new free plugin
-                            <a href="https://wordpress.org/plugins/wpc-variation-bulk-editor/" target="_blank">WPC Variation Bulk Editor</a> and
-                            <a href="https://wordpress.org/plugins/wpc-variation-duplicator/" target="_blank">WPC Variation Duplicator</a>.
+                            <a href="https://wordpress.org/plugins/wpc-variation-bulk-editor/" target="_blank">WPC
+                                Variation Bulk Editor</a> and
+                            <a href="https://wordpress.org/plugins/wpc-variation-duplicator/" target="_blank">WPC
+                                Variation Duplicator</a>.
                         </div>
                     </div>
                 </div>
@@ -344,6 +358,10 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
 		}
 
 		function ajax_search_term() {
+			if ( ! isset( $_REQUEST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['nonce'] ), 'wpcpo-security' ) || ! current_user_can( 'manage_options' ) ) {
+				die( 'Permissions check failed!' );
+			}
+
 			$return = [];
 
 			$args = [
@@ -415,12 +433,20 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
 		}
 
 		public function ajax_add_field() {
+			if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! current_user_can( 'manage_options' ) ) {
+				die( 'Permissions check failed!' );
+			}
+
 			$type = sanitize_text_field( $_POST['type'] ?? 'text' );
 			$this->get_field( $type, '', [], true );
 			wp_die();
 		}
 
 		public function ajax_add_option() {
+			if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! current_user_can( 'manage_options' ) ) {
+				die( 'Permissions check failed!' );
+			}
+
 			$this->field_id = sanitize_text_field( $_POST['field_id'] );
 			$type           = sanitize_text_field( $_POST['type'] );
 			$this->get_option( [], $type );

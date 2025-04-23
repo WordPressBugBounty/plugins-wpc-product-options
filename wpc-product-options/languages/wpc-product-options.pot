@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WPC Product Options for WooCommerce 1.7.8\n"
+"Project-Id-Version: WPC Product Options for WooCommerce 1.8.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpc-product-options\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-02-27T03:55:01+00:00\n"
+"POT-Creation-Date: 2025-04-23T04:23:17+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: wpc-product-options\n"
@@ -75,9 +75,9 @@ msgid "Apply"
 msgstr ""
 
 #: includes/class-backend.php:99
-#: includes/class-backend.php:208
-#: includes/class-backend.php:239
-#: includes/class-backend.php:320
+#: includes/class-backend.php:211
+#: includes/class-backend.php:247
+#: includes/class-backend.php:334
 msgid "Product Options"
 msgstr ""
 
@@ -85,146 +85,146 @@ msgstr ""
 msgid "Configuration"
 msgstr ""
 
-#: includes/class-backend.php:208
-#: includes/class-backend.php:218
+#: includes/class-backend.php:211
+#: includes/class-backend.php:221
 msgid "WPC Product Options"
 msgstr ""
 
-#: includes/class-backend.php:218
+#: includes/class-backend.php:221
 msgid "Premium"
 msgstr ""
 
 #. translators: stars
-#: includes/class-backend.php:221
+#: includes/class-backend.php:224
 msgid "Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating."
 msgstr ""
 
-#: includes/class-backend.php:223
+#: includes/class-backend.php:227
 msgid "Reviews"
 msgstr ""
 
-#: includes/class-backend.php:224
+#: includes/class-backend.php:229
 msgid "Changelog"
 msgstr ""
 
-#: includes/class-backend.php:225
+#: includes/class-backend.php:231
 msgid "Discussion"
 msgstr ""
 
-#: includes/class-backend.php:230
+#: includes/class-backend.php:236
 msgid "Settings updated."
 msgstr ""
 
-#: includes/class-backend.php:236
-#: includes/class-backend.php:319
+#: includes/class-backend.php:243
+#: includes/class-backend.php:333
 msgid "Settings"
 msgstr ""
 
-#: includes/class-backend.php:242
-#: includes/class-backend.php:321
+#: includes/class-backend.php:252
+#: includes/class-backend.php:335
 msgid "Premium Version"
 msgstr ""
 
-#: includes/class-backend.php:245
+#: includes/class-backend.php:255
 msgid "Essential Kit"
 msgstr ""
 
-#: includes/class-backend.php:257
+#: includes/class-backend.php:267
 msgid "General"
 msgstr ""
 
-#: includes/class-backend.php:261
+#: includes/class-backend.php:271
 msgid "Position"
 msgstr ""
 
-#: includes/class-backend.php:264
+#: includes/class-backend.php:274
 msgid "Above the add to cart button"
 msgstr ""
 
-#: includes/class-backend.php:265
+#: includes/class-backend.php:275
 msgid "Under the add to cart button"
 msgstr ""
 
-#: includes/class-backend.php:266
+#: includes/class-backend.php:276
 msgid "None (Hide it)"
 msgstr ""
 
-#: includes/class-backend.php:268
+#: includes/class-backend.php:278
 msgid "Choose the position to show product options on a single product page. You can also place the shortcode [wpcpo] inside the add-to-cart form."
 msgstr ""
 
-#: includes/class-backend.php:337
+#: includes/class-backend.php:351
 msgid "Community support"
 msgstr ""
 
-#: includes/class-backend.php:432
+#: includes/class-backend.php:458
 msgctxt "Post Type General Name"
 msgid "Product Options"
 msgstr ""
 
-#: includes/class-backend.php:433
+#: includes/class-backend.php:459
 msgctxt "Post Type Singular Name"
 msgid "Product Option"
 msgstr ""
 
-#: includes/class-backend.php:434
+#: includes/class-backend.php:460
 msgid "Add New Product Option"
 msgstr ""
 
-#: includes/class-backend.php:435
+#: includes/class-backend.php:461
 msgid "Add New"
 msgstr ""
 
-#: includes/class-backend.php:436
+#: includes/class-backend.php:462
 msgid "Edit Product Option"
 msgstr ""
 
-#: includes/class-backend.php:437
+#: includes/class-backend.php:463
 msgid "Update Product Option"
 msgstr ""
 
-#: includes/class-backend.php:438
+#: includes/class-backend.php:464
 msgid "Search Product Option"
 msgstr ""
 
-#: includes/class-backend.php:442
+#: includes/class-backend.php:468
 msgid "Product Option"
 msgstr ""
 
-#: includes/class-backend.php:535
+#: includes/class-backend.php:561
 msgid "Before wrapper"
 msgstr ""
 
-#: includes/class-backend.php:536
+#: includes/class-backend.php:562
 msgid "After wrapper"
 msgstr ""
 
-#: includes/class-backend.php:537
+#: includes/class-backend.php:563
 msgid "Before options"
 msgstr ""
 
-#: includes/class-backend.php:538
+#: includes/class-backend.php:564
 msgid "After options"
 msgstr ""
 
-#: includes/class-cart.php:96
-#: includes/class-cart.php:116
-#: includes/class-cart.php:123
-#: includes/class-cart.php:130
+#: includes/class-cart.php:99
+#: includes/class-cart.php:119
+#: includes/class-cart.php:126
+#: includes/class-cart.php:133
 msgid "You cannot add this product to the cart."
 msgstr ""
 
-#: includes/class-cart.php:117
+#: includes/class-cart.php:120
 msgid "The uploaded file has an incorrect extension."
 msgstr ""
 
 #. translators: file size
-#: includes/class-cart.php:124
+#: includes/class-cart.php:127
 msgid "The uploaded file must be larger than %s in size."
 msgstr ""
 
 #. translators: file size
-#: includes/class-cart.php:131
+#: includes/class-cart.php:134
 msgid "The uploaded file exceeds %s in size."
 msgstr ""
 
@@ -623,6 +623,6 @@ msgstr ""
 msgid "(%1$s - %2$s)"
 msgstr ""
 
-#: templates/fields/select.php:10
+#: templates/fields/select.php:18
 msgid "Select an option..."
 msgstr ""

@@ -3,21 +3,21 @@
 Plugin Name: WPC Product Options for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Product Options brings about the power of adjusting prices with highly customizable additional fields for products.
-Version: 1.7.8
+Version: 1.8.0
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-product-options
 Domain Path: /languages/
 Requires Plugins: woocommerce
 Requires at least: 4.0
-Tested up to: 6.7
+Tested up to: 6.8
 WC requires at least: 3.0
-WC tested up to: 9.7
+WC tested up to: 9.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
-! defined( 'WPCPO_VERSION' ) && define( 'WPCPO_VERSION', '1.7.8' );
+! defined( 'WPCPO_VERSION' ) && define( 'WPCPO_VERSION', '1.8.0' );
 ! defined( 'WPCPO_LITE' ) && define( 'WPCPO_LITE', __FILE__ );
 ! defined( 'WPCPO_FILE' ) && define( 'WPCPO_FILE', __FILE__ );
 ! defined( 'WPCPO_URI' ) && define( 'WPCPO_URI', plugin_dir_url( __FILE__ ) );

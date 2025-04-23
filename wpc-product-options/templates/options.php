@@ -35,8 +35,9 @@ defined( 'ABSPATH' ) || exit;
 			$field_class = 'wpcpo-option wpcpo-option-' . $field['type'];
 			$field_class .= $field['required'] ? ' wpcpo-required' : '';
 			?>
-            <div class="<?php echo esc_attr( $field_class ); ?>" <?php echo( ( $field['type'] === 'checkbox' || $field['type'] === 'image-checkbox' ) && ! empty( $field['limit'] ) ? 'data-limit="' . esc_attr( $field['limit'] ) . '"' : '' ); ?>>
-				<?php if ( strpos( $field['type'], 'appearance-' ) !== false ) {
+            <div class="<?php echo esc_attr( $field_class ); ?>"
+                 data-key="<?php echo esc_attr( $key ); ?>" <?php echo( ( $field['type'] === 'checkbox' || $field['type'] === 'image-checkbox' ) && ! empty( $field['limit'] ) ? 'data-limit="' . esc_attr( $field['limit'] ) . '"' : '' ); ?>>
+				<?php if ( str_contains( $field['type'], 'appearance-' ) ) {
 					wc_get_template(
 						'fields/' . $field['type'] . '.php',
 						[
@@ -71,12 +72,16 @@ defined( 'ABSPATH' ) || exit;
 								WPCPO_DIR . 'templates/'
 							);
 							?>
-                            <input type="hidden" name="<?php echo esc_attr( $key . '[title]' ); ?>" value="<?php echo esc_attr( $field['title'] ); ?>"/>
+                            <input type="hidden" name="<?php echo esc_attr( $key . '[title]' ); ?>"
+                                   value="<?php echo esc_attr( $field['title'] ); ?>"/>
                         </p>
                     </div>
 				<?php } ?>
             </div>
 		<?php } ?>
+		<?php if ( apply_filters( 'wpcpo_change_url', false ) ) {
+            echo '<input type="hidden" name="wpcpo_url"/>';
+		} ?>
 		<?php do_action( 'wpcpo_options_after', $fields, $product_id ); ?>
     </div>
 	<?php $frontend->total_price_settings(); ?>
