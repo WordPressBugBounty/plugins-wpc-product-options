@@ -35,13 +35,13 @@
         wpcpo_update_total($total);
     });
 
-    $(document).on('woovr_selected', function (e, selected) {
-        if ($(e['target']).closest('.woosb-product').length || $(e['target']).closest('.wooco-product').length || $(e['target']).closest('.woobt-product').length || $(e['target']).closest('.woofs-product').length || $(e['target']).closest('.woosg-product').length) {
+    $(document).on('woovr_selected', function (e, selected, variations) {
+        if (variations.closest('.woosb-product').length || variations.closest('.wooco-product').length || variations.closest('.woobt-product').length || variations.closest('.woofs-product').length || variations.closest('.woosg-product').length) {
             return;
         }
 
         let purchasable = selected.attr('data-purchasable'),
-            $total = $(e['target']).closest('form.cart').find('.wpcpo-total');
+            $total = variations.closest('form.cart').find('.wpcpo-total');
 
         if (purchasable === 'yes') {
             $total.attr('data-price', selected.attr('data-price'));
@@ -352,7 +352,7 @@ function wpcpo_update_total($total) {
 
     $total.html(html);
 
-    jQuery(document).trigger('wpcpo_update_total', [$total]);
+    jQuery(document).trigger('wpcpo_update_total', [$total, total]);
 }
 
 function wpcpo_words_count(str) {
