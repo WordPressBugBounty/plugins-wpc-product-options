@@ -314,95 +314,86 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 						continue;
 					}
 
-					$options_price = 0; // options price
-					$quantity      = (float) apply_filters( 'wpcpo_cart_item_qty', $cart_item['quantity'], $cart_item );
-					$price         = $price_bc = (float) apply_filters( 'wpcpo_cart_item_price', $cart_item['data']->get_price(), $cart_item );
-					$regular_price = (float) apply_filters( 'wpcpo_cart_item_regular_price', $cart_item['data']->get_regular_price(), $cart_item );
-					$sale_price    = (float) apply_filters( 'wpcpo_cart_item_sale_price', $cart_item['data']->get_sale_price(), $cart_item );
-					$is_on_sale    = apply_filters( 'wpcpo_cart_item_is_on_sale', $cart_item['data']->is_on_sale(), $cart_item );
+					$product_id    = $cart_item['data']->get_id();
+					$ori_product   = apply_filters( 'wpcpo_cart_item_product', wc_get_product( $product_id ), $cart_item );
+					$price         = (float) apply_filters( 'wpcpo_cart_item_price', $ori_product->get_price(), $cart_item );
+					$regular_price = (float) apply_filters( 'wpcpo_cart_item_regular_price', $ori_product->get_regular_price(), $cart_item );
+					$is_on_sale    = apply_filters( 'wpcpo_cart_item_is_on_sale', $ori_product->is_on_sale(), $cart_item );
 
-					if ( isset( $cart_item['woosb_price'] ) ) {
-						$price = $price_bc = (float) $cart_item['woosb_price'];
-					}
+					if ( ! isset( $cart_item['wpcpo_price'] ) ) {
+						$options_price = 0; // options price
+						$quantity      = (float) apply_filters( 'wpcpo_cart_item_qty', $cart_item['quantity'], $cart_item );
 
-					if ( isset( $cart_item['wooco_price'] ) ) {
-						$price = $price_bc = (float) $cart_item['wooco_price'];
-					}
+						if ( isset( $cart_item['woosb_price'] ) ) {
+							$price = (float) $cart_item['woosb_price'];
+						}
 
-					if ( isset( $cart_item['wpcpq_price'] ) ) {
-						$price = $price_bc = (float) $cart_item['wpcpq_price'];
-					}
+						if ( isset( $cart_item['wooco_price'] ) ) {
+							$price = (float) $cart_item['wooco_price'];
+						}
 
-					$total = $price * $quantity; // calculate total for 's'
+						if ( isset( $cart_item['wpcpq_price'] ) ) {
+							$price = (float) $cart_item['wpcpq_price'];
+						}
 
-					foreach ( $cart_item['wpcpo-options'] as $key => $field ) {
-						$price_type = ! empty( $field['price_type'] ) ? $field['price_type'] : '';
-						$price_val  = ! empty( $field['price'] ) ? $field['price'] : 0;
+						$total = $price * $quantity; // calculate total for 's'
 
-						switch ( $price_type ) {
-							case 'flat':
-								if ( str_contains( $price_val, '%' ) ) {
-									$calc_price    = $price_bc * (float) $price_val / 100;
-									$price         += $calc_price / $quantity;
+						foreach ( $cart_item['wpcpo-options'] as $key => $field ) {
+							$price_type = ! empty( $field['price_type'] ) ? $field['price_type'] : '';
+							$price_val  = ! empty( $field['price'] ) ? $field['price'] : 0;
+
+							switch ( $price_type ) {
+								case 'flat':
+									if ( str_contains( $price_val, '%' ) ) {
+										$calc_price = $price * (float) $price_val / 100;
+									} else {
+										$calc_price = (float) $price_val;
+									}
+
 									$options_price += $calc_price / $quantity;
-									$regular_price += $calc_price / $quantity;
-									$sale_price    += $calc_price / $quantity;
+									$total         += $calc_price;
 
 									$cart_item['wpcpo-options'][ $key ]['display_price'] = $calc_price;
-									$total                                               += $calc_price;
-								} else {
-									$price         += (float) $price_val / $quantity;
-									$options_price += (float) $price_val / $quantity;
-									$regular_price += (float) $price_val / $quantity;
-									$sale_price    += (float) $price_val / $quantity;
 
-									$cart_item['wpcpo-options'][ $key ]['display_price'] = (float) $price_val;
-									$total                                               += (float) $price_val;
-								}
+									break;
+								case 'custom':
+									$calc_price    = $this->get_custom_price( $field['custom_price'], $quantity, $price, $field['value'], $total );
+									$options_price += $calc_price / $quantity;
+									$total         += $calc_price;
 
-								break;
-							case 'custom':
-								$calc_price    = $this->get_custom_price( $field['custom_price'], $quantity, $price_bc, $field['value'], $total );
-								$price         += $calc_price / $quantity;
-								$options_price += $calc_price / $quantity;
-								$regular_price += $calc_price / $quantity;
-								$sale_price    += $calc_price / $quantity;
+									$cart_item['wpcpo-options'][ $key ]['display_price'] = $calc_price;
 
-								$cart_item['wpcpo-options'][ $key ]['display_price'] = $calc_price;
-								$total                                               += $calc_price;
+									break;
+								default:
+									// qty
+									if ( str_contains( $price_val, '%' ) ) {
+										$calc_price = $price * (float) $price_val / 100;
+									} else {
+										$calc_price = (float) $price_val;
+									}
 
-								break;
-							default:
-								// qty
-								if ( str_contains( $price_val, '%' ) ) {
-									$calc_price    = $price_bc * (float) $price_val / 100;
-									$price         += $calc_price;
 									$options_price += $calc_price;
-									$regular_price += $calc_price;
-									$sale_price    += $calc_price;
+									$total         += $calc_price * $quantity;
 
 									$cart_item['wpcpo-options'][ $key ]['display_price'] = $calc_price * $quantity;
-									$total                                               += $calc_price * $quantity;
-								} else {
-									$price         += (float) $price_val;
-									$options_price += (float) $price_val;
-									$regular_price += (float) $price_val;
-									$sale_price    += (float) $price_val;
 
-									$cart_item['wpcpo-options'][ $key ]['display_price'] = (float) $price_val * $quantity;
-									$total                                               += (float) $price_val * $quantity;
-								}
-
-								break;
+									break;
+							}
 						}
+
+						$cart_item['wpcpo_price'] = $options_price; // store options price only
+					} else {
+						$options_price = (float) $cart_item['wpcpo_price'];
 					}
 
-					$cart_item['wpcpo_price'] = $options_price; // store options price only
-					$cart_item['data']->set_price( $price );
-					$cart_item['data']->set_regular_price( $regular_price );
+					if ( $options_price !== 0 ) {
+						$cart_item['data']->set_regular_price( $regular_price + $options_price );
+						$cart_item['data']->set_price( $price + $options_price );
 
-					if ( $is_on_sale ) {
-						$cart_item['data']->set_sale_price( $sale_price );
+						if ( $is_on_sale ) {
+							$sale_price = (float) apply_filters( 'wpcpo_cart_item_sale_price', $ori_product->get_sale_price(), $cart_item );
+							$cart_item['data']->set_sale_price( $sale_price + $options_price );
+						}
 					}
 
 					// save $cart_item
