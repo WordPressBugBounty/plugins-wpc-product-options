@@ -386,7 +386,7 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 						$options_price = (float) $cart_item['wpcpo_price'];
 					}
 
-					if ( $options_price !== 0 ) {
+					if ( $options_price != 0 ) {
 						$cart_item['data']->set_regular_price( $regular_price + $options_price );
 						$cart_item['data']->set_price( $price + $options_price );
 

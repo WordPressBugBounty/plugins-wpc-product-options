@@ -218,19 +218,26 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
 			$active_tab = sanitize_key( $_GET['tab'] ?? 'settings' );
 			?>
             <div class="wpclever_settings_page wrap">
-                <h1 class="wpclever_settings_page_title"><?php echo esc_html__( 'WPC Product Options', 'wpc-product-options' ) . ' ' . esc_html( WPCPO_VERSION ) . ' ' . ( defined( 'WPCPO_PREMIUM' ) ? '<span class="premium" style="display: none">' . esc_html__( 'Premium', 'wpc-product-options' ) . '</span>' : '' ); ?></h1>
-                <div class="wpclever_settings_page_desc about-text">
-                    <p>
-						<?php printf( /* translators: stars */ esc_html__( 'Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating.', 'wpc-product-options' ), '<span style="color:#ffb900">&#9733;&#9733;&#9733;&#9733;&#9733;</span>' ); ?>
-                        <br/>
-                        <a href="<?php echo esc_url( WPCPO_REVIEWS ); ?>"
-                           target="_blank"><?php esc_html_e( 'Reviews', 'wpc-product-options' ); ?></a> |
-                        <a href="<?php echo esc_url( WPCPO_CHANGELOG ); ?>"
-                           target="_blank"><?php esc_html_e( 'Changelog', 'wpc-product-options' ); ?></a> |
-                        <a href="<?php echo esc_url( WPCPO_DISCUSSION ); ?>"
-                           target="_blank"><?php esc_html_e( 'Discussion', 'wpc-product-options' ); ?></a>
-                    </p>
+                <div class="wpclever_settings_page_header">
+                    <a class="wpclever_settings_page_header_logo" href="https://wpclever.net/"
+                       target="_blank" title="Visit wpclever.net"></a>
+                    <div class="wpclever_settings_page_header_text">
+                        <div class="wpclever_settings_page_title"><?php echo esc_html__( 'WPC Product Options', 'wpc-product-options' ) . ' ' . esc_html( WPCPO_VERSION ) . ' ' . ( defined( 'WPCPO_PREMIUM' ) ? '<span class="premium" style="display: none">' . esc_html__( 'Premium', 'wpc-product-options' ) . '</span>' : '' ); ?></div>
+                        <div class="wpclever_settings_page_desc about-text">
+                            <p>
+								<?php printf( /* translators: stars */ esc_html__( 'Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating.', 'wpc-product-options' ), '<span style="color:#ffb900">&#9733;&#9733;&#9733;&#9733;&#9733;</span>' ); ?>
+                                <br/>
+                                <a href="<?php echo esc_url( WPCPO_REVIEWS ); ?>"
+                                   target="_blank"><?php esc_html_e( 'Reviews', 'wpc-product-options' ); ?></a> |
+                                <a href="<?php echo esc_url( WPCPO_CHANGELOG ); ?>"
+                                   target="_blank"><?php esc_html_e( 'Changelog', 'wpc-product-options' ); ?></a> |
+                                <a href="<?php echo esc_url( WPCPO_DISCUSSION ); ?>"
+                                   target="_blank"><?php esc_html_e( 'Discussion', 'wpc-product-options' ); ?></a>
+                            </p>
+                        </div>
+                    </div>
                 </div>
+                <h2></h2>
 				<?php if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] ) { ?>
                     <div class="notice notice-success is-dismissible">
                         <p><?php esc_html_e( 'Settings updated.', 'wpc-product-options' ); ?></p>
