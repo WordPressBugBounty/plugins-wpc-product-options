@@ -4,6 +4,7 @@ defined( 'ABSPATH' ) || exit;
 if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 	class Wpcpo_Frontend {
 		private static $options = [];
+		protected static $priorities = [];
 		protected static $instance = null;
 
 		public static function instance() {
@@ -18,16 +19,6 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 			add_action( 'init', [ $this, 'init' ] );
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 99 );
 			add_filter( 'woocommerce_loop_add_to_cart_link', [ $this, 'add_to_cart_link' ], 10, 2 );
-
-			if ( Wpcpo_Backend::get_setting( 'position', 'above_atc' ) === 'above_atc' ) {
-				add_action( 'woocommerce_before_add_to_cart_button', [ $this, 'display' ], 10 );
-				add_action( 'woocommerce_before_variations_form', [ $this, 'display_variable_before' ] );
-			}
-
-			if ( Wpcpo_Backend::get_setting( 'position', 'above_atc' ) === 'below_atc' ) {
-				add_action( 'woocommerce_after_add_to_cart_button', [ $this, 'display' ], 10 );
-				add_action( 'woocommerce_after_variations_form', [ $this, 'display_variable_after' ] );
-			}
 		}
 
 		public function init() {
@@ -50,6 +41,27 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 			}
 
 			add_shortcode( 'wpcpo', [ $this, 'shortcode' ] );
+
+			self::$priorities = apply_filters( 'wpcpo_priorities', [
+				'above_atc' => 10,
+				'below_atc' => 10
+			] );
+
+			if ( Wpcpo_Backend::get_setting( 'position', 'above_atc' ) === 'above_atc' ) {
+				add_action( 'woocommerce_before_add_to_cart_button', [
+					$this,
+					'display'
+				], absint( self::$priorities['above_atc'] ?? 10 ) );
+				add_action( 'woocommerce_before_variations_form', [ $this, 'display_variable_before' ] );
+			}
+
+			if ( Wpcpo_Backend::get_setting( 'position', 'above_atc' ) === 'below_atc' ) {
+				add_action( 'woocommerce_after_add_to_cart_button', [
+					$this,
+					'display'
+				], absint( self::$priorities['below_atc'] ?? 10 ) );
+				add_action( 'woocommerce_after_variations_form', [ $this, 'display_variable_after' ] );
+			}
 		}
 
 		public static function add_to_cart_link( $link, $product ) {
@@ -353,12 +365,18 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 		}
 
 		public function display_variable_before() {
-			remove_action( 'woocommerce_before_add_to_cart_button', [ $this, 'display' ], 10 );
+			remove_action( 'woocommerce_before_add_to_cart_button', [
+				$this,
+				'display'
+			], absint( self::$priorities['above_atc'] ?? 10 ) );
 			add_action( 'woocommerce_single_variation', [ $this, 'display' ], 15 );
 		}
 
 		public function display_variable_after() {
-			remove_action( 'woocommerce_after_add_to_cart_button', [ $this, 'display' ], 10 );
+			remove_action( 'woocommerce_after_add_to_cart_button', [
+				$this,
+				'display'
+			], absint( self::$priorities['below_atc'] ?? 10 ) );
 			add_action( 'woocommerce_single_variation', [ $this, 'display' ], 25 );
 		}
 
