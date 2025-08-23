@@ -365,7 +365,7 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
 		}
 
 		function ajax_search_term() {
-			if ( ! isset( $_REQUEST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['nonce'] ), 'wpcpo-security' ) || ! current_user_can( 'manage_options' ) ) {
+			if ( ! isset( $_REQUEST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
 				die( 'Permissions check failed!' );
 			}
 
@@ -440,7 +440,7 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
 		}
 
 		public function ajax_add_field() {
-			if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! current_user_can( 'manage_options' ) ) {
+			if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
 				die( 'Permissions check failed!' );
 			}
 
@@ -450,7 +450,7 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
 		}
 
 		public function ajax_add_option() {
-			if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! current_user_can( 'manage_options' ) ) {
+			if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
 				die( 'Permissions check failed!' );
 			}
 

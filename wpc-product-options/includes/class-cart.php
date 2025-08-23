@@ -400,28 +400,36 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 		}
 
 		public function cart_item_price( $price, $cart_item ) {
+			if ( empty( $cart_item['wpcpo-options'] ) ) {
+				return $price;
+			}
+
 			if ( ! empty( $cart_item['wpcpo_price'] ) && ( ! empty( $cart_item['wooco_price'] ) || ! empty( $cart_item['woosb_price'] ) ) ) {
-				$price = (float) $cart_item['wpcpo_price'];
+				$calc_price = (float) $cart_item['wpcpo_price'];
 
 				if ( ! empty( $cart_item['wooco_price'] ) ) {
-					$price += (float) $cart_item['wooco_price'];
+					$calc_price += (float) $cart_item['wooco_price'];
 				}
 
 				if ( ! empty( $cart_item['woosb_price'] ) ) {
-					$price += (float) $cart_item['woosb_price'];
+					$calc_price += (float) $cart_item['woosb_price'];
 
 					if ( ! empty( $cart_item['woosb_discount_amount'] ) ) {
-						$price += (float) $cart_item['woosb_discount_amount'];
+						$calc_price += (float) $cart_item['woosb_discount_amount'];
 					}
 				}
 
-				return apply_filters( 'wpcpo_cart_item_price', wc_price( $price ), $cart_item );
+				$price = wc_price( $calc_price );
 			}
 
-			return $price;
+			return apply_filters( 'wpcpo_cart_item_price_html', $price, $cart_item );
 		}
 
 		public function cart_item_subtotal( $subtotal, $cart_item = null ) {
+			if ( empty( $cart_item['wpcpo-options'] ) ) {
+				return $subtotal;
+			}
+
 			if ( ! empty( $cart_item['wpcpo_price'] ) && ( ! empty( $cart_item['wooco_price'] ) || ! empty( $cart_item['woosb_price'] ) ) ) {
 				$price = (float) $cart_item['wpcpo_price'];
 
@@ -442,11 +450,9 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 				if ( wc_tax_enabled() && WC()->cart->display_prices_including_tax() && ! wc_prices_include_tax() ) {
 					$subtotal .= ' <small class="tax_label">' . WC()->countries->inc_tax_or_vat() . '</small>';
 				}
-
-				return apply_filters( 'wpcpo_cart_item_subtotal', $subtotal, $cart_item );
 			}
 
-			return $subtotal;
+			return apply_filters( 'wpcpo_cart_item_subtotal_html', $subtotal, $cart_item );
 		}
 
 		public function cart_item_permalink( $permalink, $cart_item ) {
