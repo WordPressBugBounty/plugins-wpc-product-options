@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 $price_type = $this->get_field_value( 'price_type', 'flat' );
 ?>
     <input type="hidden" name="<?php echo esc_attr( 'wpcpo-fields[' . $this->field_id . '][type]' ); ?>"
-           value="<?php echo esc_attr( $type ); ?>"/>
+           class="wpcpo-type-val" value="<?php echo esc_attr( $type ); ?>"/>
     <div class="wpcpo-item-line">
         <label><strong><?php esc_html_e( 'Title', 'wpc-product-options' ); ?> *</strong>
             <input type="text" class="input-block sync-label field-logic wpcpo-input-not-empty"
@@ -32,25 +32,41 @@ $price_type = $this->get_field_value( 'price_type', 'flat' );
         </label>
     </div>
     <div class="wpcpo-item-line">
-        <label><?php esc_html_e( 'Date format', 'wpc-product-options' ); ?></label>
-        <select name="<?php echo esc_attr( 'wpcpo-fields[' . $this->field_id . '][format]' ); ?>">
-            <option value="F j, Y" <?php selected( $this->get_field_value( 'format' ), 'F j, Y' ); ?>><?php echo wp_date( 'F j, Y' ); ?></option>
-            <option value="Y-m-d" <?php selected( $this->get_field_value( 'format' ), 'Y-m-d' ); ?>><?php echo wp_date( 'Y-m-d' ); ?></option>
-            <option value="m/d/Y" <?php selected( $this->get_field_value( 'format' ), 'm/d/Y' ); ?>><?php echo wp_date( 'm/d/Y' ); ?></option>
-            <option value="d/m/Y" <?php selected( $this->get_field_value( 'format' ), 'd/m/Y' ); ?>><?php echo wp_date( 'd/m/Y' ); ?></option>
-        </select>
-    </div>
-    <div class="wpcpo-item-line">
         <label>
             <input type="checkbox" value="1" class="checkbox-required"
                    name="<?php echo esc_attr( 'wpcpo-fields[' . $this->field_id . '][required]' ); ?>" <?php checked( $this->get_field_value( 'required' ), '1' ); ?>> <?php esc_html_e( 'Required', 'wpc-product-options' ); ?>
         </label>
     </div>
     <div class="wpcpo-item-line">
+        <div class="wpcpo-inner-options">
+            <div class="inner-header">
+                <span class="inner-header-name"><?php esc_html_e( 'Label', 'wpc-product-options' ); ?></span>
+                <span class="inner-header-default"><?php esc_html_e( 'Default value', 'wpc-product-options' ); ?></span>
+                <span class="inner-header-min"><?php esc_html_e( 'Min', 'wpc-product-options' ); ?></span>
+                <span class="inner-header-max"><?php esc_html_e( 'Max', 'wpc-product-options' ); ?></span>
+                <span class="inner-header-step"><?php esc_html_e( 'Step', 'wpc-product-options' ); ?></span>
+            </div>
+            <div class="inner-content">
+                <?php
+                $dimensions = $this->get_field_value( 'dimensions', [] );
+
+                foreach ( $dimensions as $k => $option ) {
+                    $this->get_dimension( $option, $type );
+                }
+                ?>
+            </div>
+            <div class="inner-footer">
+                <button type="button" class="button wpcpo-add-new-dimension"
+                        data-id="<?php echo esc_attr( $this->field_id ); ?>"><?php esc_html_e( 'Add dimension', 'wpc-product-options' ); ?></button>
+            </div>
+        </div>
+    </div>
+    <div class="wpcpo-item-line">
         <label>
             <input type="checkbox" value="1"
                    name="<?php echo esc_attr( 'wpcpo-fields[' . $this->field_id . '][enable_price]' ); ?>" <?php checked( $this->get_field_value( 'enable_price', '0' ), '1' ); ?>> <?php esc_html_e( 'Adjust price', 'wpc-product-options' ); ?>
             <div class="checkbox-show">
+                <p class="description"><?php esc_html_e( 'In the custom formula, you can use d1, d2, d3, etc., which correspond to the values of the above dimensions. For example: d1*d2*10. If you use a value that does not exist, it will be 0.', 'wpc-product-options' ); ?></p>
                 <select class="option-type <?php echo esc_attr( 'type-' . $price_type ); ?>"
                         name="<?php echo esc_attr( 'wpcpo-fields[' . $this->field_id . '][price_type]' ); ?>">
                     <option value="flat" <?php selected( $price_type, 'flat' ); ?>><?php esc_html_e( 'Flat Fee', 'wpc-product-options' ); ?></option>

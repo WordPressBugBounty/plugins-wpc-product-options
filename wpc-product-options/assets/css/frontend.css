@@ -1,145 +1,295 @@
+@charset "UTF-8";
 :root {
-    --wpcpo-error: #e2401c;
+  --wpcpo-error: #e2401c;
 }
 
 .wpcpo-wrapper {
-    display: block;
-    width: 100%;
-    clear: both;
+  display: block;
+  width: 100%;
+  clear: both;
 }
 
 .wpcpo-total {
-    margin: 20px 0 40px 0;
-    padding: 20px 0 0 0;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
-    overflow: hidden;
+  margin: 20px 0 40px 0;
+  padding: 20px 0 0 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  overflow: hidden;
 }
-
 .wpcpo-total ul {
-    list-style: none;
-    margin: 0;
+  list-style: none;
+  margin: 0;
 }
-
 .wpcpo-total ul li {
-    display: flex;
-    justify-content: space-between;
-    padding: 5px 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
 }
-
 .wpcpo-total ul li.wpcpo-subtotal {
-    border-top: 1px solid #eee;
-    padding: 10px 0;
-    margin-top: 20px;
-    justify-content: flex-end;
+  border-top: 1px solid #eee;
+  padding: 10px 0;
+  margin-top: 20px;
+  justify-content: space-between;
 }
-
+.wpcpo-total ul li.wpcpo-subtotal.wpcpo-subtotal-0 .wpcpo-clear {
+  opacity: 0;
+  appearance: none;
+}
 .wpcpo-total ul li.wpcpo-subtotal .amount {
-    margin-left: 10px;
-    font-weight: 700;
+  margin-left: 10px;
+  font-weight: 700;
 }
 
 .wpcpo-disabled {
-    opacity: 0.5 !important;
-    pointer-events: none !important;
-    cursor: not-allowed !important;
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+  cursor: not-allowed !important;
 }
 
 .wpcpo-option.wpcpo-has-error label {
-    color: var(--wpcpo-error);
+  color: var(--wpcpo-error);
 }
-
 .wpcpo-option.wpcpo-has-error .wpcpo-option-field {
-    border-color: var(--wpcpo-error);
+  border-color: var(--wpcpo-error);
 }
-
 .wpcpo-option.wpcpo-option-image-radio .form-row {
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: -5px;
-    margin-right: -5px;
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -5px;
+  margin-right: -5px;
 }
-
 .wpcpo-option.wpcpo-option-image-radio .form-row .field-image-radio, .wpcpo-option.wpcpo-option-image-radio .form-row .field-radio {
-    display: none;
+  display: none;
 }
-
 .wpcpo-option.wpcpo-option-image-radio .form-row input[type=radio]:checked + label {
-    border: 1px solid green;
+  border: 1px solid green;
 }
-
+.wpcpo-option.wpcpo-option-image-radio .form-row input[type=radio]:checked + label:before {
+  content: "✓";
+  color: #ffffff;
+  display: block;
+  width: 24px;
+  height: 24px;
+  line-height: 20px;
+  background-color: green;
+  text-align: center;
+  font-size: 14px;
+  border-radius: 24px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #ffffff;
+  border-image: initial;
+  box-sizing: border-box;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}
 .wpcpo-option.wpcpo-option-image-radio .form-row label {
-    width: 25%;
-    text-align: center;
-    padding: 10px;
-    margin: 5px;
-    border: 1px solid transparent;
-    box-sizing: border-box;
-    cursor: pointer;
+  width: 25%;
+  text-align: center;
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid #dddddd;
+  box-sizing: border-box;
+  cursor: pointer;
+  position: relative;
 }
-
 .wpcpo-option.wpcpo-option-image-radio .form-row label img {
-    display: inline-block;
+  display: inline-block;
 }
-
 .wpcpo-option.wpcpo-option-image-checkbox .form-row {
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: -5px;
-    margin-right: -5px;
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -5px;
+  margin-right: -5px;
 }
-
 .wpcpo-option.wpcpo-option-image-checkbox .form-row .field-image-checkbox, .wpcpo-option.wpcpo-option-image-checkbox .form-row .field-checkbox {
-    display: none;
+  display: none;
 }
-
 .wpcpo-option.wpcpo-option-image-checkbox .form-row input[type=checkbox]:checked + label {
-    border: 1px solid green;
+  border: 1px solid green;
 }
-
+.wpcpo-option.wpcpo-option-image-checkbox .form-row input[type=checkbox]:checked + label:before {
+  content: "✓";
+  color: #ffffff;
+  display: block;
+  width: 24px;
+  height: 24px;
+  line-height: 20px;
+  background-color: green;
+  text-align: center;
+  font-size: 14px;
+  border-radius: 0;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #ffffff;
+  border-image: initial;
+  box-sizing: border-box;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}
 .wpcpo-option.wpcpo-option-image-checkbox .form-row label {
-    width: 25%;
-    text-align: center;
-    padding: 10px;
-    margin: 5px;
-    border: 1px solid transparent;
-    box-sizing: border-box;
-    cursor: pointer;
+  width: 25%;
+  text-align: center;
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid #dddddd;
+  box-sizing: border-box;
+  cursor: pointer;
+  position: relative;
+}
+.wpcpo-option.wpcpo-option-image-checkbox .form-row label img {
+  display: inline-block;
+}
+.wpcpo-option.wpcpo-option-color-radio .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -5px;
+  margin-right: -5px;
+}
+.wpcpo-option.wpcpo-option-color-radio .form-row .field-color-radio, .wpcpo-option.wpcpo-option-color-radio .form-row .field-radio {
+  display: none;
+}
+.wpcpo-option.wpcpo-option-color-radio .form-row input[type=radio]:checked + label {
+  border: 1px solid green;
+}
+.wpcpo-option.wpcpo-option-color-radio .form-row input[type=radio]:checked + label:before {
+  content: "✓";
+  color: #ffffff;
+  display: block;
+  width: 24px;
+  height: 24px;
+  line-height: 20px;
+  background-color: green;
+  text-align: center;
+  font-size: 14px;
+  border-radius: 50%;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #ffffff;
+  border-image: initial;
+  box-sizing: border-box;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}
+.wpcpo-option.wpcpo-option-color-radio .form-row label {
+  width: 25%;
+  text-align: center;
+  padding: 10px 5px;
+  margin: 5px;
+  border: 1px solid #dddddd;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.wpcpo-option.wpcpo-option-color-radio .form-row label > * {
+  margin: 0 5px;
+}
+.wpcpo-option.wpcpo-option-color-radio .form-row label .label-color {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+}
+.wpcpo-option.wpcpo-option-color-checkbox .form-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -5px;
+  margin-right: -5px;
+}
+.wpcpo-option.wpcpo-option-color-checkbox .form-row .field-color-checkbox, .wpcpo-option.wpcpo-option-color-checkbox .form-row .field-checkbox {
+  display: none;
+}
+.wpcpo-option.wpcpo-option-color-checkbox .form-row input[type=checkbox]:checked + label {
+  border: 1px solid green;
+}
+.wpcpo-option.wpcpo-option-color-checkbox .form-row input[type=checkbox]:checked + label:before {
+  content: "✓";
+  color: #ffffff;
+  display: block;
+  width: 24px;
+  height: 24px;
+  line-height: 20px;
+  background-color: green;
+  text-align: center;
+  font-size: 14px;
+  border-radius: 0;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #ffffff;
+  border-image: initial;
+  box-sizing: border-box;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}
+.wpcpo-option.wpcpo-option-color-checkbox .form-row label {
+  width: 25%;
+  text-align: center;
+  padding: 10px 5px;
+  margin: 5px;
+  border: 1px solid #dddddd;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.wpcpo-option.wpcpo-option-color-checkbox .form-row label > * {
+  margin: 0 5px;
+}
+.wpcpo-option.wpcpo-option-color-checkbox .form-row label .label-color {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+}
+.wpcpo-option.wpcpo-option-quantity .quantity {
+  float: none !important;
+}
+.wpcpo-option.wpcpo-option-dimensions .wpcpo-dimensions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.wpcpo-option[data-logic=show] {
+  display: none;
 }
 
-.wpcpo-option.wpcpo-option-image-checkbox .form-row label img {
-    display: inline-block;
+form.cart [name=wpcpo-hidden-quantity] {
+  display: none !important;
 }
 
 .wp-picker-container .button {
-    border-radius: 2px;
+  border-radius: 2px;
 }
-
 .wp-picker-container .button:before, .wp-picker-container .button:after {
-    display: none !important;
+  display: none !important;
 }
-
 .wp-picker-container .button.wp-picker-clear {
-    font-size: 11px;
-    line-height: 1;
+  font-size: 11px;
+  line-height: 1;
 }
 
 .box-color-picker {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
 }
 
 .box-image-radio, .box-image-checkbox {
-    display: inline-block;
-    width: 40px;
-    vertical-align: middle;
+  display: inline-block;
+  width: 40px;
+  vertical-align: middle;
 }
-
 .box-image-radio img, .box-image-checkbox img {
-    width: 100%;
-    height: auto;
+  width: 100%;
+  height: auto;
 }
 
 /*# sourceMappingURL=frontend.css.map */

@@ -9,14 +9,14 @@ defined( 'ABSPATH' ) || exit;
 $df_val = $_GET[ $key ] ?? '';
 
 if ( empty( $field['options'] ) || ! is_array( $field['options'] ) ) {
-	return;
+    return;
 }
 
 foreach ( $field['options'] as $option_key => $option ) {
-	if ( isset( $option['value'] ) && $option['value'] !== '' ) {
-		$option_label = isset( $option['name'] ) && $option['name'] !== '' ? $option['name'] : $option['value'];
-		?>
-        <label>
+    if ( isset( $option['value'] ) && $option['value'] !== '' ) {
+        $option_label = isset( $option['name'] ) && $option['name'] !== '' ? $option['name'] : $option['value'];
+        ?>
+        <label for="<?php echo esc_attr( $option_key ); ?>">
             <input class="wpcpo-option-field field-radio" type="radio"
                    name="<?php echo esc_attr( $key . '[value]' ); ?>" id="<?php echo esc_attr( $option_key ); ?>"
                    data-label="<?php echo esc_attr( $option_label ); ?>"
@@ -25,9 +25,10 @@ foreach ( $field['options'] as $option_key => $option ) {
                    data-price="<?php echo esc_attr( $option['price'] ); ?>"
                    data-price-custom="<?php echo esc_attr( $option['custom_price'] ); ?>"
                    value="<?php echo esc_attr( $option['value'] ); ?>" <?php echo esc_attr( ( $field['default_value'] && ( $field['value'] === $option['value'] ) ) || $df_val === $option['value'] ? 'checked' : '' ); ?>>
-			<?php echo esc_html( $option_label ); ?>
-            <span><?php echo Wpcpo_Frontend::get_label_price( $option, 'option' ); ?></span></label>
-	<?php }
+            <?php echo esc_html( $option_label ); ?>
+            <span><?php echo Wpcpo_Frontend::get_label_price( $option, 'option' ); ?></span>
+        </label>
+    <?php }
 }
 ?>
 <input type="hidden" name="<?php echo esc_attr( $key . '[label]' ); ?>" value=""/>

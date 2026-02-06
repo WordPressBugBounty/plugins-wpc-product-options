@@ -28,7 +28,14 @@
         border-top: 1px solid #eee;
         padding: 10px 0;
         margin-top: 20px;
-        justify-content: flex-end;
+        justify-content: space-between;
+
+        &.wpcpo-subtotal-0 {
+          .wpcpo-clear {
+            opacity: 0;
+            appearance: none;
+          }
+        }
 
         .amount {
           margin-left: 10px;
@@ -75,6 +82,27 @@
 
       input[type="radio"]:checked + label {
         border: 1px solid green;
+
+        &:before {
+          content: "✓";
+          color: #ffffff;
+          display: block;
+          width: 24px;
+          height: 24px;
+          line-height: 20px;
+          background-color: green;
+          text-align: center;
+          font-size: 14px;
+          border-radius: 24px;
+          border-width: 2px;
+          border-style: solid;
+          border-color: #ffffff;
+          border-image: initial;
+          box-sizing: border-box;
+          position: absolute;
+          top: -10px;
+          right: -10px;
+        }
       }
 
       label {
@@ -82,9 +110,10 @@
         text-align: center;
         padding: 10px;
         margin: 5px;
-        border: 1px solid transparent;
+        border: 1px solid #dddddd;
         box-sizing: border-box;
         cursor: pointer;
+        position: relative;
 
         img {
           display: inline-block;
@@ -106,6 +135,27 @@
 
       input[type="checkbox"]:checked + label {
         border: 1px solid green;
+
+        &:before {
+          content: "✓";
+          color: #ffffff;
+          display: block;
+          width: 24px;
+          height: 24px;
+          line-height: 20px;
+          background-color: green;
+          text-align: center;
+          font-size: 14px;
+          border-radius: 0;
+          border-width: 2px;
+          border-style: solid;
+          border-color: #ffffff;
+          border-image: initial;
+          box-sizing: border-box;
+          position: absolute;
+          top: -10px;
+          right: -10px;
+        }
       }
 
       label {
@@ -113,9 +163,10 @@
         text-align: center;
         padding: 10px;
         margin: 5px;
-        border: 1px solid transparent;
+        border: 1px solid #dddddd;
         box-sizing: border-box;
         cursor: pointer;
+        position: relative;
 
         img {
           display: inline-block;
@@ -123,6 +174,152 @@
       }
     }
   }
+
+  &.wpcpo-option-color-radio {
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-left: -5px;
+      margin-right: -5px;
+
+      .field-color-radio, .field-radio {
+        display: none;
+      }
+
+      input[type="radio"]:checked + label {
+        border: 1px solid green;
+
+        &:before {
+          content: "✓";
+          color: #ffffff;
+          display: block;
+          width: 24px;
+          height: 24px;
+          line-height: 20px;
+          background-color: green;
+          text-align: center;
+          font-size: 14px;
+          border-radius: 50%;
+          border-width: 2px;
+          border-style: solid;
+          border-color: #ffffff;
+          border-image: initial;
+          box-sizing: border-box;
+          position: absolute;
+          top: -10px;
+          right: -10px;
+        }
+      }
+
+      label {
+        width: 25%;
+        text-align: center;
+        padding: 10px 5px;
+        margin: 5px;
+        border: 1px solid #dddddd;
+        box-sizing: border-box;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        position: relative;
+
+        > * {
+          margin: 0 5px;
+        }
+
+        .label-color {
+          display: inline-block;
+          width: 32px;
+          height: 32px;
+          flex: 0 0 32px;
+        }
+      }
+    }
+  }
+
+  &.wpcpo-option-color-checkbox {
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-left: -5px;
+      margin-right: -5px;
+
+      .field-color-checkbox, .field-checkbox {
+        display: none;
+      }
+
+      input[type="checkbox"]:checked + label {
+        border: 1px solid green;
+
+        &:before {
+          content: "✓";
+          color: #ffffff;
+          display: block;
+          width: 24px;
+          height: 24px;
+          line-height: 20px;
+          background-color: green;
+          text-align: center;
+          font-size: 14px;
+          border-radius: 0;
+          border-width: 2px;
+          border-style: solid;
+          border-color: #ffffff;
+          border-image: initial;
+          box-sizing: border-box;
+          position: absolute;
+          top: -10px;
+          right: -10px;
+        }
+      }
+
+      label {
+        width: 25%;
+        text-align: center;
+        padding: 10px 5px;
+        margin: 5px;
+        border: 1px solid #dddddd;
+        box-sizing: border-box;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        position: relative;
+
+        > * {
+          margin: 0 5px;
+        }
+
+        .label-color {
+          display: inline-block;
+          width: 32px;
+          height: 32px;
+          flex: 0 0 32px;
+        }
+      }
+    }
+  }
+
+  &.wpcpo-option-quantity {
+    .quantity {
+      float: none !important;
+    }
+  }
+
+  &.wpcpo-option-dimensions {
+    .wpcpo-dimensions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  &[data-logic="show"] {
+    display: none;
+  }
+}
+
+form.cart [name="wpcpo-hidden-quantity"] {
+  display: none !important;
 }
 
 .wp-picker-container {

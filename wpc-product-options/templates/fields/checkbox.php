@@ -9,24 +9,25 @@ defined( 'ABSPATH' ) || exit;
 $df_val = isset( $_GET[ $key ] ) ? explode( ',', $_GET[ $key ] ) : [];
 
 if ( empty( $field['options'] ) || ! is_array( $field['options'] ) ) {
-	return;
+    return;
 }
 
 foreach ( $field['options'] as $option_key => $option ) {
-	if ( isset( $option['value'] ) && $option['value'] !== '' ) {
-		$option_label = isset( $option['name'] ) && $option['name'] !== '' ? $option['name'] : $option['value'];
-		?>
-        <label>
+    if ( isset( $option['value'] ) && $option['value'] !== '' ) {
+        $option_label = isset( $option['name'] ) && $option['name'] !== '' ? $option['name'] : $option['value'];
+        ?>
+        <label for="<?php echo esc_attr( $option_key ); ?>">
             <input class="wpcpo-option-field" type="checkbox"
+                   id="<?php echo esc_attr( $option_key ); ?>"
                    name="<?php echo esc_attr( $option_key . '[value]' ); ?>"
-				<?php echo esc_attr( $field['required'] ? 'required' : '' ); ?>
+                    <?php echo esc_attr( $field['required'] ? 'required' : '' ); ?>
                    data-label="<?php echo esc_attr( $option_label ); ?>"
                    data-title="<?php echo esc_attr( $field['title'] ); ?>" data-enable-price="1"
                    data-price-type="<?php echo esc_attr( $option['price_type'] ); ?>"
                    data-price="<?php echo esc_attr( $option['price'] ); ?>"
                    data-price-custom="<?php echo esc_attr( $option['custom_price'] ); ?>"
                    value="<?php echo esc_attr( $option['value'] ); ?>" <?php echo esc_attr( ( $field['default_value'] && ( $field['value'] === $option['value'] ) ) || in_array( $option['value'], $df_val ) ? 'checked' : '' ); ?>>
-			<?php echo esc_html( $option_label ); ?>
+            <?php echo esc_html( $option_label ); ?>
             <span><?php echo Wpcpo_Frontend::get_label_price( $option, 'option' ); ?></span>
             <input type="hidden" name="<?php echo esc_attr( $option_key . '[label]' ); ?>"
                    value="<?php echo esc_attr( $option_label ); ?>"/>
@@ -40,5 +41,5 @@ foreach ( $field['options'] as $option_key => $option ) {
                    value="<?php echo esc_attr( $field['title'] ); ?>"/>
             <input type="hidden" name="<?php echo esc_attr( $option_key . '[type]' ); ?>" value="checkbox"/>
         </label>
-	<?php }
+    <?php }
 }

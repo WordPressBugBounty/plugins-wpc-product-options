@@ -2,221 +2,248 @@
 defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'Wpcpo_Backend' ) ) {
-	class Wpcpo_Backend {
-		private $field = [];
-		private $field_id = '';
-		protected static $instance = null;
-		protected static $settings = [];
+    class Wpcpo_Backend {
+        private $field = [];
+        private $field_id = '';
+        protected static $instance = null;
+        protected static $settings = [];
+        protected static $localization = [];
 
-		public static function instance() {
-			if ( is_null( self::$instance ) ) {
-				self::$instance = new self();
-			}
+        public static function instance() {
+            if ( is_null( self::$instance ) ) {
+                self::$instance = new self();
+            }
 
-			return self::$instance;
-		}
+            return self::$instance;
+        }
 
-		public function __construct() {
-			self::$settings = (array) get_option( 'wpcpo_settings', [] );
+        public function __construct() {
+            self::$settings     = (array) get_option( 'wpcpo_settings', [] );
+            self::$localization = (array) get_option( 'wpcpo_localization', [] );
 
-			add_action( 'init', [ $this, 'init' ] );
-			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-			add_action( 'admin_init', [ $this, 'register_settings' ] );
-			add_action( 'admin_menu', [ $this, 'admin_menu' ] );
-			add_filter( 'plugin_action_links', [ $this, 'action_links' ], 10, 2 );
-			add_filter( 'plugin_row_meta', [ $this, 'row_meta' ], 10, 2 );
+            add_action( 'init', [ $this, 'init' ] );
+            add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+            add_action( 'admin_init', [ $this, 'register_settings' ] );
+            add_action( 'admin_menu', [ $this, 'admin_menu' ] );
+            add_filter( 'plugin_action_links', [ $this, 'action_links' ], 10, 2 );
+            add_filter( 'plugin_row_meta', [ $this, 'row_meta' ], 10, 2 );
 
-			add_action( 'add_meta_boxes', [ $this, 'add_meta_box' ] );
-			add_action( 'save_post_wpc_product_option', [ $this, 'save_product_options' ] );
-			add_filter( 'manage_edit-wpc_product_option_columns', [ $this, 'custom_column' ] );
-			add_action( 'manage_wpc_product_option_posts_custom_column', [ $this, 'custom_column_value' ], 10, 2 );
+            add_action( 'add_meta_boxes', [ $this, 'add_meta_box' ] );
+            add_action( 'save_post_wpc_product_option', [ $this, 'save_product_options' ] );
+            add_filter( 'manage_edit-wpc_product_option_columns', [ $this, 'custom_column' ] );
+            add_action( 'manage_wpc_product_option_posts_custom_column', [ $this, 'custom_column_value' ], 10, 2 );
 
-			// AJAX
-			add_action( 'wp_ajax_wpcpo_search_term', [ $this, 'ajax_search_term' ] );
-			add_action( 'wp_ajax_wpcpo_add_field', [ $this, 'ajax_add_field' ] );
-			add_action( 'wp_ajax_wpcpo_add_option', [ $this, 'ajax_add_option' ] );
+            // AJAX
+            add_action( 'wp_ajax_wpcpo_search_term', [ $this, 'ajax_search_term' ] );
+            add_action( 'wp_ajax_wpcpo_add_field', [ $this, 'ajax_add_field' ] );
+            add_action( 'wp_ajax_wpcpo_add_option', [ $this, 'ajax_add_option' ] );
+            add_action( 'wp_ajax_wpcpo_add_dimension', [ $this, 'ajax_add_dimension' ] );
+            add_action( 'wp_ajax_wpcpo_add_condition', [ $this, 'ajax_add_condition' ] );
 
-			// Single product
-			add_filter( 'woocommerce_product_data_tabs', [ $this, 'product_data_tabs' ] );
-			add_action( 'woocommerce_product_data_panels', [ $this, 'product_data_panels' ] );
-			add_action( 'woocommerce_process_product_meta', [ $this, 'save_product_options' ] );
+            // Single product
+            add_filter( 'woocommerce_product_data_tabs', [ $this, 'product_data_tabs' ] );
+            add_action( 'woocommerce_product_data_panels', [ $this, 'product_data_panels' ] );
+            add_action( 'woocommerce_process_product_meta', [ $this, 'save_product_options' ] );
 
-			// WPC Smart Messages
-			add_filter( 'wpcsm_locations', [ $this, 'wpcsm_locations' ] );
-		}
+            // WPC Smart Messages
+            add_filter( 'wpcsm_locations', [ $this, 'wpcsm_locations' ] );
+        }
 
-		public static function get_settings() {
-			return apply_filters( 'wpcpo_get_settings', self::$settings );
-		}
+        public static function get_settings() {
+            return apply_filters( 'wpcpo_get_settings', self::$settings );
+        }
 
-		public static function get_setting( $name, $default = false ) {
-			if ( ! empty( self::$settings ) && isset( self::$settings[ $name ] ) ) {
-				$setting = self::$settings[ $name ];
-			} else {
-				$setting = get_option( 'wpcpo_' . $name, $default );
-			}
+        public static function get_setting( $name, $default = false ) {
+            if ( ! empty( self::$settings ) && isset( self::$settings[ $name ] ) ) {
+                $setting = self::$settings[ $name ];
+            } else {
+                $setting = get_option( 'wpcpo_' . $name, $default );
+            }
 
-			return apply_filters( 'wpcpo_get_setting', $setting, $name, $default );
-		}
+            return apply_filters( 'wpcpo_get_setting', $setting, $name, $default );
+        }
 
-		public function init() {
-			// load text-domain
-			load_plugin_textdomain( 'wpc-product-options', false, basename( WPCPO_DIR ) . '/languages/' );
+        public static function localization( $key = '', $default = '' ) {
+            $str = '';
 
-			$this->register_postype();
-		}
+            if ( ! empty( $key ) && ! empty( self::$localization[ $key ] ) ) {
+                $str = self::$localization[ $key ];
+            } elseif ( ! empty( $default ) ) {
+                $str = $default;
+            }
 
-		public function custom_column( $columns ) {
-			return [
-				'cb'      => $columns['cb'],
-				'title'   => esc_html__( 'Title', 'wpc-product-options' ),
-				'desc'    => esc_html__( 'Description', 'wpc-product-options' ),
-				'summary' => esc_html__( 'Summary', 'wpc-product-options' ),
-				'date'    => esc_html__( 'Date', 'wpc-product-options' )
-			];
-		}
+            return apply_filters( 'wpcpo_localization_' . $key, $str );
+        }
 
-		public function custom_column_value( $column, $post_id ) {
-			if ( $column == 'desc' ) {
-				echo get_the_excerpt( $post_id );
-			}
+        public function init() {
+            // load text-domain
+            load_plugin_textdomain( 'wpc-product-options', false, basename( WPCPO_DIR ) . '/languages/' );
 
-			if ( $column == 'summary' ) {
-				$fields    = get_post_meta( $post_id, 'wpcpo-fields', true );
-				$apply_for = get_post_meta( $post_id, 'wpcpo-apply-for', true );
-				$apply     = (array) get_post_meta( $post_id, 'wpcpo-apply', true );
+            $this->register_postype();
+        }
 
-				echo '<div>' . esc_html__( 'Fields', 'wpc-product-options' ) . ': ' . ( ! empty( $fields ) && is_array( $fields ) ? count( $fields ) : '0' ) . '</div>';
-				echo '<div>' . esc_html__( 'Apply', 'wpc-product-options' ) . ': ' . ( in_array( $apply_for, [
-						'all',
-						'none'
-					] ) ? $apply_for : $apply_for . ' - ' . ( ! empty( $apply ) ? implode( ', ', $apply ) : '' ) ) . '</div>';
-			}
-		}
+        public function custom_column( $columns ) {
+            return [
+                    'cb'      => $columns['cb'],
+                    'title'   => esc_html__( 'Title', 'wpc-product-options' ),
+                    'desc'    => esc_html__( 'Description', 'wpc-product-options' ),
+                    'summary' => esc_html__( 'Summary', 'wpc-product-options' ),
+                    'date'    => esc_html__( 'Date', 'wpc-product-options' )
+            ];
+        }
 
-		public function product_data_tabs( $tabs ) {
-			$tabs['wpcpo'] = [
-				'label'  => esc_html__( 'Product Options', 'wpc-product-options' ),
-				'target' => 'wpcpo_settings'
-			];
+        public function custom_column_value( $column, $post_id ) {
+            if ( $column == 'desc' ) {
+                echo get_the_excerpt( $post_id );
+            }
 
-			return $tabs;
-		}
+            if ( $column == 'summary' ) {
+                $fields    = get_post_meta( $post_id, 'wpcpo-fields', true );
+                $apply_for = get_post_meta( $post_id, 'wpcpo-apply-for', true );
+                $apply     = (array) get_post_meta( $post_id, 'wpcpo-apply', true );
 
-		public function product_data_panels() {
-			include_once WPCPO_DIR . 'includes/templates/panel.php';
-		}
+                echo '<div>' . esc_html__( 'Fields', 'wpc-product-options' ) . ': ' . ( ! empty( $fields ) && is_array( $fields ) ? count( $fields ) : '0' ) . '</div>';
+                echo '<div>' . esc_html__( 'Apply', 'wpc-product-options' ) . ': ' . ( in_array( $apply_for, [
+                                'all',
+                                'none'
+                        ] ) ? $apply_for : $apply_for . ' - ' . ( ! empty( $apply ) ? implode( ', ', $apply ) : '' ) ) . '</div>';
+            }
+        }
 
-		public function add_meta_box() {
-			add_meta_box( 'wpcpo_configuration', esc_html__( 'Configuration', 'wpc-product-options' ), [
-				$this,
-				'configuration_meta'
-			], 'wpc_product_option', 'advanced', 'low' );
+        public function product_data_tabs( $tabs ) {
+            $tabs['wpcpo'] = [
+                    'label'  => esc_html__( 'Product Options', 'wpc-product-options' ),
+                    'target' => 'wpcpo_settings'
+            ];
 
-			add_meta_box( 'wpcpo_fields', esc_html__( 'Fields', 'wpc-product-options' ), [
-				$this,
-				'fields_meta'
-			], 'wpc_product_option', 'advanced', 'low' );
-		}
+            return $tabs;
+        }
 
-		public function save_product_options( $post_id ) {
-			if ( isset( $_POST['wpcpo-fields'] ) ) {
-				update_post_meta( $post_id, 'wpcpo-fields', $this->sanitize_array( $this->validate( $_POST['wpcpo-fields'] ) ) );
-			}
+        public function product_data_panels() {
+            include_once WPCPO_DIR . 'includes/templates/panel.php';
+        }
 
-			if ( isset( $_POST['wpcpo-apply-for'] ) ) {
-				update_post_meta( $post_id, 'wpcpo-apply-for', sanitize_text_field( $_POST['wpcpo-apply-for'] ) );
-			}
+        public function add_meta_box() {
+            add_meta_box( 'wpcpo_configuration', esc_html__( 'Configuration', 'wpc-product-options' ), [
+                    $this,
+                    'configuration_meta'
+            ], 'wpc_product_option', 'advanced', 'low' );
 
-			if ( isset( $_POST['wpcpo-apply'] ) ) {
-				update_post_meta( $post_id, 'wpcpo-apply', $this->sanitize_array( $_POST['wpcpo-apply'] ) );
-			}
+            add_meta_box( 'wpcpo_fields', esc_html__( 'Fields', 'wpc-product-options' ), [
+                    $this,
+                    'fields_meta'
+            ], 'wpc_product_option', 'advanced', 'low' );
+        }
 
-			if ( isset( $_POST['wpcpo-display'] ) ) {
-				update_post_meta( $post_id, 'wpcpo-display', sanitize_text_field( $_POST['wpcpo-display'] ) );
-			}
-		}
+        public function save_product_options( $post_id ) {
+            if ( isset( $_POST['wpcpo-fields'] ) ) {
+                update_post_meta( $post_id, 'wpcpo-fields', self::sanitize_array( $this->validate( $_POST['wpcpo-fields'] ) ) );
+            }
 
-		private function sanitize_array( $arr ) {
-			foreach ( (array) $arr as $k => $v ) {
-				if ( is_array( $v ) ) {
-					$arr[ $k ] = self::sanitize_array( $v );
-				} else {
-					$arr[ $k ] = sanitize_post_field( 'post_content', $v, 0, 'display' );
-				}
-			}
+            if ( isset( $_POST['wpcpo-apply-for'] ) ) {
+                update_post_meta( $post_id, 'wpcpo-apply-for', sanitize_text_field( $_POST['wpcpo-apply-for'] ) );
+            }
 
-			return $arr;
-		}
+            if ( isset( $_POST['wpcpo-apply'] ) ) {
+                update_post_meta( $post_id, 'wpcpo-apply', self::sanitize_array( $_POST['wpcpo-apply'] ) );
+            }
 
-		private function validate( $fields ) {
-			foreach ( $fields as $key => $field ) {
-				if ( isset( $field['custom_price'] ) ) {
-					$field['custom_price'] = preg_replace( '/[^0-9\+\-\*\/\(\)\.pqlvws]/', '', $field['custom_price'] );
-				} elseif ( isset( $field['options'] ) && is_array( $field['options'] ) ) {
-					foreach ( $field['options'] as $k => $option ) {
-						if ( isset( $option['custom_price'] ) ) {
-							$option['custom_price'] = preg_replace( '/[^0-9\+\-\*\/\(\)\.pqlvws]/', '', $option['custom_price'] );
-							$field['options'][ $k ] = $option;
-						}
-					}
-				}
+            if ( isset( $_POST['wpcpo-display'] ) ) {
+                update_post_meta( $post_id, 'wpcpo-display', sanitize_text_field( $_POST['wpcpo-display'] ) );
+            }
+        }
 
-				$fields[ $key ] = $field;
-			}
+        public function sanitize_array( $arr ) {
+            foreach ( (array) $arr as $k => $v ) {
+                if ( is_array( $v ) ) {
+                    $arr[ $k ] = self::sanitize_array( $v );
+                } else {
+                    $arr[ $k ] = sanitize_post_field( 'post_content', $v, 0, 'db' );
+                }
+            }
 
-			return $fields;
-		}
+            return $arr;
+        }
 
-		public function configuration_meta() {
-			include_once WPCPO_DIR . 'includes/templates/configuration.php';
-		}
+        private function validate( $fields ) {
+            foreach ( $fields as $key => $field ) {
+                if ( isset( $field['custom_price'] ) ) {
+                    $field['custom_price'] = preg_replace( '/[^0-9\+\-\*\/\(\)\.vdpqlws]/', '', $field['custom_price'] );
+                } elseif ( isset( $field['options'] ) && is_array( $field['options'] ) ) {
+                    foreach ( $field['options'] as $k => $option ) {
+                        if ( isset( $option['custom_price'] ) ) {
+                            $option['custom_price'] = preg_replace( '/[^0-9\+\-\*\/\(\)\.vdpqlws]/', '', $option['custom_price'] );
+                            $field['options'][ $k ] = $option;
+                        }
+                    }
+                }
 
-		public function fields_meta() {
-			$fields = get_post_meta( get_the_ID(), 'wpcpo-fields', true );
-			$fields = ( is_array( $fields ) ) ? $fields : [];
-			include_once WPCPO_DIR . 'includes/templates/fields.php';
-		}
+                $fields[ $key ] = $field;
+            }
 
-		public function enqueue_scripts() {
-			if ( ( 'wpc_product_option' !== get_current_screen()->id ) && ( 'product' !== get_current_screen()->id ) ) {
-				return;
-			}
+            return $fields;
+        }
 
-			wp_enqueue_media();
-			wp_enqueue_style( 'hint', WPCPO_URI . 'assets/css/hint.css' );
+        public function configuration_meta() {
+            include_once WPCPO_DIR . 'includes/templates/configuration.php';
+        }
 
-			// wpcdpk
-			wp_enqueue_style( 'wpcdpk', WPCPO_URI . 'assets/libs/wpcdpk/css/datepicker.css' );
-			wp_enqueue_script( 'wpcdpk', WPCPO_URI . 'assets/libs/wpcdpk/js/datepicker.js', [ 'jquery' ], WPCPO_VERSION, true );
+        public function fields_meta() {
+            $fields = get_post_meta( get_the_ID(), 'wpcpo-fields', true );
+            $fields = ( is_array( $fields ) ) ? $fields : [];
+            include_once WPCPO_DIR . 'includes/templates/fields.php';
+        }
 
-			wp_enqueue_style( 'wpcpo-backend', WPCPO_URI . 'assets/css/backend.css', [ 'woocommerce_admin_styles' ], WPCPO_VERSION );
-			wp_enqueue_script( 'wpcpo-backend', WPCPO_URI . 'assets/js/backend.js', [
-				'jquery',
-				'wc-enhanced-select',
-				'jquery-ui-sortable',
-				'selectWoo',
-			], WPCPO_VERSION, true );
-			wp_localize_script( 'wpcpo-backend', 'wpcpo_vars', apply_filters( 'wpcpo_vars', [
-				'nonce' => wp_create_nonce( 'wpcpo-security' ),
-			] ) );
-		}
+        public function enqueue_scripts() {
+            if ( ( 'wpc_product_option' !== get_current_screen()->id ) && ( 'product' !== get_current_screen()->id ) ) {
+                return;
+            }
 
-		function register_settings() {
-			// settings
-			register_setting( 'wpcpo_settings', 'wpcpo_settings' );
-		}
+            wp_enqueue_media();
+            wp_enqueue_style( 'wp-color-picker' );
+            wp_enqueue_style( 'hint', WPCPO_URI . 'assets/css/hint.css' );
 
-		function admin_menu() {
-			add_submenu_page( 'wpclever', esc_html__( 'WPC Product Options', 'wpc-product-options' ), esc_html__( 'Product Options', 'wpc-product-options' ), 'manage_options', 'wpclever-wpcpo', [
-				$this,
-				'admin_menu_content'
-			] );
-		}
+            // wpcdpk
+            wp_enqueue_style( 'wpcdpk', WPCPO_URI . 'assets/libs/wpcdpk/css/datepicker.css' );
+            wp_enqueue_script( 'wpcdpk', WPCPO_URI . 'assets/libs/wpcdpk/js/datepicker.js', [ 'jquery' ], WPCPO_VERSION, true );
 
-		function admin_menu_content() {
-			$active_tab = sanitize_key( $_GET['tab'] ?? 'settings' );
-			?>
+            wp_enqueue_style( 'wpcpo-backend', WPCPO_URI . 'assets/css/backend.css', [ 'woocommerce_admin_styles' ], WPCPO_VERSION );
+            wp_enqueue_script( 'wpcpo-backend', WPCPO_URI . 'assets/js/backend.js', [
+                    'jquery',
+                    'wc-enhanced-select',
+                    'jquery-ui-sortable',
+                    'wp-color-picker',
+                    'selectWoo',
+            ], WPCPO_VERSION, true );
+            wp_localize_script( 'wpcpo-backend', 'wpcpo_vars', apply_filters( 'wpcpo_vars', [
+                    'nonce' => wp_create_nonce( 'wpcpo-security' ),
+            ] ) );
+        }
+
+        function register_settings() {
+            // settings
+            register_setting( 'wpcpo_settings', 'wpcpo_settings', [
+                    'type'              => 'array',
+                    'sanitize_callback' => [ $this, 'sanitize_array' ],
+            ] );
+
+            // localization
+            register_setting( 'wpcpo_localization', 'wpcpo_localization', [
+                    'type'              => 'array',
+                    'sanitize_callback' => [ $this, 'sanitize_array' ],
+            ] );
+        }
+
+        function admin_menu() {
+            add_submenu_page( 'wpclever', esc_html__( 'WPC Product Options', 'wpc-product-options' ), esc_html__( 'Product Options', 'wpc-product-options' ), 'manage_options', 'wpclever-wpcpo', [
+                    $this,
+                    'admin_menu_content'
+            ] );
+        }
+
+        function admin_menu_content() {
+            $active_tab = sanitize_key( $_GET['tab'] ?? 'settings' );
+            ?>
             <div class="wpclever_settings_page wrap">
                 <div class="wpclever_settings_page_header">
                     <a class="wpclever_settings_page_header_logo" href="https://wpclever.net/"
@@ -225,7 +252,7 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
                         <div class="wpclever_settings_page_title"><?php echo esc_html__( 'WPC Product Options', 'wpc-product-options' ) . ' ' . esc_html( WPCPO_VERSION ) . ' ' . ( defined( 'WPCPO_PREMIUM' ) ? '<span class="premium" style="display: none">' . esc_html__( 'Premium', 'wpc-product-options' ) . '</span>' : '' ); ?></div>
                         <div class="wpclever_settings_page_desc about-text">
                             <p>
-								<?php printf( /* translators: stars */ esc_html__( 'Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating.', 'wpc-product-options' ), '<span style="color:#ffb900">&#9733;&#9733;&#9733;&#9733;&#9733;</span>' ); ?>
+                                <?php printf( /* translators: stars */ esc_html__( 'Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating.', 'wpc-product-options' ), '<span style="color:#ffb900">&#9733;&#9733;&#9733;&#9733;&#9733;</span>' ); ?>
                                 <br/>
                                 <a href="<?php echo esc_url( WPCPO_REVIEWS ); ?>"
                                    target="_blank"><?php esc_html_e( 'Reviews', 'wpc-product-options' ); ?></a> |
@@ -238,40 +265,47 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
                     </div>
                 </div>
                 <h2></h2>
-				<?php if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] ) { ?>
+                <?php if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] ) { ?>
                     <div class="notice notice-success is-dismissible">
                         <p><?php esc_html_e( 'Settings updated.', 'wpc-product-options' ); ?></p>
                     </div>
-				<?php } ?>
+                <?php } ?>
                 <div class="wpclever_settings_page_nav">
                     <h2 class="nav-tab-wrapper">
                         <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-wpcpo&tab=settings' ) ); ?>"
                            class="<?php echo esc_attr( $active_tab === 'settings' ? 'nav-tab nav-tab-active' : 'nav-tab' ); ?>">
-							<?php esc_html_e( 'Settings', 'wpc-product-options' ); ?>
+                            <?php esc_html_e( 'Settings', 'wpc-product-options' ); ?>
+                        </a>
+                        <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-wpcpo&tab=localization' ) ); ?>"
+                           class="<?php echo esc_attr( $active_tab === 'localization' ? 'nav-tab nav-tab-active' : 'nav-tab' ); ?>">
+                            <?php esc_html_e( 'Localization', 'wpc-product-options' ); ?>
                         </a>
                         <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=wpc_product_option' ) ); ?>"
                            class="nav-tab">
-							<?php esc_html_e( 'Product Options', 'wpc-product-options' ); ?>
+                            <?php esc_html_e( 'Product Options', 'wpc-product-options' ); ?>
                         </a>
                         <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-wpcpo&tab=premium' ) ); ?>"
                            class="<?php echo esc_attr( $active_tab === 'premium' ? 'nav-tab nav-tab-active' : 'nav-tab' ); ?>"
                            style="color: #c9356e">
-							<?php esc_html_e( 'Premium Version', 'wpc-product-options' ); ?>
+                            <?php esc_html_e( 'Premium Version', 'wpc-product-options' ); ?>
                         </a>
                         <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-kit' ) ); ?>" class="nav-tab">
-							<?php esc_html_e( 'Essential Kit', 'wpc-product-options' ); ?>
+                            <?php esc_html_e( 'Essential Kit', 'wpc-product-options' ); ?>
                         </a>
                     </h2>
                 </div>
                 <div class="wpclever_settings_page_content">
-					<?php if ( $active_tab === 'settings' ) {
-						$position = self::get_setting( 'position', 'above_atc' );
-						?>
+                    <?php if ( $active_tab === 'settings' ) {
+                        $position      = self::get_setting( 'position', 'above_atc' );
+                        $summary_free  = self::get_setting( 'summary_free', 'no' );
+                        $summary_clear = self::get_setting( 'summary_clear', 'no' );
+                        $change_url    = self::get_setting( 'change_url', 'no' );
+                        ?>
                         <form method="post" action="options.php">
                             <table class="form-table wpcpo-table">
                                 <tr class="heading">
                                     <th colspan="2">
-										<?php esc_html_e( 'General', 'wpc-product-options' ); ?>
+                                        <?php esc_html_e( 'General', 'wpc-product-options' ); ?>
                                     </th>
                                 </tr>
                                 <tr>
@@ -285,14 +319,101 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
                                         <span class="description"><?php esc_html_e( 'Choose the position to show product options on a single product page. You can also place the shortcode [wpcpo] inside the add-to-cart form.', 'wpc-product-options' ); ?></span>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th><?php esc_html_e( 'Summary of free options', 'wpc-product-options' ); ?></th>
+                                    <td>
+                                        <select name="wpcpo_settings[summary_free]">
+                                            <option value="no" <?php selected( $summary_free, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-product-options' ); ?></option>
+                                            <option value="yes" <?php selected( $summary_free, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-product-options' ); ?></option>
+                                        </select>
+                                        <span class="description"><?php esc_html_e( 'Display free options on the summary.', 'wpc-product-options' ); ?></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php esc_html_e( '"Clear all" button', 'wpc-product-options' ); ?></th>
+                                    <td>
+                                        <select name="wpcpo_settings[summary_clear]">
+                                            <option value="no" <?php selected( $summary_clear, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-product-options' ); ?></option>
+                                            <option value="yes" <?php selected( $summary_clear, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-product-options' ); ?></option>
+                                        </select>
+                                        <span class="description"><?php esc_html_e( 'Display the "Clear all" button to clear all selected options.', 'wpc-product-options' ); ?></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php esc_html_e( 'Change URL (Beta)', 'wpc-product-options' ); ?></th>
+                                    <td>
+                                        <select name="wpcpo_settings[change_url]">
+                                            <option value="no" <?php selected( $change_url, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-product-options' ); ?></option>
+                                            <option value="yes" <?php selected( $change_url, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-product-options' ); ?></option>
+                                        </select>
+                                        <span class="description"><?php esc_html_e( 'Change the product URL based on selected options.', 'wpc-product-options' ); ?></span>
+                                    </td>
+                                </tr>
                                 <tr class="submit">
                                     <th colspan="2">
-										<?php settings_fields( 'wpcpo_settings' ); ?><?php submit_button(); ?>
+                                        <?php settings_fields( 'wpcpo_settings' ); ?><?php submit_button(); ?>
                                     </th>
                                 </tr>
                             </table>
                         </form>
-					<?php } elseif ( $active_tab === 'premium' ) { ?>
+                    <?php } elseif ( $active_tab === 'localization' ) { ?>
+                        <form method="post" action="options.php">
+                            <table class="form-table">
+                                <tr class="heading">
+                                    <th scope="row"><?php esc_html_e( 'Localization', 'wpc-product-options' ); ?></th>
+                                    <td>
+                                        <?php esc_html_e( 'Leave blank to use the default text and its equivalent translation in multiple languages.', 'wpc-product-options' ); ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php esc_html_e( 'Subtotal', 'wpc-product-options' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="text" class="regular-text" name="wpcpo_localization[subtotal]"
+                                                   value="<?php echo esc_attr( self::localization( 'subtotal' ) ); ?>"
+                                                   placeholder="<?php esc_attr_e( 'Subtotal:', 'wpc-product-options' ); ?>"/>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php esc_html_e( 'Free', 'wpc-product-options' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="text" class="regular-text" name="wpcpo_localization[free]"
+                                                   value="<?php echo esc_attr( self::localization( 'free' ) ); ?>"
+                                                   placeholder="<?php esc_attr_e( 'Free', 'wpc-product-options' ); ?>"/>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php esc_html_e( 'Characters remaining', 'wpc-product-options' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="text" class="regular-text"
+                                                   name="wpcpo_localization[characters_remaining]"
+                                                   value="<?php echo esc_attr( self::localization( 'characters_remaining' ) ); ?>"
+                                                   placeholder="<?php esc_attr_e( 'characters remaining', 'wpc-product-options' ); ?>"/>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php esc_html_e( 'Clear all', 'wpc-product-options' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="text" class="regular-text" name="wpcpo_localization[clear]"
+                                                   value="<?php echo esc_attr( self::localization( 'clear' ) ); ?>"
+                                                   placeholder="<?php esc_attr_e( 'Clear all options', 'wpc-product-options' ); ?>"/>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr class="submit">
+                                    <th colspan="2">
+                                        <?php settings_fields( 'wpcpo_localization' ); ?><?php submit_button(); ?>
+                                    </th>
+                                </tr>
+                            </table>
+                        </form>
+                    <?php } elseif ( $active_tab === 'premium' ) { ?>
                         <div class="wpclever_settings_page_content_text">
                             <p>Get the Premium Version just $29!
                                 <a href="https://wpclever.net/downloads/product-options/?utm_source=pro&utm_medium=wpcpo&utm_campaign=wporg"
@@ -300,11 +421,12 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
                             </p>
                             <p><strong>Extra features for Premium Version:</strong></p>
                             <ul style="margin-bottom: 0">
-                                <li>- Users can define their own price formula.</li>
+                                <li>- Define your own price formula.</li>
+                                <li>- Use conditional logic to show/hide an option.</li>
                                 <li>- Get the lifetime update & premium support.</li>
                             </ul>
                         </div>
-					<?php } ?>
+                    <?php } ?>
                 </div><!-- /.wpclever_settings_page_content -->
                 <div class="wpclever_settings_page_suggestion">
                     <div class="wpclever_settings_page_suggestion_label">
@@ -326,264 +448,307 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
                     </div>
                 </div>
             </div>
-			<?php
-		}
+            <?php
+        }
 
-		function action_links( $links, $file ) {
-			static $plugin;
+        function action_links( $links, $file ) {
+            static $plugin;
 
-			if ( ! isset( $plugin ) ) {
-				$plugin = plugin_basename( WPCPO_FILE );
-			}
+            if ( ! isset( $plugin ) ) {
+                $plugin = plugin_basename( WPCPO_FILE );
+            }
 
-			if ( $plugin === $file ) {
-				$settings             = '<a href="' . esc_url( admin_url( 'admin.php?page=wpclever-wpcpo&tab=settings' ) ) . '">' . esc_html__( 'Settings', 'wpc-product-options' ) . '</a>';
-				$options              = '<a href="' . esc_url( admin_url( 'edit.php?post_type=wpc_product_option' ) ) . '">' . esc_html__( 'Product Options', 'wpc-product-options' ) . '</a>';
-				$links['wpc-premium'] = '<a href="' . esc_url( admin_url( 'admin.php?page=wpclever-wpcpo&tab=premium' ) ) . '" style="color: #c9356e">' . esc_html__( 'Premium Version', 'wpc-product-options' ) . '</a>';
-				array_unshift( $links, $settings, $options );
-			}
+            if ( $plugin === $file ) {
+                $settings             = '<a href="' . esc_url( admin_url( 'admin.php?page=wpclever-wpcpo&tab=settings' ) ) . '">' . esc_html__( 'Settings', 'wpc-product-options' ) . '</a>';
+                $options              = '<a href="' . esc_url( admin_url( 'edit.php?post_type=wpc_product_option' ) ) . '">' . esc_html__( 'Product Options', 'wpc-product-options' ) . '</a>';
+                $links['wpc-premium'] = '<a href="' . esc_url( admin_url( 'admin.php?page=wpclever-wpcpo&tab=premium' ) ) . '" style="color: #c9356e">' . esc_html__( 'Premium Version', 'wpc-product-options' ) . '</a>';
+                array_unshift( $links, $settings, $options );
+            }
 
-			return (array) $links;
-		}
+            return (array) $links;
+        }
 
-		function row_meta( $links, $file ) {
-			static $plugin;
+        function row_meta( $links, $file ) {
+            static $plugin;
 
-			if ( ! isset( $plugin ) ) {
-				$plugin = plugin_basename( WPCPO_FILE );
-			}
+            if ( ! isset( $plugin ) ) {
+                $plugin = plugin_basename( WPCPO_FILE );
+            }
 
-			if ( $plugin === $file ) {
-				$row_meta = [
-					'support' => '<a href="' . esc_url( WPCPO_DISCUSSION ) . '" target="_blank">' . esc_html__( 'Community support', 'wpc-product-options' ) . '</a>',
-				];
+            if ( $plugin === $file ) {
+                $row_meta = [
+                        'support' => '<a href="' . esc_url( WPCPO_DISCUSSION ) . '" target="_blank">' . esc_html__( 'Community support', 'wpc-product-options' ) . '</a>',
+                ];
 
-				return array_merge( $links, $row_meta );
-			}
+                return array_merge( $links, $row_meta );
+            }
 
-			return (array) $links;
-		}
+            return (array) $links;
+        }
 
-		function ajax_search_term() {
-			if ( ! isset( $_REQUEST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
-				die( 'Permissions check failed!' );
-			}
+        function ajax_search_term() {
+            if ( ! isset( $_REQUEST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
+                die( 'Permissions check failed!' );
+            }
 
-			$return = [];
+            $return = [];
 
-			$args = [
-				'taxonomy'   => sanitize_text_field( $_REQUEST['taxonomy'] ),
-				'orderby'    => 'id',
-				'order'      => 'ASC',
-				'hide_empty' => false,
-				'fields'     => 'all',
-				'name__like' => sanitize_text_field( $_REQUEST['q'] ),
-			];
+            $args = [
+                    'taxonomy'   => sanitize_text_field( $_REQUEST['taxonomy'] ),
+                    'orderby'    => 'id',
+                    'order'      => 'ASC',
+                    'hide_empty' => false,
+                    'fields'     => 'all',
+                    'name__like' => sanitize_text_field( $_REQUEST['q'] ),
+            ];
 
-			$terms = get_terms( $args );
+            $terms = get_terms( $args );
 
-			if ( is_array( $terms ) && count( $terms ) ) {
-				foreach ( $terms as $term ) {
-					$return[] = [ $term->slug, $term->name ];
-				}
-			}
+            if ( is_array( $terms ) && count( $terms ) ) {
+                foreach ( $terms as $term ) {
+                    $return[] = [ $term->slug, $term->name ];
+                }
+            }
 
-			wp_send_json( $return );
-		}
+            wp_send_json( $return );
+        }
 
-		private function get_field( $type, $key = '', $data = [], $active = false ) {
-			$this->field   = $data;
-			$text_fields   = [ 'number', 'text', 'password', 'hidden', 'textarea', 'email' ];
-			$select_fields = [ 'radio', 'image-radio', 'select', 'checkbox', 'image-checkbox' ];
+        private function get_field( $type, $key = '', $data = [], $active = false ) {
+            $this->field   = $data;
+            $text_fields   = [ 'number', 'text', 'password', 'hidden', 'textarea', 'email' ];
+            $select_fields = [
+                    'radio',
+                    'image-radio',
+                    'color-radio',
+                    'checkbox',
+                    'image-checkbox',
+                    'color-checkbox',
+                    'select'
+            ];
 
-			if ( in_array( $type, $text_fields ) ) {
-				$file_type = WPCPO_DIR . 'includes/templates/fields/text.php';
-			} elseif ( in_array( $type, $select_fields ) ) {
-				$file_type = WPCPO_DIR . 'includes/templates/fields/select.php';
-			} else {
-				$file_type = WPCPO_DIR . 'includes/templates/fields/' . $type . '.php';
-			}
+            if ( in_array( $type, $text_fields ) ) {
+                $file_type = WPCPO_DIR . 'includes/templates/fields/text.php';
+            } elseif ( in_array( $type, $select_fields ) ) {
+                $file_type = WPCPO_DIR . 'includes/templates/fields/select.php';
+            } else {
+                $file_type = WPCPO_DIR . 'includes/templates/fields/' . $type . '.php';
+            }
 
-			$file_display   = WPCPO_DIR . 'includes/templates/display.php';
-			$file_field     = WPCPO_DIR . 'includes/templates/field.php';
-			$this->field_id = $field_id = ! empty( $key ) ? $key : self::generate_key();
+            $file_display   = WPCPO_DIR . 'includes/templates/display.php';
+            $file_field     = WPCPO_DIR . 'includes/templates/field.php';
+            $this->field_id = $field_id = ! empty( $key ) ? $key : self::generate_key();
 
-			if ( file_exists( $file_type ) ) {
-				include $file_field;
-			}
-		}
+            if ( file_exists( $file_type ) ) {
+                include $file_field;
+            }
+        }
 
-		private function get_options( $type = null ) {
-			$options = $this->get_field_value( 'options', [] );
-			include WPCPO_DIR . 'includes/templates/fields/options.php';
-		}
+        private function get_options( $type = null ) {
+            $options = $this->get_field_value( 'options', [] );
+            include WPCPO_DIR . 'includes/templates/fields/options.php';
+        }
 
-		private function get_option( $option = [], $type = null ) {
-			$option_id = self::generate_key();
-			include WPCPO_DIR . 'includes/templates/fields/option.php';
-		}
+        private function get_option( $option = [], $type = null ) {
+            $option_id = self::generate_key();
+            include WPCPO_DIR . 'includes/templates/fields/option.php';
+        }
 
-		private function get_field_value( $key, $default = '' ) {
-			if ( isset( $this->field[ $key ] ) ) {
-				return $this->field[ $key ];
-			}
+        private function get_dimension( $dimension = [] ) {
+            $dimension_id = self::generate_key();
+            include WPCPO_DIR . 'includes/templates/fields/dimension.php';
+        }
 
-			return $default;
-		}
+        private function get_conditions() {
+            $conditions = $this->get_field_value( 'logic_conditions', [] );
+            include WPCPO_DIR . 'includes/templates/fields/conditions.php';
+        }
 
-		private function get_option_value( $option, $key, $default = '' ) {
-			if ( isset( $option[ $key ] ) ) {
-				return $option[ $key ];
-			}
+        private function get_condition( $condition = [] ) {
+            $condition_id = self::generate_key();
+            include WPCPO_DIR . 'includes/templates/fields/condition.php';
+        }
 
-			return $default;
-		}
+        private function get_field_value( $key, $default = '' ) {
+            if ( isset( $this->field[ $key ] ) ) {
+                return $this->field[ $key ];
+            }
 
-		public function ajax_add_field() {
-			if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
-				die( 'Permissions check failed!' );
-			}
+            return $default;
+        }
 
-			$type = sanitize_text_field( $_POST['type'] ?? 'text' );
-			$this->get_field( $type, '', [], true );
-			wp_die();
-		}
+        private function get_option_value( $option, $key, $default = '' ) {
+            if ( isset( $option[ $key ] ) ) {
+                return $option[ $key ];
+            }
 
-		public function ajax_add_option() {
-			if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
-				die( 'Permissions check failed!' );
-			}
+            return $default;
+        }
 
-			$this->field_id = sanitize_text_field( $_POST['field_id'] );
-			$type           = sanitize_text_field( $_POST['type'] );
-			$this->get_option( [], $type );
-			wp_die();
-		}
+        public function ajax_add_field() {
+            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
+                die( 'Permissions check failed!' );
+            }
 
-		public function register_postype() {
-			$labels = [
-				'name'          => _x( 'Product Options', 'Post Type General Name', 'wpc-product-options' ),
-				'singular_name' => _x( 'Product Option', 'Post Type Singular Name', 'wpc-product-options' ),
-				'add_new_item'  => esc_html__( 'Add New Product Option', 'wpc-product-options' ),
-				'add_new'       => esc_html__( 'Add New', 'wpc-product-options' ),
-				'edit_item'     => esc_html__( 'Edit Product Option', 'wpc-product-options' ),
-				'update_item'   => esc_html__( 'Update Product Option', 'wpc-product-options' ),
-				'search_items'  => esc_html__( 'Search Product Option', 'wpc-product-options' ),
-			];
+            $type = sanitize_text_field( $_POST['type'] ?? 'text' );
+            $this->get_field( $type, '', [], true );
+            wp_die();
+        }
 
-			$args = [
-				'label'               => esc_html__( 'Product Option', 'wpc-product-options' ),
-				'labels'              => $labels,
-				'supports'            => [ 'title', 'excerpt' ],
-				'hierarchical'        => false,
-				'public'              => false,
-				'show_ui'             => true,
-				'show_in_menu'        => true,
-				'show_in_nav_menus'   => true,
-				'show_in_admin_bar'   => true,
-				'menu_position'       => 28,
-				'menu_icon'           => 'dashicons-feedback',
-				'can_export'          => true,
-				'has_archive'         => false,
-				'exclude_from_search' => true,
-				'publicly_queryable'  => false,
-				'capability_type'     => 'post',
-				'show_in_rest'        => false,
-			];
+        public function ajax_add_option() {
+            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
+                die( 'Permissions check failed!' );
+            }
 
-			register_post_type( 'wpc_product_option', $args );
-		}
+            $this->field_id = sanitize_text_field( $_POST['field_id'] );
+            $type           = sanitize_text_field( $_POST['type'] );
+            $this->get_option( [], $type );
+            wp_die();
+        }
 
-		public static function generate_key() {
-			$key         = '';
-			$key_str     = apply_filters( 'wpcpo_key_characters', 'abcdefghijklmnopqrstuvwxyz0123456789' );
-			$key_str_len = strlen( $key_str );
+        public function ajax_add_dimension() {
+            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
+                die( 'Permissions check failed!' );
+            }
 
-			for ( $i = 0; $i < apply_filters( 'wpcpo_key_length', 4 ); $i ++ ) {
-				$key .= $key_str[ random_int( 0, $key_str_len - 1 ) ];
-			}
+            $this->field_id = sanitize_text_field( $_POST['field_id'] );
+            $this->get_dimension( [] );
+            wp_die();
+        }
 
-			if ( is_numeric( $key ) ) {
-				$key = self::generate_key();
-			}
+        public function ajax_add_condition() {
+            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
+                die( 'Permissions check failed!' );
+            }
 
-			return apply_filters( 'wpcpo_generate_key', 'wpcpo-' . $key );
-		}
+            $this->field_id = sanitize_text_field( $_POST['field_id'] );
+            $this->get_condition( [] );
+            wp_die();
+        }
 
-		public static function upload_filetypes( $types = null ) {
-			$filetypes = '';
+        public function register_postype() {
+            $labels = [
+                    'name'          => _x( 'Product Options', 'Post Type General Name', 'wpc-product-options' ),
+                    'singular_name' => _x( 'Product Option', 'Post Type Singular Name', 'wpc-product-options' ),
+                    'add_new_item'  => esc_html__( 'Add New Product Option', 'wpc-product-options' ),
+                    'add_new'       => esc_html__( 'Add New', 'wpc-product-options' ),
+                    'edit_item'     => esc_html__( 'Edit Product Option', 'wpc-product-options' ),
+                    'update_item'   => esc_html__( 'Update Product Option', 'wpc-product-options' ),
+                    'search_items'  => esc_html__( 'Search Product Option', 'wpc-product-options' ),
+            ];
 
-			if ( ! empty( $types ) ) {
-				if ( is_array( $types ) ) {
-					$filetypes = implode( ', ', array_map( 'Wpcpo_Backend::filetype_exts', $types ) );
-				} elseif ( is_string( $types ) ) {
-					$types_arr = array_unique( explode( ',', $types ) );
-					$filetypes = implode( ', ', array_map( 'Wpcpo_Backend::filetype_exts', $types_arr ) );
-				}
-			} else {
-				$misc_exts        = [
-					// Images.
-					'jpg',
-					'jpeg',
-					'png',
-					'gif',
-					'webp',
-					// Video.
-					'mov',
-					'avi',
-					'mpg',
-					'3gp',
-					'3g2',
-					// "audio".
-					'midi',
-					'mid',
-					// Miscellaneous.
-					'pdf',
-					'doc',
-					'ppt',
-					'odt',
-					'pptx',
-					'docx',
-					'pps',
-					'ppsx',
-					'xls',
-					'xlsx',
-					'key',
-				];
-				$audio_exts       = wp_get_audio_extensions();
-				$video_exts       = wp_get_video_extensions();
-				$upload_filetypes = array_unique( array_merge( $misc_exts, $audio_exts, $video_exts ) );
-				$filetypes        = implode( ', ', array_map( 'Wpcpo_Backend::filetype_exts', $upload_filetypes ) );
-			}
+            $args = [
+                    'label'               => esc_html__( 'Product Option', 'wpc-product-options' ),
+                    'labels'              => $labels,
+                    'supports'            => [ 'title', 'excerpt' ],
+                    'hierarchical'        => false,
+                    'public'              => false,
+                    'show_ui'             => true,
+                    'show_in_menu'        => true,
+                    'show_in_nav_menus'   => true,
+                    'show_in_admin_bar'   => true,
+                    'menu_position'       => 28,
+                    'menu_icon'           => 'dashicons-feedback',
+                    'can_export'          => true,
+                    'has_archive'         => false,
+                    'exclude_from_search' => true,
+                    'publicly_queryable'  => false,
+                    'capability_type'     => 'post',
+                    'show_in_rest'        => false,
+            ];
 
-			return apply_filters( 'wpcpo_upload_filetypes', $filetypes );
-		}
+            register_post_type( 'wpc_product_option', $args );
+        }
 
-		public static function filetype_exts( $filetype ) {
-			return '.' . trim( strtolower( str_replace( '.', '', str_replace( ',', '', $filetype ) ) ) );
-		}
+        public static function generate_key() {
+            $key         = '';
+            $key_str     = apply_filters( 'wpcpo_key_characters', 'abcdefghijklmnopqrstuvwxyz0123456789' );
+            $key_str_len = strlen( $key_str );
 
-		function wpcsm_locations( $locations ) {
-			$locations['WPC Product Options'] = [
-				'wpcpo_wrap_before'    => esc_html__( 'Before wrapper', 'wpc-product-options' ),
-				'wpcpo_wrap_after'     => esc_html__( 'After wrapper', 'wpc-product-options' ),
-				'wpcpo_options_before' => esc_html__( 'Before options', 'wpc-product-options' ),
-				'wpcpo_options_after'  => esc_html__( 'After options', 'wpc-product-options' ),
-			];
+            for ( $i = 0; $i < apply_filters( 'wpcpo_key_length', 4 ); $i ++ ) {
+                $key .= $key_str[ random_int( 0, $key_str_len - 1 ) ];
+            }
 
-			return $locations;
-		}
+            if ( is_numeric( $key ) ) {
+                $key = self::generate_key();
+            }
 
-		public static function write_log( $log ) {
-			if ( true === WP_DEBUG ) {
-				if ( is_array( $log ) || is_object( $log ) ) {
-					error_log( print_r( $log, true ) );
-				} else {
-					error_log( $log );
-				}
-			}
-		}
-	}
+            return apply_filters( 'wpcpo_generate_key', 'wpcpo-' . $key );
+        }
+
+        public static function upload_filetypes( $types = null ) {
+            $filetypes = '';
+
+            if ( ! empty( $types ) ) {
+                if ( is_array( $types ) ) {
+                    $filetypes = implode( ', ', array_map( 'Wpcpo_Backend::filetype_exts', $types ) );
+                } elseif ( is_string( $types ) ) {
+                    $types_arr = array_unique( explode( ',', $types ) );
+                    $filetypes = implode( ', ', array_map( 'Wpcpo_Backend::filetype_exts', $types_arr ) );
+                }
+            } else {
+                $misc_exts        = [
+                    // Images.
+                        'jpg',
+                        'jpeg',
+                        'png',
+                        'gif',
+                        'webp',
+                    // Video.
+                        'mov',
+                        'avi',
+                        'mpg',
+                        '3gp',
+                        '3g2',
+                    // "audio".
+                        'midi',
+                        'mid',
+                    // Miscellaneous.
+                        'pdf',
+                        'doc',
+                        'ppt',
+                        'odt',
+                        'pptx',
+                        'docx',
+                        'pps',
+                        'ppsx',
+                        'xls',
+                        'xlsx',
+                        'key',
+                ];
+                $audio_exts       = wp_get_audio_extensions();
+                $video_exts       = wp_get_video_extensions();
+                $upload_filetypes = array_unique( array_merge( $misc_exts, $audio_exts, $video_exts ) );
+                $filetypes        = implode( ', ', array_map( 'Wpcpo_Backend::filetype_exts', $upload_filetypes ) );
+            }
+
+            return apply_filters( 'wpcpo_upload_filetypes', $filetypes );
+        }
+
+        public static function filetype_exts( $filetype ) {
+            return '.' . trim( strtolower( str_replace( '.', '', str_replace( ',', '', $filetype ) ) ) );
+        }
+
+        function wpcsm_locations( $locations ) {
+            $locations['WPC Product Options'] = [
+                    'wpcpo_wrap_before'    => esc_html__( 'Before wrapper', 'wpc-product-options' ),
+                    'wpcpo_wrap_after'     => esc_html__( 'After wrapper', 'wpc-product-options' ),
+                    'wpcpo_options_before' => esc_html__( 'Before options', 'wpc-product-options' ),
+                    'wpcpo_options_after'  => esc_html__( 'After options', 'wpc-product-options' ),
+            ];
+
+            return $locations;
+        }
+
+        public static function write_log( $log ) {
+            if ( true === WP_DEBUG ) {
+                if ( is_array( $log ) || is_object( $log ) ) {
+                    error_log( print_r( $log, true ) );
+                } else {
+                    error_log( $log );
+                }
+            }
+        }
+    }
 }
 
 return Wpcpo_Backend::instance();

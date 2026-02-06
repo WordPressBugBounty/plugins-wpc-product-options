@@ -14,6 +14,8 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 		}
 
 		public function __construct() {
+			add_action( 'wp', [ $this, 'process_file_link' ] );
+
 			// Load cart data per page load
 			add_filter( 'woocommerce_get_cart_item_from_session', [ $this, 'get_cart_item_from_session' ], 20, 2 );
 
@@ -27,7 +29,11 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 			add_filter( 'woocommerce_get_item_data', [ $this, 'get_item_data' ], 10, 2 );
 
 			// Add meta to order
-			add_filter( 'woocommerce_checkout_create_order_line_item', [ $this, 'order_line_item' ], 10, 3 );
+			add_action( 'woocommerce_checkout_create_order_line_item', [ $this, 'order_line_item' ], 10, 3 );
+			add_action( 'woocommerce_order_item_meta_start', [ $this, 'order_item_meta' ], 10, 2 );
+
+			// Admin order item meta
+			add_action( 'woocommerce_before_order_itemmeta', [ $this, 'order_item_meta' ], 10, 2 );
 
 			// Before calculate totals
 			add_action( 'woocommerce_before_mini_cart_contents', [ $this, 'before_mini_cart_contents' ], 999999 );
@@ -41,8 +47,106 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 			add_filter( 'woocommerce_cart_item_permalink', [ $this, 'cart_item_permalink' ], 10, 2 );
 		}
 
+		function process_file_link() {
+			// cart file download
+			if ( isset( $_GET['wpcpo-key'], $_GET['wpcpo-cart-item'] ) && isset( $_GET['_wpnonce'] ) && ( false !== wp_verify_nonce( $_GET['_wpnonce'], 'wpcpo_cart_file' ) ) ) {
+				$file_key      = sanitize_text_field( wp_unslash( $_GET['wpcpo-key'] ) );
+				$cart_item_key = sanitize_text_field( wp_unslash( $_GET['wpcpo-cart-item'] ) );
+
+				if ( ! str_starts_with( $file_key, 'wpcpo-' ) ) {
+					$file_key = 'wpcpo-' . $file_key;
+				}
+
+				if ( isset( WC()->cart->cart_contents[ $cart_item_key ]['wpcpo-options'][ $file_key ]['url'] ) ) {
+					$file_name     = WC()->cart->cart_contents[ $cart_item_key ]['wpcpo-options'][ $file_key ]['value'];
+					$tmp_file_name = WC()->cart->cart_contents[ $cart_item_key ]['wpcpo-options'][ $file_key ]['file'];
+					$mime_type     = false;
+
+					if ( function_exists( 'finfo_open' ) ) {
+						$finfo     = finfo_open( FILEINFO_MIME_TYPE );
+						$mime_type = finfo_file( $finfo, $tmp_file_name );
+						finfo_close( $finfo );
+					} elseif ( function_exists( 'mime_content_type' ) ) {
+						$mime_type = mime_content_type( $tmp_file_name );
+					}
+
+					// clean all levels of output buffering
+					// this is needed in case some 3rd-party plugin interferes with the output buffer
+					while ( ob_get_level() ) {
+						ob_end_clean();
+					}
+
+					header( "Expires: 0" );
+					header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+					header( "Cache-Control: private", false );
+
+					if ( isset( $_GET['force_download'] ) && $_GET['force_download'] === '1' ) {
+						header( 'Content-disposition: attachment; filename="' . $file_name . '"' );
+					}
+
+					if ( $mime_type ) {
+						header( "Content-type: $mime_type" );
+					}
+
+					header( "Content-Transfer-Encoding: binary" );
+					header( "Content-Length: " . filesize( $tmp_file_name ) );
+					readfile( $tmp_file_name );
+
+					exit();
+				}
+			}
+
+			// order file download
+			if ( isset( $_GET['wpcpo-key'], $_GET['wpcpo-order-item'] ) && isset( $_GET['_wpnonce'] ) ) {
+				$file_key      = sanitize_text_field( wp_unslash( $_GET['wpcpo-key'] ) );
+				$order_item_id = sanitize_text_field( wp_unslash( $_GET['wpcpo-order-item'] ) );
+
+				if ( ! str_starts_with( $file_key, 'wpcpo-' ) ) {
+					$file_key = 'wpcpo-' . $file_key;
+				}
+
+				if ( ( $options = wc_get_order_item_meta( $order_item_id, '_wpcpo_options_v2' ) ) && isset( $options[ $file_key ] ) ) {
+					$file_name     = $options[ $file_key ]['value'];
+					$tmp_file_name = $options[ $file_key ]['file'];
+					$mime_type     = false;
+
+					if ( function_exists( 'finfo_open' ) ) {
+						$finfo     = finfo_open( FILEINFO_MIME_TYPE );
+						$mime_type = finfo_file( $finfo, $tmp_file_name );
+						finfo_close( $finfo );
+					} elseif ( function_exists( 'mime_content_type' ) ) {
+						$mime_type = mime_content_type( $tmp_file_name );
+					}
+
+					// clean all levels of output buffering
+					// this is needed in case some 3rd-party plugin interferes with the output buffer
+					while ( ob_get_level() ) {
+						ob_end_clean();
+					}
+
+					header( "Expires: 0" );
+					header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+					header( "Cache-Control: private", false );
+
+					if ( isset( $_GET['force_download'] ) && $_GET['force_download'] === '1' ) {
+						header( 'Content-disposition: attachment; filename="' . $file_name . '"' );
+					}
+
+					if ( $mime_type ) {
+						header( "Content-type: $mime_type" );
+					}
+
+					header( "Content-Transfer-Encoding: binary" );
+					header( "Content-Length: " . filesize( $tmp_file_name ) );
+					readfile( $tmp_file_name );
+
+					exit();
+				}
+			}
+		}
+
 		private function clean_custom_price( $custom_price ) {
-			return preg_replace( '/[^0-9\+\-\*\/\(\)\.vpqlws]/', '', $custom_price );
+			return preg_replace( '/[^0-9\+\-\*\/\(\)\.vdpqlws]/', '', $custom_price );
 		}
 
 		private function word_count( $string ) {
@@ -53,6 +157,10 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 		}
 
 		private function get_custom_price( $custom_price, $quantity, $product_price, $value, $total = 0 ) {
+			return 0;
+		}
+
+		private function get_custom_price_dimensions( $dimensions, $custom_price, $quantity, $product_price, $value, $total = 0 ) {
 			return 0;
 		}
 
@@ -156,13 +264,17 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 					// file upload
 					if ( isset( $data['type'] ) && $data['type'] === 'file' ) {
 						if ( ! empty( $_FILES[ $key ] ) && ! empty( $_FILES[ $key ]['name'] ) ) {
-							$upload           = $this->handle_upload( $_FILES[ $key ] );
-							$data['value']    = basename( wc_clean( $upload['url'] ) );
-							$data['file_url'] = wc_clean( $upload['url'] );
-							$post_options[]   = $data;
+							$upload = $this->handle_upload( $_FILES[ $key ] );
+
+							if ( $upload && empty( $upload['error'] ) ) {
+								$data['value']        = basename( wc_clean( $upload['url'] ) );
+								$data['file']         = wc_clean( $upload['file'] );
+								$data['url']          = wc_clean( $upload['url'] );
+								$post_options[ $key ] = $data;
+							}
 						}
 					} else {
-						$post_options[] = $data;
+						$post_options[ $key ] = $data;
 					}
 
 					if ( apply_filters( 'wpcpo_clear_request_data', true, $cart_item_data, $product_id ) ) {
@@ -188,11 +300,18 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 
 			add_filter( 'upload_dir', [ $this, 'upload_dir' ] );
 
-			$upload = wp_handle_upload( $file, [ 'test_form' => false ] );
+			$upload = wp_handle_upload( $file, [
+				'test_form'                => false,
+				'unique_filename_callback' => [ $this, 'unique_filename' ]
+			] );
 
 			remove_filter( 'upload_dir', [ $this, 'upload_dir' ] );
 
 			return $upload;
+		}
+
+		public function unique_filename( $dir, $name, $ext ) {
+			return apply_filters( 'wpcpo_unique_filename', uniqid() . $ext, $dir, $name, $ext );
 		}
 
 		public function upload_dir( $path_data ) {
@@ -203,11 +322,11 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 			$folder   = trim( apply_filters( 'wpcpo_upload_folder', $date_str . '/' . $user_str ), '/' );
 
 			if ( empty( $path_data['subdir'] ) ) {
-				$path_data['path']   = $path_data['path'] . '/wpcpo_uploads/' . $folder;
-				$path_data['url']    = $path_data['url'] . '/wpcpo_uploads/' . $folder;
-				$path_data['subdir'] = '/wpcpo_uploads/' . $folder;
+				$path_data['path']   = $path_data['path'] . '/woocommerce_uploads/wpcpo_uploads/' . $folder;
+				$path_data['url']    = $path_data['url'] . '/woocommerce_uploads/wpcpo_uploads/' . $folder;
+				$path_data['subdir'] = '/woocommerce_uploads/wpcpo_uploads/' . $folder;
 			} else {
-				$subdir              = '/wpcpo_uploads/' . $folder;
+				$subdir              = '/woocommerce_uploads/wpcpo_uploads/' . $folder;
 				$path_data['path']   = str_replace( $path_data['subdir'], $subdir, $path_data['path'] );
 				$path_data['url']    = str_replace( $path_data['subdir'], $subdir, $path_data['url'] );
 				$path_data['subdir'] = str_replace( $path_data['subdir'], $subdir, $path_data['subdir'] );
@@ -228,12 +347,12 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 			return $cart_item;
 		}
 
-		public function get_item_data( $other_data, $cart_item ) {
+		public function get_item_data( $item_data, $cart_item ) {
 			if ( empty( $cart_item['wpcpo-options'] ) || ! is_array( $cart_item['wpcpo-options'] ) ) {
-				return $other_data;
+				return $item_data;
 			}
 
-			foreach ( $cart_item['wpcpo-options'] as $option ) {
+			foreach ( $cart_item['wpcpo-options'] as $option_key => $option ) {
 				if ( isset( $option['value'] ) && ( $option['value'] !== '' ) ) {
 					$data = [
 						'name'    => $option['title'],
@@ -254,8 +373,8 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 							$data['value'] = '<span class="wpcpo-item-data-image box-image-checkbox">' . wp_get_attachment_image( $option['image'] ) . '</span>';
 						}
 
-						if ( ( $option['type'] === 'file' ) && ! empty( $option['file_url'] ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'file' ) ) {
-							$data['value'] = '<span class="wpcpo-item-data-file"><a target="_blank" href="' . esc_url( $option['file_url'] ) . '">' . $option['value'] . '</a></span>';
+						if ( ( $option['type'] === 'file' ) && ( isset( $option['url'] ) || isset( $option['file_url'] ) ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'file' ) ) {
+							$data['value'] = '<span class="wpcpo-item-data-file"><a target="_blank" href="' . esc_url( $option['file_url'] ?? self::get_cart_file_link( $option_key, $cart_item['key'] ) ) . '">' . $option['value'] . '</a></span>';
 						}
 					}
 
@@ -263,38 +382,34 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 						$data['display'] = '<span class="' . esc_attr( 'wpcpo-item-data-display wpcpo-item-data-' . ( $option['type'] ?? 'default' ) ) . '">' . $data['value'] . ' <span class="wpcpo-item-data-price">(' . wc_price( $option['display_price'] ) . ')</span></span>';
 					}
 
-					$other_data[] = $data;
+					$item_data[] = apply_filters( 'wpcpo_cart_item_data', $data, $option, $cart_item );
 				}
 			}
 
-			return $other_data;
+			return $item_data;
 		}
 
 		public function order_line_item( $item, $cart_item_key, $values ) {
-			if ( ! empty( $values['wpcpo-options'] ) ) {
-				$options = [];
+			if ( isset( $values['wpcpo-options'] ) ) {
+				$item->update_meta_data( '_wpcpo_options_v2', $values['wpcpo-options'] );
+			}
+		}
 
-				foreach ( $values['wpcpo-options'] as $option ) {
-					if ( isset( $option['value'] ) && ( $option['value'] !== '' ) ) {
-						$option_key   = sanitize_title( $option['title'] );
-						$option_value = isset( $option['label'] ) && ( $option['label'] !== '' ) ? $option['label'] : $option['value'];
+		function order_item_meta( $item_id, $item ) {
+			if ( $options = $item->get_meta( '_wpcpo_options_v2' ) ) {
+				$meta = '<ul class="wpcpo-order-item-options">';
 
-						if ( ( $option['type'] === 'file' ) && ! empty( $option['file_url'] ) ) {
-							$option_value = '<a target="_blank" href="' . esc_url( $option['file_url'] ) . '">' . $option['value'] . '</a>';
-						}
-
-						$item->add_meta_data( $option['title'], $option_value );
-						$options[ $option_key ] = [
-							'title' => $option['title'],
-							'label' => $option['label'] ?? '',
-							'value' => $option['value'],
-						];
+				foreach ( $options as $option_key => $option ) {
+					if ( $option['type'] === 'file' ) {
+						$meta .= '<li><strong>' . esc_html( $option['title'] ) . ':</strong> <a target="_blank" href="' . self::get_order_file_link( $option_key, $item ) . '">' . $option['value'] . '</a> (<a target="_blank" href="' . self::get_order_file_link( $option_key, $item, true ) . '">' . esc_html__( 'download', 'wpc-product-options' ) . '</a>)</li>';
+					} else {
+						$meta .= '<li><strong>' . esc_html( $option['title'] ) . ':</strong> ' . esc_html( isset( $option['label'] ) && $option['label'] !== '' ? $option['label'] : $option['value'] ) . '</li>';
 					}
 				}
 
-				if ( ! empty( $options ) ) {
-					$item->add_meta_data( '_wpcpo_options', $options );
-				}
+				$meta .= '</ul>';
+
+				echo apply_filters( 'wpcpo_order_item_meta', $meta, $item );
 			}
 		}
 
@@ -309,93 +424,98 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 			}
 
 			foreach ( $cart_object->cart_contents as $cart_item_key => $cart_item ) {
-				if ( ! empty( $cart_item['wpcpo-options'] ) ) {
-					if ( apply_filters( 'wpcpo_ignore_recalculate_price', false, $cart_item_key, $cart_item ) ) {
-						continue;
-					}
-
-					$product_id    = $cart_item['data']->get_id();
-					$ori_product   = apply_filters( 'wpcpo_cart_item_product', wc_get_product( $product_id ), $cart_item );
-					$is_on_sale    = apply_filters( 'wpcpo_cart_item_is_on_sale', $ori_product->is_on_sale(), $cart_item );
-					$price         = (float) apply_filters( 'wpcpo_cart_item_price', $ori_product->get_price(), $cart_item );
-					$regular_price = (float) apply_filters( 'wpcpo_cart_item_regular_price', $ori_product->get_regular_price(), $cart_item );
-					$quantity      = (float) apply_filters( 'wpcpo_cart_item_qty', $cart_item['quantity'], $cart_item );
-
-					// calculate options price
-					$options_price = 0; // options price
-
-					if ( isset( $cart_item['woosb_price'] ) ) {
-						$price = (float) $cart_item['woosb_price'];
-					}
-
-					if ( isset( $cart_item['wooco_price'] ) ) {
-						$price = (float) $cart_item['wooco_price'];
-					}
-
-					if ( isset( $cart_item['wpcpq_price'] ) ) {
-						$price = (float) $cart_item['wpcpq_price'];
-					}
-
-					$total = $price * $quantity; // calculate total for 's'
-
-					foreach ( $cart_item['wpcpo-options'] as $key => $field ) {
-						$price_type = ! empty( $field['price_type'] ) ? $field['price_type'] : '';
-						$price_val  = ! empty( $field['price'] ) ? $field['price'] : 0;
-
-						switch ( $price_type ) {
-							case 'flat':
-								if ( str_contains( $price_val, '%' ) ) {
-									$calc_price = $price * (float) $price_val / 100;
-								} else {
-									$calc_price = (float) $price_val;
-								}
-
-								$options_price += $calc_price / $quantity;
-								$total         += $calc_price;
-
-								$cart_item['wpcpo-options'][ $key ]['display_price'] = $calc_price;
-
-								break;
-							case 'custom':
-								$calc_price    = $this->get_custom_price( $field['custom_price'], $quantity, $price, $field['value'], $total );
-								$options_price += $calc_price / $quantity;
-								$total         += $calc_price;
-
-								$cart_item['wpcpo-options'][ $key ]['display_price'] = $calc_price;
-
-								break;
-							default:
-								// qty
-								if ( str_contains( $price_val, '%' ) ) {
-									$calc_price = $price * (float) $price_val / 100;
-								} else {
-									$calc_price = (float) $price_val;
-								}
-
-								$options_price += $calc_price;
-								$total         += $calc_price * $quantity;
-
-								$cart_item['wpcpo-options'][ $key ]['display_price'] = $calc_price * $quantity;
-
-								break;
-						}
-					}
-
-					$cart_item['wpcpo_price'] = $options_price; // store options price only
-
-					if ( $options_price != 0 ) {
-						$cart_item['data']->set_regular_price( $regular_price + $options_price );
-						$cart_item['data']->set_price( $price + $options_price );
-
-						if ( $is_on_sale ) {
-							$sale_price = (float) apply_filters( 'wpcpo_cart_item_sale_price', $ori_product->get_sale_price(), $cart_item );
-							$cart_item['data']->set_sale_price( $sale_price + $options_price );
-						}
-					}
-
-					// save $cart_item
-					WC()->cart->cart_contents[ $cart_item_key ] = $cart_item;
+				if ( empty( $cart_item['wpcpo-options'] ) || apply_filters( 'wpcpo_ignore_recalculate_price', false, $cart_item_key, $cart_item ) ) {
+					continue;
 				}
+
+				$product_id    = $cart_item['data']->get_id();
+				$ori_product   = apply_filters( 'wpcpo_cart_item_product', wc_get_product( $product_id ), $cart_item );
+				$is_on_sale    = apply_filters( 'wpcpo_cart_item_is_on_sale', $ori_product->is_on_sale(), $cart_item );
+				$price         = (float) apply_filters( 'wpcpo_cart_item_price', $ori_product->get_price(), $cart_item );
+				$regular_price = (float) apply_filters( 'wpcpo_cart_item_regular_price', $ori_product->get_regular_price(), $cart_item );
+				$quantity      = (float) apply_filters( 'wpcpo_cart_item_qty', $cart_item['quantity'], $cart_item );
+
+				// calculate options price
+				$options_price = 0; // options price
+
+				if ( isset( $cart_item['woosb_price'] ) ) {
+					$price = (float) $cart_item['woosb_price'];
+				}
+
+				/*
+				if ( isset( $cart_item['wooco_price'] ) ) {
+					$price = (float) $cart_item['wooco_price'];
+				}
+				*/
+
+				if ( isset( $cart_item['wpcpq_price'] ) ) {
+					$price = (float) $cart_item['wpcpq_price'];
+				}
+
+				$total = $price * $quantity; // calculate total for 's'
+
+				foreach ( $cart_item['wpcpo-options'] as $key => $field ) {
+					$price_type = ! empty( $field['price_type'] ) ? $field['price_type'] : '';
+					$price_val  = ! empty( $field['price'] ) ? $field['price'] : 0;
+
+					switch ( $price_type ) {
+						case 'flat':
+							if ( str_contains( $price_val, '%' ) ) {
+								$calc_price = $price * (float) $price_val / 100;
+							} else {
+								$calc_price = (float) $price_val;
+							}
+
+							$options_price += $calc_price / $quantity;
+							$total         += $calc_price;
+
+							$cart_item['wpcpo-options'][ $key ]['display_price'] = $calc_price;
+
+							break;
+						case 'custom':
+							if ( $field['type'] === 'dimensions' ) {
+								$calc_price = $this->get_custom_price_dimensions( $field['dimensions'] ?? [], $field['custom_price'], $quantity, $price, $field['value'], $total );
+							} else {
+								$calc_price = $this->get_custom_price( $field['custom_price'], $quantity, $price, $field['value'], $total );
+							}
+
+							$options_price += $calc_price / $quantity;
+							$total         += $calc_price;
+
+							$cart_item['wpcpo-options'][ $key ]['display_price'] = $calc_price;
+
+							break;
+						default:
+							// qty
+							if ( str_contains( $price_val, '%' ) ) {
+								$calc_price = $price * (float) $price_val / 100;
+							} else {
+								$calc_price = (float) $price_val;
+							}
+
+							$options_price += $calc_price;
+							$total         += $calc_price * $quantity;
+
+							$cart_item['wpcpo-options'][ $key ]['display_price'] = $calc_price * $quantity;
+
+							break;
+					}
+				}
+
+				$cart_item['wpcpo_price'] = $options_price; // store options price only
+
+				if ( $options_price != 0 ) {
+					$cart_item['data']->set_regular_price( $regular_price + $options_price );
+					$cart_item['data']->set_price( $price + $options_price );
+
+					if ( $is_on_sale ) {
+						$sale_price = (float) apply_filters( 'wpcpo_cart_item_sale_price', $ori_product->get_sale_price(), $cart_item );
+						$cart_item['data']->set_sale_price( $sale_price + $options_price );
+					}
+				}
+
+				// save $cart_item
+				WC()->cart->cart_contents[ $cart_item_key ] = $cart_item;
 			}
 		}
 
@@ -467,6 +587,30 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 			}
 
 			return $permalink;
+		}
+
+		public function get_cart_file_link( $file_key, $cart_item_key ) {
+			$args = [
+				'_wpnonce'        => wp_create_nonce( 'wpcpo_cart_file' ),
+				'wpcpo-key'       => str_replace( 'wpcpo-', '', $file_key ),
+				'wpcpo-cart-item' => $cart_item_key,
+			];
+
+			return add_query_arg( $args, home_url() );
+		}
+
+		public function get_order_file_link( $file_key, $order_item, $download = false ) {
+			$args = [
+				'_wpnonce'         => wp_create_nonce( 'wpcpo_order_file' ),
+				'wpcpo-key'        => str_replace( 'wpcpo-', '', $file_key ),
+				'wpcpo-order-item' => $order_item->get_id(),
+			];
+
+			if ( $download ) {
+				$args['force_download'] = 1;
+			}
+
+			return add_query_arg( $args, home_url() );
 		}
 	}
 }

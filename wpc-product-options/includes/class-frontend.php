@@ -19,6 +19,7 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 			add_action( 'init', [ $this, 'init' ] );
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ], 99 );
 			add_filter( 'woocommerce_loop_add_to_cart_link', [ $this, 'add_to_cart_link' ], 10, 2 );
+			add_filter( 'woocommerce_quantity_input_args', [ $this, 'quantity_input_args' ], 99, 2 );
 		}
 
 		public function init() {
@@ -76,6 +77,15 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 			return $link;
 		}
 
+		public static function quantity_input_args( $args, $product ) {
+			if ( is_product() && ! str_starts_with( $args['input_id'], 'wpcpo' ) && self::has_field( $product, 'quantity' ) ) {
+				$args['input_name'] = 'wpcpo-hidden-quantity';
+				$args['min_value']  = $args['max_value'] = 1;
+			}
+
+			return $args;
+		}
+
 		public function enqueue_scripts() {
 			if ( is_admin() ) {
 				return;
@@ -128,16 +138,18 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 
 			wp_enqueue_script( 'wpcpo-frontend', WPCPO_URI . 'assets/js/frontend.js', [ 'jquery' ], WPCPO_VERSION, true );
 			wp_localize_script( 'wpcpo-frontend', 'wpcpo_vars', [
-				'i18n_addon_total'         => esc_html__( 'Options total:', 'wpc-product-options' ),
-				'i18n_subtotal'            => esc_html__( 'Subtotal:', 'wpc-product-options' ),
-				'i18n_remaining'           => esc_html__( 'characters remaining', 'wpc-product-options' ),
+				'i18n_clear'               => Wpcpo_Backend::localization( 'clear', esc_html__( 'Clear all options', 'wpc-product-options' ) ),
+				'i18n_subtotal'            => Wpcpo_Backend::localization( 'subtotal', esc_html__( 'Subtotal:', 'wpc-product-options' ) ),
+				'i18n_remaining'           => Wpcpo_Backend::localization( 'characters_remaining', esc_html__( 'characters remaining', 'wpc-product-options' ) ),
 				'price_decimals'           => wc_get_price_decimals(),
 				'currency_symbol'          => get_woocommerce_currency_symbol(),
 				'price_format'             => get_woocommerce_price_format(),
 				'price_decimal_separator'  => wc_get_price_decimal_separator(),
 				'price_thousand_separator' => wc_get_price_thousand_separator(),
 				'trim_zeros'               => apply_filters( 'woocommerce_price_trim_zeros', false ),
-				'change_url'               => apply_filters( 'wpcpo_change_url', false ),
+				'change_url'               => apply_filters( 'wpcpo_change_url', Wpcpo_Backend::get_setting( 'change_url', 'no' ) === 'yes' ),
+				'summary_free'             => apply_filters( 'wpcpo_summary_free', Wpcpo_Backend::get_setting( 'summary_free', 'no' ) === 'yes' ),
+				'summary_clear'            => apply_filters( 'wpcpo_summary_clear', Wpcpo_Backend::get_setting( 'summary_clear', 'no' ) === 'yes' ),
 				'quantity_symbol'          => '&times;',
 				'is_rtl'                   => is_rtl(),
 			] );
@@ -173,6 +185,22 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 				'wpc-product-options',
 				WPCPO_DIR . 'templates/'
 			);
+		}
+
+		public static function has_field( $product, $type = 'text' ) {
+			$fields = self::get_fields( $product );
+
+			if ( empty( $fields ) ) {
+				return false;
+			}
+
+			foreach ( $fields as $field ) {
+				if ( isset( $field['type'] ) && ( $field['type'] === $type ) ) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		public static function get_fields( $product ) {
@@ -404,6 +432,16 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 			];
 
 			return str_replace( array_keys( $replace ), array_values( $replace ), $datetime_format );
+		}
+
+		public static function data_attributes( $attrs ) {
+			$attrs_arr = [];
+
+			foreach ( $attrs as $key => $attr ) {
+				$attrs_arr[] = 'data-' . sanitize_title( str_replace( 'data-', '', $key ) ) . '="' . esc_attr( $attr ) . '"';
+			}
+
+			return implode( ' ', $attrs_arr );
 		}
 	}
 }

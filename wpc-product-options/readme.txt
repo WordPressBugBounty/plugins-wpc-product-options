@@ -3,9 +3,9 @@ Contributors: wpclever
 Donate link: https://wpclever.net
 Tags: woocommerce, wpc, options, product options, product addons
 Requires at least: 4.0
-Tested up to: 6.8
-Version: 1.8.5
-Stable tag: 1.8.5
+Tested up to: 6.9
+Version: 3.1.0
+Stable tag: 3.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,11 +15,11 @@ WPC Product Options brings about the power of adjusting prices with highly custo
 
 **WPC Product Options for WooCommerce** will become another essential plugin for any kind of online stores, which brings about the power of adjusting prices with highly customizable additional fields for simple products.
 
-Users can insert up to 18+ different types of custom add-ons to simple products so that customers can easily configure their preferences. Online stores that emphasize personalization & customized designs, take in on-demands orders, and have sophisticated products with complex configurations will benefit from this plugin the most.
+Users can insert up to 18+ different types of custom add-ons to simple products so that customers can easily configure their preferences. Online stores that emphasize personalization & customized designs, take in on-demand orders, and have sophisticated products with complex configurations will benefit from this plugin the most.
 
-Three modes available: Global, Override, and Disable. Users can configure as many premade fields as they want and use them as global add-ons to insert to multiple products at a time using product types, categories, tags, brands, attributes, etc. In Override, custom add-ons for individual products can be specified easily in the same way as Global add-ons.
+Three modes are available: Global, Override, and Disable. Users can configure as many premade fields as they want and use them as global add-ons to insert to multiple products at a time using product types, categories, tags, brands, attributes, etc. In Override, custom add-ons for individual products can be specified easily in the same way as Global add-ons.
 
-Especially, usres can use the Shortcode field to insert anything they want using short-code, for example, a Countdown Timer for flash sale counting or size chart. Another special thing about WPC Product Options for WooCommerce is that users can define a new custom price formula that suits their products well. There are some special goods and services requiring special pricing for add-ons and this is available right in our plugin.
+Especially, users can use the Shortcode field to insert anything they want using short-code, for example, a Countdown Timer for flash sale counting or size chart. Another special thing about WPC Product Options for WooCommerce is that users can define a new custom price formula that suits their products well. There are some special goods and services requiring special pricing for add-ons, and this is available right in our plugin.
 
 = Live demo =
 
@@ -27,13 +27,13 @@ Visit our [live demo](https://demo.wpclever.net/wpcpo/ "live demo") here to see 
 
 = Key Features =
 
-- 18+ type of custom add-ons and fields: text, date & time, file upload, etc.
+- 23+ type of custom add-ons and fields: text, date & time, file upload, etc.
 - Global add-ons for product types, categories, tags, brands, attributes, etc.
 - Customize individual product add-ons or disable global add-ons completely
 - Add-on pricing: Flat fee (amount or %), quantity synced & custom formula
 - Nice picker for date, time, date & time, data range and colors
 - Drag and drop builder - easy to move the add-on fields around
-- Shortcode supported for inserting anything, ie. countdown clock, size chart
+- Shortcode supported for inserting anything, i.e. countdown clock, size chart
 - Highly configurable fields: title, required, description, price, default value, limits
 - Compatible with most common WordPress themes and WooCommerce plugins
 
@@ -46,8 +46,11 @@ Visit our [live demo](https://demo.wpclever.net/wpcpo/ "live demo") here to see 
 - File Upload
 - Radio (single selection)
 - Image Radio (single selection)
+- Color Radio (single selection)
 - Checkbox (multiple selection)
 - Image Checkbox (multiple selection)
+- Color Checkbox (multiple selection)
+- Dimensions (multiple dimensions, e.g., width, height, length, etc.)
 - Select (single selection)
 - Color Picker
 - Date Picker
@@ -62,11 +65,11 @@ Visit our [live demo](https://demo.wpclever.net/wpcpo/ "live demo") here to see 
 
 = Additional Prices =
 
-There are three types of prices for add-ons: flat fee, quantity synced and custom formula.
+There are three types of prices for add-ons: flat fee, quantity synced, and custom formula.
 
 - **Flat fee**: Users can use a number to set a fixed price for each field or enter a percentage, for example, 10% - the additional price will be 10% of the main price.
 - **Quantity synced**: When customers increase or decrease the quantity of the main product, the Quantity synced price means the unit price, so it will be multiplied by the chosen value of the main quantity.
-- **Custom formula** (Premium Version): Users can define their own price formula. Use p for price, q for quantity, v for value and l for length.
+- **Custom formula** (Premium Version): Users can define their own price formula. Use p for price, q for quantity, v for value, and l for length.
 
 = Need more features? =
 
@@ -82,11 +85,34 @@ Please try other plugins from us:
 
 1. Please make sure that you installed WooCommerce
 2. Go to plugins in your dashboard and select "Add New"
-3. Search for "WPC Product Options", Install & Activate it
+3. Search for "WPC Product Options," Install & Activate it
 4. Go to WP-admin > Product Options to add global options
-5. When adding/editing the product you can choose the Product Options tab then add some options as you want
+5. When adding/editing the product, you can choose the Product Options tab then add some options as you want
 
 == Changelog ==
+
+= 3.1.0 =
+* Added: "Clear all" button
+* Added: Summary of free options
+* Added: Change product URL based on the selected options
+
+= 3.0.1 =
+* Added: Download link for files
+
+= 3.0.0 =
+* Added: Color radio & Color checkbox
+* Updated: Compatible with WP 6.9 & Woo 10.3
+
+= 2.1.0 =
+* Updated: Move the uploaded file to the secure 'woocommerce_uploads' folder
+
+= 2.0.0 =
+* Added: Dimensions (multiple dimensions, e.g., width, height, length, etc.)
+* Updated: Optimized the code
+
+= 1.8.6 =
+* Updated: Optimized the code
+* Updated: Compatible with WP 6.8 & Woo 10.2
 
 = 1.8.5 =
 * Added: Filter hook 'wpcpo_cart_item_price_html' & 'wpcpo_cart_item_subtotal_html'

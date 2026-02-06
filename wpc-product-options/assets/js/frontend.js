@@ -101,6 +101,22 @@
             $wrapper.find('input[name$="price_type\]"]').attr('value', type);
             $wrapper.find('input[name$="price\]"]').attr('value', price);
             $wrapper.find('input[name$="custom_price\]"]').attr('value', custom_price);
+        } else if ($this.hasClass('field-dimensions')) {
+            let $dimensions = $this.closest('.wpcpo-option-dimensions'), dimensions = [];
+
+            $dimensions.find('.wpcpo-dimension').each(function () {
+                if ($(this).find('input').val() !== '') {
+                    let dimension = $(this).find('label').text() + ': ' + $(this).find('input').val();
+
+                    dimensions.push(dimension);
+                }
+            });
+
+            if (dimensions.length) {
+                $this.val(dimensions.join('; '));
+            } else {
+                $this.val('');
+            }
         }
 
         wpcpo_validate($options);
@@ -111,6 +127,16 @@
         let $this = $(this), $options = $this.closest('.wpcpo-options');
 
         wpcpo_validate($options);
+    });
+
+    $(document).on('keyup change', '.wpcpo-option-field-dimension', function () {
+        let $this = $(this);
+
+        if (parseFloat($this.val()) < parseFloat($this.attr('min'))) {
+            $this.val($this.attr('min'));
+        }
+
+        $this.closest('.wpcpo-option-dimensions').find('.wpcpo-option-field').trigger('change');
     });
 
     $(document).on('keyup change', '.wpcpo-option-field', function () {
@@ -134,7 +160,7 @@
             $options.find('.wpcpo-option').each(function () {
                 let $option = $(this), option_key = $option.data('key'), option_val = '';
 
-                if ($option.hasClass('wpcpo-option-checkbox') || $option.hasClass('wpcpo-option-image-checkbox')) {
+                if ($option.hasClass('wpcpo-option-checkbox') || $option.hasClass('wpcpo-option-image-checkbox') || $option.hasClass('wpcpo-option-color-checkbox')) {
                     option_val = $.map($option.find(':checkbox:checked'), function (n, i) {
                         return n.value;
                     }).join(',');
@@ -144,7 +170,7 @@
                     option_val = $option.find('select').val();
                 }
 
-                if ($option.hasClass('wpcpo-option-radio') || $option.hasClass('wpcpo-option-image-radio')) {
+                if ($option.hasClass('wpcpo-option-radio') || $option.hasClass('wpcpo-option-image-radio') || $option.hasClass('wpcpo-option-color-radio')) {
                     option_val = $option.find('input[type="radio"]:checked').length ? $option.find('input[type="radio"]:checked').val() : '';
                 }
 
@@ -165,6 +191,16 @@
 
             window.history.replaceState(null, null, new_link);
         }
+    });
+
+    $(document).on('click touch', '.wpcpo-clear-btn', function (e) {
+        e.preventDefault();
+
+        $('.wpcpo-option-field').each(function () {
+            $(this).val('').prop('checked', false).prop('selected', false).trigger('blur');
+        });
+
+        wpcpo_init();
     });
 })(jQuery);
 
@@ -226,7 +262,7 @@ function wpcpo_get_custom_price(custom_price, quantity, product_price, value, to
 
     value = parseFloat(value.replace(/[^\d.]/g, ''));
 
-    custom_price = custom_price.toLowerCase().replace(/(v|q|p|l|w|s)+/gi, function (match, tag, char) {
+    custom_price = custom_price.toLowerCase().replace(/([vpqlws])+/gi, function (match, tag, char) {
         switch (tag) {
             case 'q':
                 return quantity;
@@ -256,12 +292,48 @@ function wpcpo_get_custom_price(custom_price, quantity, product_price, value, to
     return custom_price;
 }
 
+function wpcpo_get_custom_dimensions_price($field, custom_price, quantity, product_price, value, total = 0) {
+    let $dimensions = $field.closest('.wpcpo-option-dimensions');
+
+    custom_price = custom_price.toLowerCase().replace(/([vpqlws])+/gi, function (match, tag, char) {
+        switch (tag) {
+            case 'q':
+                return quantity;
+            case 'p':
+                return product_price;
+            case 's':
+                return total;
+        }
+    });
+
+    custom_price = custom_price.toLowerCase().replace(/d(\d+)/gi, function (match, tag, char) {
+        if ($dimensions.find('.wpcpo-option-field-dimension-d' + tag).length && ($dimensions.find('.wpcpo-option-field-dimension-d' + tag).val() !== '')) {
+            return parseFloat($dimensions.find('.wpcpo-option-field-dimension-d' + tag).val());
+        } else {
+            return 0;
+        }
+    });
+
+    try {
+        custom_price = eval(custom_price.replace(/[^-()\d/*+.]/g, ''));
+    } catch (e) {
+        custom_price = 0;
+    }
+
+    if (isNaN(custom_price) || (custom_price === Infinity) || (custom_price === -Infinity)) {
+        custom_price = 0;
+    }
+
+    return custom_price;
+}
+
 function wpcpo_get_field_price($field, product_price, quantity = 1, total = 0) {
     let field_price = 0, type = $field.data('price-type'), price = $field.data('price'),
         custom_price = $field.data('price-custom'), value = $field.val();
 
     if ($field.hasClass('field-select')) {
         let $option = $field.find(':selected');
+
         type = $option.data('price-type');
         price = $option.data('price');
         custom_price = $option.data('price-custom');
@@ -277,7 +349,11 @@ function wpcpo_get_field_price($field, product_price, quantity = 1, total = 0) {
 
             break;
         case 'custom':
-            field_price = wpcpo_get_custom_price(custom_price, quantity, product_price, value, total);
+            if ($field.hasClass('field-dimensions')) {
+                field_price = wpcpo_get_custom_dimensions_price($field, custom_price, quantity, product_price, value, total);
+            } else {
+                field_price = wpcpo_get_custom_price(custom_price, quantity, product_price, value, total);
+            }
 
             break;
         default:
@@ -298,7 +374,8 @@ function wpcpo_update_total($total) {
     let qty = parseFloat($total.closest('form.cart').find('[name=quantity]').val()),
         price = parseFloat($total.attr('data-price')), type = $total.data('type'), name = $total.data('product-name'),
         total = price * qty, fields = $total.closest('.wpcpo-wrapper').find('.wpcpo-option-field').get(), html = '',
-        qty_string = wpcpo_vars.is_rtl ? wpcpo_vars.quantity_symbol + qty : qty + wpcpo_vars.quantity_symbol;
+        qty_string = wpcpo_vars.is_rtl ? wpcpo_vars.quantity_symbol + qty : qty + wpcpo_vars.quantity_symbol,
+        selected = 0;
 
     html += '<ul>';
     html += `<li>
@@ -323,31 +400,38 @@ function wpcpo_update_total($total) {
             value = $field.find('option:selected').data('label');
         }
 
-        if (enable_price === 1 && value !== '') {
-            $price_label.html(``);
-            let field_price = wpcpo_get_field_price($field, price, qty, total);
+        $price_label.html(``);
 
-            if (!isNaN(field_price)) {
-                if (field_price !== 0) {
-                    total += field_price;
+        if (value !== '' && value !== undefined) {
+            if (wpcpo_vars.summary_clear) {
+                selected++;
+            }
 
-                    if (field_price > 0) {
-                        $price_label.html(`(+${wpcpo_format_price(field_price)})`);
+            if (enable_price === 1 || wpcpo_vars.summary_free) {
+                let field_price = wpcpo_get_field_price($field, price, qty, total);
+
+                if (!isNaN(field_price)) {
+                    total += parseFloat(field_price);
+                }
+
+                if (!isNaN(field_price) || wpcpo_vars.summary_free) {
+                    if (isNaN(field_price)) {
+                        html += `<li class="wpcpo-free"><div class="wpcpo-col1"><span>${$field.data('title')}:</span> ${value}</div><div class="wpcpo-col2"><strong><span class="amount">${wpcpo_format_price(field_price)}</span></strong></div></li>`;
                     } else {
-                        $price_label.html(`(${wpcpo_format_price(field_price)})`);
-                    }
+                        if (parseFloat(field_price) > 0) {
+                            $price_label.html(`(+${wpcpo_format_price(field_price)})`);
+                        } else {
+                            $price_label.html(`(${wpcpo_format_price(field_price)})`);
+                        }
 
-                    html += `<li><div class="wpcpo-col1"><span>${$field.data('title')}:</span> ${value}</div><div class="wpcpo-col2"><strong><span class="amount">${wpcpo_format_price(field_price)}</span></strong></div></li>`;
-                } else {
-                    html += `<li class="wpcpo-free"><div class="wpcpo-col1"><span>${$field.data('title')}:</span> ${value}</div><div class="wpcpo-col2"><strong><span class="amount">${wpcpo_format_price(field_price)}</span></strong></div></li>`;
+                        html += `<li><div class="wpcpo-col1"><span>${$field.data('title')}:</span> ${value}</div><div class="wpcpo-col2"><strong><span class="amount">${wpcpo_format_price(field_price)}</span></strong></div></li>`;
+                    }
                 }
             }
-        } else {
-            $price_label.html('');
         }
     }
 
-    html += `<li class="wpcpo-subtotal">${wpcpo_vars.i18n_subtotal}<span class="amount">${wpcpo_format_price(total)}</span></li>`;
+    html += `<li class="wpcpo-subtotal wpcpo-subtotal-${selected}"><span class="wpcpo-clear"><a class="wpcpo-clear-btn" href="javascript:void(0);">${wpcpo_vars.i18n_clear}</a></span><span class="wpcpo-subtotal-amount">${wpcpo_vars.i18n_subtotal}<span class="amount">${wpcpo_format_price(total)}</span></span></li>`;
     html += '</ul>';
 
     $total.html(html);

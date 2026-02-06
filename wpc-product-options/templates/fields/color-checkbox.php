@@ -13,7 +13,7 @@ if ( empty( $field['options'] ) || ! is_array( $field['options'] ) ) {
 }
 
 foreach ( $field['options'] as $option_key => $option ) {
-    if ( isset( $option['value'] ) && $option['value'] !== '' && ! empty( $option['image'] ) ) {
+    if ( isset( $option['value'] ) && $option['value'] !== '' && ! empty( $option['color'] ) ) {
         $option_label = isset( $option['name'] ) && $option['name'] !== '' ? $option['name'] : $option['value'];
         ?>
         <input class="wpcpo-option-field field-checkbox" type="checkbox"
@@ -24,12 +24,12 @@ foreach ( $field['options'] as $option_key => $option ) {
                data-price="<?php echo esc_attr( $option['price'] ); ?>"
                data-price-custom="<?php echo esc_attr( $option['custom_price'] ); ?>"
                value="<?php echo esc_attr( $option['value'] ); ?>"
-               data-image="<?php echo esc_attr( $option['image'] ); ?>" <?php echo esc_attr( ( $field['default_value'] && ( $field['value'] === $option['value'] ) ) || in_array( $option['value'], $df_val ) ? 'checked' : '' ); ?>>
+               data-color="<?php echo esc_attr( $option['color'] ); ?>" <?php echo esc_attr( ( $field['default_value'] && ( $field['value'] === $option['value'] ) ) || in_array( $option['value'], $df_val ) ? 'checked' : '' ); ?>>
         <label for="<?php echo esc_attr( $option_key ); ?>">
             <?php
-            do_action( 'wpcpo_image_checkbox_option_before', $option, $field );
+            do_action( 'wpcpo_color_checkbox_option_before', $option, $field );
 
-            echo wp_get_attachment_image( $option['image'] );
+            echo '<span class="label-color" style="background-color: ' . esc_attr( sanitize_hex_color( $option['color'] ) ) . '"></span>';
 
             if ( isset( $option['name'] ) && $option['name'] !== '' ) {
                 echo '<span class="label-name">' . esc_html( $option['name'] ) . '</span>';
@@ -37,7 +37,7 @@ foreach ( $field['options'] as $option_key => $option ) {
 
             echo Wpcpo_Frontend::get_label_price( $option, 'option' );
 
-            do_action( 'wpcpo_image_checkbox_option_after', $option, $field );
+            do_action( 'wpcpo_color_checkbox_option_after', $option, $field );
             ?>
         </label>
         <input type="hidden" name="<?php echo esc_attr( $option_key . '[label]' ); ?>"
@@ -50,8 +50,8 @@ foreach ( $field['options'] as $option_key => $option ) {
                value="<?php echo esc_attr( $option['custom_price'] ); ?>"/>
         <input type="hidden" name="<?php echo esc_attr( $option_key . '[title]' ); ?>"
                value="<?php echo esc_attr( $field['title'] ); ?>"/>
-        <input type="hidden" name="<?php echo esc_attr( $option_key . '[type]' ); ?>" value="image-checkbox"/>
-        <input type="hidden" name="<?php echo esc_attr( $option_key . '[image]' ); ?>"
-               value="<?php echo esc_attr( $option['image'] ); ?>"/>
+        <input type="hidden" name="<?php echo esc_attr( $option_key . '[type]' ); ?>" value="color-checkbox"/>
+        <input type="hidden" name="<?php echo esc_attr( $option_key . '[color]' ); ?>"
+               value="<?php echo esc_attr( $option['color'] ); ?>"/>
     <?php }
 }

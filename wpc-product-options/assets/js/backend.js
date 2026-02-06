@@ -7,7 +7,9 @@
         init_apply();
         init_single($('#wpcpo-select-display').val());
         image_selector();
+        color_picker();
         date_picker();
+        init_logic();
     });
 
     $(document).on('change', '.wpcpo-apply-for', function () {
@@ -40,6 +42,7 @@
         }, function (response) {
             $('.wpcpo-items-wrapper .wpcpo-items').append(response);
             init_sortable();
+            init_logic();
             $this.prop('disabled', false);
         });
     }).on('keyup change keypress', '.wpcpo-item-line .sync-label', function () {
@@ -47,14 +50,26 @@
         let $this = $(this), value = $this.val(),
             $label = $this.closest('.wpcpo-item').find('.wpcpo-item-label .title');
         $label.text(value);
+        init_logic();
+    }).on('change', '.wpcpo-condition-fields', function () {
+        $(this).attr('data-val', $(this).val());
     }).on('change', '.wpcpo-item-line .checkbox-required', function () {
         // required
-        let $this = $(this), $label = $this.closest('.wpcpo-item').find('.wpcpo-item-label .required');
+        let $this = $(this), $required = $this.closest('.wpcpo-item').find('.wpcpo-item-label .required');
 
         if ($this.is(':checked')) {
-            $label.text('*');
+            $required.text('*');
         } else {
-            $label.text('');
+            $required.text('');
+        }
+    }).on('change', '.wpcpo-item-line .checkbox-logic', function () {
+        // required
+        let $this = $(this), $logic = $this.closest('.wpcpo-item').find('.wpcpo-item-label .logic');
+
+        if ($this.is(':checked')) {
+            $logic.html('<span class="dashicons dashicons-welcome-view-site"></span>');
+        } else {
+            $logic.html('');
         }
     }).on('click touch', '.nav-tab-wrapper a', function (e) {
         e.preventDefault();
@@ -78,7 +93,41 @@
             $wrapper.append(response);
             init_sortable();
             image_selector();
+            color_picker();
             date_picker();
+            $this.prop('disabled', false);
+        });
+    }).on('click touch', '.wpcpo-add-new-dimension', function () {
+        let $this = $(this), $wrapper = $this.closest('.wpcpo-inner-options').find('.inner-content'),
+            field_id = $this.data('id');
+
+        $this.prop('disabled', true);
+
+        $.post(ajaxurl, {
+            action: 'wpcpo_add_dimension', field_id: field_id, nonce: wpcpo_vars.nonce,
+        }, function (response) {
+            $wrapper.append(response);
+            init_sortable();
+            image_selector();
+            color_picker();
+            date_picker();
+            $this.prop('disabled', false);
+        });
+    }).on('click touch', '.wpcpo-add-new-condition', function () {
+        let $this = $(this), $wrapper = $this.closest('.wpcpo-inner-options').find('.inner-content'),
+            field_id = $this.data('id');
+
+        $this.prop('disabled', true);
+
+        $.post(ajaxurl, {
+            action: 'wpcpo_add_condition', field_id: field_id, nonce: wpcpo_vars.nonce,
+        }, function (response) {
+            $wrapper.append(response);
+            init_sortable();
+            image_selector();
+            color_picker();
+            date_picker();
+            init_logic();
             $this.prop('disabled', false);
         });
     }).on('click', 'input[type="submit"]', function () {
@@ -109,7 +158,7 @@
     }).on('keyup change keypress', '.wpcpo-price-custom', function () {
         let $this = $(this), value = $this.val();
 
-        value = value.replace(/[^0-9\+\-\*\/\(\)\.pqlvws]/g, '');
+        value = value.replace(/[^0-9\+\-\*\/\(\)\.vdpqlws]/g, '');
         $this.val(value);
 
         // validate custom price
@@ -185,6 +234,32 @@
         });
     }
 
+    function init_logic() {
+        let fields = '';
+
+        $('.wpcpo-item').each(function () {
+            if ($(this).find('.field-logic').length) {
+                let field_id = $(this).data('id');
+                let field_title = $(this).find('.field-logic').val();
+
+                fields += '<option value="' + field_id + '">' + field_title + ' (#' + field_id + ')</option>';
+            }
+        });
+
+        $('.wpcpo-condition-fields').each(function () {
+            let this_id = $(this).data('id');
+            let this_val = $(this).attr('data-val');
+
+            $(this).html(fields);
+            $(this).find('option[value="' + this_id + '"]').remove();
+
+            if (this_val !== undefined && this_val !== '') {
+                $(this).find('option[value="' + this_val + '"]').prop('selected', true);
+                $(this).trigger('change');
+            }
+        });
+    }
+
     function image_selector() {
         $('.wpcpo-image-preview').on('click touch', function (e) {
             e.preventDefault();
@@ -224,10 +299,14 @@
         });
     }
 
+    function color_picker() {
+        $('.wpcpo-color-picker').wpColorPicker();
+    }
+
     function validate_custom_price(custom_price) {
         let check = false;
 
-        custom_price = custom_price.toLowerCase().replace(/(v|q|p|l|w|s)+/gi, function (match, tag, char) {
+        custom_price = custom_price.toLowerCase().replace(/([vdpqlws])+/gi, function (match, tag, char) {
             switch (tag) {
                 case 'q':
                 case 'p':

@@ -57,7 +57,7 @@
       .wpcpo-item-content {
         border-top: 1px solid var(--border);
         display: none;
-        padding: 20px;
+        padding: 15px;
         background: var(--background2);
 
         .wpcpo-image-selector {
@@ -108,6 +108,10 @@
           }
         }
 
+        select {
+          float: none;
+        }
+
         .input-block {
           display: block !important;
           width: 100% !important;
@@ -121,7 +125,7 @@
         }
 
         input[type="checkbox"] {
-          &:checked + .checkbox-show {
+          &:checked + .checkbox-show, &:checked + * + .checkbox-show {
             display: block !important;
           }
         }
@@ -198,6 +202,9 @@
         font-size: 14px;
         display: flex;
         align-items: center;
+        white-space: nowrap;
+        max-width: 100%;
+        overflow: hidden;
 
         .required {
           margin-left: 5px;
@@ -220,6 +227,12 @@
 
         .key {
           background-color: #999999;
+        }
+
+        .logic {
+          display: inline-block;
+          margin-left: 10px;
+          line-height: 1;
         }
       }
 
@@ -244,94 +257,99 @@
     .wpcpo-inner-options {
       border: 1px solid var(--background2);
 
+      &.wpcpo-logic-conditions {
+        margin-top: 10px;
+      }
+
       .inner-header {
         background: var(--background2);
-        padding: 15px 10px;
-        grid-template-columns: 20px 30px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 30px;
-        display: grid;
-        grid-gap: 15px;
+        display: flex;
+        align-items: center;
+        position: relative;
+        padding: 10px 40px;
+        column-gap: 0;
+        font-weight: 600;
 
-        span {
-          display: flex;
-          align-items: center;
-          font-weight: 600;
-
-          &.inner-header-image {
-            grid-column: 2/4;
-          }
-
-          &.inner-header-name {
-            grid-column: 4/6;
-          }
-
-          &.inner-header-value {
-            grid-column: 6/8;
-          }
-
-          &.inner-header-price {
-            grid-column: 8/-1;
-          }
+        & > * {
+          flex-grow: 1;
+          padding: 0 5px;
         }
       }
 
-      .inner-option {
-        display: grid;
-        grid-template-columns: 20px 30px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 30px;
-        grid-auto-rows: 35px;
-        grid-gap: 15px;
-        padding: 10px;
-        border-bottom: 1px solid var(--background2);
-        background-color: #ffffff;
-
-        .inner-option-image {
-          grid-column: 2/4;
-        }
-
-        .inner-option-name {
-          grid-column: 4/6;
-        }
-
-        .inner-option-value {
-          grid-column: 6/8;
-        }
-
-        .inner-option-price {
-          grid-column: 8/13;
+      .inner-content {
+        .inner-option {
           display: flex;
           align-items: center;
+          position: relative;
+          padding: 10px 40px;
+          column-gap: 0;
+          border-bottom: 1px solid var(--background2);
+          background-color: #ffffff;
 
-          .wpcpo-price-wrapper, .wpcpo-price-custom-wrapper {
+          .inner-option-move, .inner-option-remove {
+            position: absolute;
+            top: 50%;
+            bottom: 0;
+            width: 30px;
+            height: 30px;
+            line-height: 28px;
+            text-align: center;
+            transform: translateY(-50%);
+          }
+
+          .inner-option-move {
+            left: 0;
+            cursor: move;
+
+            &:before {
+              content: "\f545";
+              display: block;
+              text-align: center;
+              font: normal 12px/28px dashicons;
+              speak: none;
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale;
+              text-decoration: none !important;
+            }
+          }
+
+          .inner-option-remove {
+            right: 0;
+          }
+
+          & > * {
             flex-grow: 1;
+            padding: 0 5px;
+
+            &.inner-option-image {
+              width: 50px;
+              flex: 0 0 50px;
+            }
+
+            &.inner-option-color {
+              width: 120px;
+              flex: 0 0 120px;
+            }
+
+            &.inner-option-price {
+              display: flex;
+              align-items: center;
+
+              select {
+                width: auto;
+              }
+
+              .wpcpo-price-wrapper {
+                flex-grow: 1;
+              }
+            }
+          }
+
+          input, select {
+            width: 100%;
+            max-width: 100%;
           }
         }
-
-        > * {
-          align-self: center;
-        }
-
-        input {
-          width: 100% !important;
-          max-width: 100% !important;
-        }
-      }
-
-      .inner-option-move {
-        &:before {
-          content: "\f545";
-          display: block;
-          text-align: center;
-          font: normal 12px/40px dashicons;
-          speak: none;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-          text-decoration: none !important;
-        }
-      }
-
-      .inner-option-remove {
-        grid-column: 13;
-        text-align: right;
-        cursor: move;
       }
 
       .inner-footer {
@@ -361,6 +379,26 @@
 
   .wpcpo-fields-single-product & {
     padding: 12px;
+  }
+}
+
+.wpcpo-color-selector {
+  .wp-picker-container {
+    position: relative;
+
+    .wp-color-result {
+      margin: 0;
+    }
+
+    .wp-picker-input-wrap {
+      display: none;
+    }
+
+    .wp-picker-holder {
+      background-color: #ffffff;
+      position: absolute;
+      z-index: 999;
+    }
   }
 }
 

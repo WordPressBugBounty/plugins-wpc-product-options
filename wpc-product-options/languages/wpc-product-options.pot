@@ -1,17 +1,17 @@
-# Copyright (C) 2025 WPClever
-# This file is distributed under the GPLv2 or later.
+# Copyright (C) 2026 WPClever
+# This file is distributed under the same license as the WPC Product Options for WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: WPC Product Options for WooCommerce 1.8.5\n"
+"Project-Id-Version: WPC Product Options for WooCommerce 3.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpc-product-options\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-08-23T02:59:14+00:00\n"
+"POT-Creation-Date: 2026-01-26T07:35:24+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.11.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wpc-product-options\n"
 
 #. Plugin Name of the plugin
@@ -39,232 +39,306 @@ msgstr ""
 msgid "https://wpclever.net"
 msgstr ""
 
-#: includes/class-backend.php:72
-#: includes/templates/fields/color-picker.php:13
-#: includes/templates/fields/date-picker.php:13
-#: includes/templates/fields/date-range-picker.php:13
-#: includes/templates/fields/date-time-picker.php:13
-#: includes/templates/fields/file-upload.php:13
-#: includes/templates/fields/select.php:11
-#: includes/templates/fields/text.php:13
-#: includes/templates/fields/time-picker.php:13
+#: includes/class-backend.php:88
+#: includes/templates/fields/color-picker.php:14
+#: includes/templates/fields/date-picker.php:14
+#: includes/templates/fields/date-range-picker.php:14
+#: includes/templates/fields/date-time-picker.php:14
+#: includes/templates/fields/dimensions.php:14
+#: includes/templates/fields/file-upload.php:14
+#: includes/templates/fields/quantity.php:12
+#: includes/templates/fields/select.php:12
+#: includes/templates/fields/text.php:14
+#: includes/templates/fields/time-picker.php:14
 msgid "Title"
 msgstr ""
 
-#: includes/class-backend.php:73
+#: includes/class-backend.php:89
 msgid "Description"
 msgstr ""
 
-#: includes/class-backend.php:74
+#: includes/class-backend.php:90
 msgid "Summary"
 msgstr ""
 
-#: includes/class-backend.php:75
+#: includes/class-backend.php:91
 msgid "Date"
 msgstr ""
 
-#: includes/class-backend.php:89
-#: includes/class-backend.php:116
+#: includes/class-backend.php:105
+#: includes/class-backend.php:132
 #: includes/templates/panel.php:9
 msgid "Fields"
 msgstr ""
 
-#: includes/class-backend.php:90
+#: includes/class-backend.php:106
 #: includes/templates/configuration.php:10
 msgid "Apply"
 msgstr ""
 
-#: includes/class-backend.php:99
-#: includes/class-backend.php:211
-#: includes/class-backend.php:254
-#: includes/class-backend.php:341
+#: includes/class-backend.php:115
+#: includes/class-backend.php:238
+#: includes/class-backend.php:285
+#: includes/class-backend.php:463
 msgid "Product Options"
 msgstr ""
 
-#: includes/class-backend.php:111
+#: includes/class-backend.php:127
 msgid "Configuration"
 msgstr ""
 
-#: includes/class-backend.php:211
-#: includes/class-backend.php:225
+#: includes/class-backend.php:238
+#: includes/class-backend.php:252
 msgid "WPC Product Options"
 msgstr ""
 
-#: includes/class-backend.php:225
+#: includes/class-backend.php:252
 msgid "Premium"
 msgstr ""
 
 #. translators: stars
-#: includes/class-backend.php:228
+#: includes/class-backend.php:255
+#, php-format
 msgid "Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating."
 msgstr ""
 
-#: includes/class-backend.php:231
+#: includes/class-backend.php:258
 msgid "Reviews"
 msgstr ""
 
-#: includes/class-backend.php:233
+#: includes/class-backend.php:260
 msgid "Changelog"
 msgstr ""
 
-#: includes/class-backend.php:235
+#: includes/class-backend.php:262
 msgid "Discussion"
 msgstr ""
 
-#: includes/class-backend.php:243
+#: includes/class-backend.php:270
 msgid "Settings updated."
 msgstr ""
 
-#: includes/class-backend.php:250
-#: includes/class-backend.php:340
+#: includes/class-backend.php:277
+#: includes/class-backend.php:462
 msgid "Settings"
 msgstr ""
 
-#: includes/class-backend.php:259
-#: includes/class-backend.php:342
+#: includes/class-backend.php:281
+#: includes/class-backend.php:363
+msgid "Localization"
+msgstr ""
+
+#: includes/class-backend.php:290
+#: includes/class-backend.php:464
 msgid "Premium Version"
 msgstr ""
 
-#: includes/class-backend.php:262
+#: includes/class-backend.php:293
 msgid "Essential Kit"
 msgstr ""
 
-#: includes/class-backend.php:274
+#: includes/class-backend.php:308
 msgid "General"
 msgstr ""
 
-#: includes/class-backend.php:278
+#: includes/class-backend.php:312
 msgid "Position"
 msgstr ""
 
-#: includes/class-backend.php:281
+#: includes/class-backend.php:315
 msgid "Above the add to cart button"
 msgstr ""
 
-#: includes/class-backend.php:282
+#: includes/class-backend.php:316
 msgid "Under the add to cart button"
 msgstr ""
 
-#: includes/class-backend.php:283
+#: includes/class-backend.php:317
 msgid "None (Hide it)"
 msgstr ""
 
-#: includes/class-backend.php:285
+#: includes/class-backend.php:319
 msgid "Choose the position to show product options on a single product page. You can also place the shortcode [wpcpo] inside the add-to-cart form."
 msgstr ""
 
-#: includes/class-backend.php:358
+#: includes/class-backend.php:323
+msgid "Summary of free options"
+msgstr ""
+
+#: includes/class-backend.php:326
+#: includes/class-backend.php:336
+#: includes/class-backend.php:346
+msgid "No"
+msgstr ""
+
+#: includes/class-backend.php:327
+#: includes/class-backend.php:337
+#: includes/class-backend.php:347
+msgid "Yes"
+msgstr ""
+
+#: includes/class-backend.php:329
+msgid "Display free options on the summary."
+msgstr ""
+
+#: includes/class-backend.php:333
+msgid "\"Clear all\" button"
+msgstr ""
+
+#: includes/class-backend.php:339
+msgid "Display the \"Clear all\" button to clear all selected options."
+msgstr ""
+
+#: includes/class-backend.php:343
+msgid "Change URL (Beta)"
+msgstr ""
+
+#: includes/class-backend.php:349
+msgid "Change the product URL based on selected options."
+msgstr ""
+
+#: includes/class-backend.php:365
+msgid "Leave blank to use the default text and its equivalent translation in multiple languages."
+msgstr ""
+
+#: includes/class-backend.php:369
+msgid "Subtotal"
+msgstr ""
+
+#: includes/class-backend.php:374
+#: includes/class-frontend.php:142
+msgid "Subtotal:"
+msgstr ""
+
+#: includes/class-backend.php:379
+#: includes/class-backend.php:384
+msgid "Free"
+msgstr ""
+
+#: includes/class-backend.php:389
+msgid "Characters remaining"
+msgstr ""
+
+#: includes/class-backend.php:395
+#: includes/class-frontend.php:143
+msgid "characters remaining"
+msgstr ""
+
+#: includes/class-backend.php:400
+msgid "Clear all"
+msgstr ""
+
+#: includes/class-backend.php:405
+#: includes/class-frontend.php:141
+msgid "Clear all options"
+msgstr ""
+
+#: includes/class-backend.php:480
 msgid "Community support"
 msgstr ""
 
-#: includes/class-backend.php:465
+#: includes/class-backend.php:630
 msgctxt "Post Type General Name"
 msgid "Product Options"
 msgstr ""
 
-#: includes/class-backend.php:466
+#: includes/class-backend.php:631
 msgctxt "Post Type Singular Name"
 msgid "Product Option"
 msgstr ""
 
-#: includes/class-backend.php:467
+#: includes/class-backend.php:632
 msgid "Add New Product Option"
 msgstr ""
 
-#: includes/class-backend.php:468
+#: includes/class-backend.php:633
 msgid "Add New"
 msgstr ""
 
-#: includes/class-backend.php:469
+#: includes/class-backend.php:634
 msgid "Edit Product Option"
 msgstr ""
 
-#: includes/class-backend.php:470
+#: includes/class-backend.php:635
 msgid "Update Product Option"
 msgstr ""
 
-#: includes/class-backend.php:471
+#: includes/class-backend.php:636
 msgid "Search Product Option"
 msgstr ""
 
-#: includes/class-backend.php:475
+#: includes/class-backend.php:640
 msgid "Product Option"
 msgstr ""
 
-#: includes/class-backend.php:568
+#: includes/class-backend.php:733
 msgid "Before wrapper"
 msgstr ""
 
-#: includes/class-backend.php:569
+#: includes/class-backend.php:734
 msgid "After wrapper"
 msgstr ""
 
-#: includes/class-backend.php:570
+#: includes/class-backend.php:735
 msgid "Before options"
 msgstr ""
 
-#: includes/class-backend.php:571
+#: includes/class-backend.php:736
 msgid "After options"
 msgstr ""
 
-#: includes/class-cart.php:99
-#: includes/class-cart.php:119
-#: includes/class-cart.php:126
-#: includes/class-cart.php:133
+#: includes/class-cart.php:207
+#: includes/class-cart.php:227
+#: includes/class-cart.php:234
+#: includes/class-cart.php:241
 msgid "You cannot add this product to the cart."
 msgstr ""
 
-#: includes/class-cart.php:120
+#: includes/class-cart.php:228
 msgid "The uploaded file has an incorrect extension."
 msgstr ""
 
 #. translators: file size
-#: includes/class-cart.php:127
+#: includes/class-cart.php:235
+#, php-format
 msgid "The uploaded file must be larger than %s in size."
 msgstr ""
 
 #. translators: file size
-#: includes/class-cart.php:134
+#: includes/class-cart.php:242
+#, php-format
 msgid "The uploaded file exceeds %s in size."
 msgstr ""
 
-#: includes/class-frontend.php:72
+#: includes/class-cart.php:404
+msgid "download"
+msgstr ""
+
+#: includes/class-frontend.php:73
 msgid "Select options"
 msgstr ""
 
-#: includes/class-frontend.php:118
+#: includes/class-frontend.php:128
 msgid "Clear"
 msgstr ""
 
-#: includes/class-frontend.php:119
+#: includes/class-frontend.php:129
 msgid "Default"
 msgstr ""
 
-#: includes/class-frontend.php:120
+#: includes/class-frontend.php:130
 msgid "Select Color"
 msgstr ""
 
-#: includes/class-frontend.php:121
+#: includes/class-frontend.php:131
 msgid "Current Color"
 msgstr ""
 
-#: includes/class-frontend.php:131
-msgid "Options total:"
-msgstr ""
-
-#: includes/class-frontend.php:132
-msgid "Subtotal:"
-msgstr ""
-
-#: includes/class-frontend.php:133
-msgid "characters remaining"
-msgstr ""
-
-#: includes/templates/configuration.php:36
+#: includes/templates/configuration.php:37
 msgid "Select which products that you want to apply these options. You still can specify options on a product basis."
 msgstr ""
 
-#: includes/templates/field.php:18
+#: includes/templates/field.php:24
 msgid "remove"
 msgstr ""
 
@@ -293,292 +367,359 @@ msgid "Radio"
 msgstr ""
 
 #: includes/templates/fields.php:23
-msgid "Image Radio"
+msgid "Image radio"
 msgstr ""
 
 #: includes/templates/fields.php:24
-msgid "Checkbox"
+msgid "Color radio"
 msgstr ""
 
 #: includes/templates/fields.php:25
-msgid "Image Checkbox"
+msgid "Checkbox"
 msgstr ""
 
 #: includes/templates/fields.php:26
-msgid "Date picker"
+msgid "Image checkbox"
 msgstr ""
 
 #: includes/templates/fields.php:27
-msgid "Time picker"
+msgid "Color checkbox"
 msgstr ""
 
 #: includes/templates/fields.php:28
-msgid "Date time picker"
+msgid "Date picker"
 msgstr ""
 
 #: includes/templates/fields.php:29
-msgid "Date range picker"
+msgid "Time picker"
 msgstr ""
 
 #: includes/templates/fields.php:30
-msgid "Color picker"
+msgid "Date time picker"
 msgstr ""
 
 #: includes/templates/fields.php:31
-msgid "File upload"
+msgid "Date range picker"
 msgstr ""
 
 #: includes/templates/fields.php:32
-msgid "Appearance"
+msgid "Color picker"
 msgstr ""
 
 #: includes/templates/fields.php:33
-#: includes/templates/fields/appearance-heading.php:13
-msgid "Heading"
+msgid "File upload"
 msgstr ""
 
 #: includes/templates/fields.php:34
-#: includes/templates/fields/appearance-paragraph.php:11
-msgid "Paragraph"
+msgid "Quantity input"
 msgstr ""
 
 #: includes/templates/fields.php:35
-msgid "Spacer"
+msgid "Dimensions"
 msgstr ""
 
 #: includes/templates/fields.php:36
-msgid "Separator"
+msgid "Appearance"
 msgstr ""
 
 #: includes/templates/fields.php:37
-#: includes/templates/fields/appearance-shortcode.php:11
-msgid "Shortcode"
+#: includes/templates/fields/appearance-heading.php:14
+msgid "Heading"
+msgstr ""
+
+#: includes/templates/fields.php:38
+#: includes/templates/fields/appearance-paragraph.php:12
+msgid "Paragraph"
+msgstr ""
+
+#: includes/templates/fields.php:39
+msgid "Spacer"
 msgstr ""
 
 #: includes/templates/fields.php:40
+msgid "Separator"
+msgstr ""
+
+#: includes/templates/fields.php:41
+#: includes/templates/fields/appearance-shortcode.php:12
+msgid "Shortcode"
+msgstr ""
+
+#: includes/templates/fields.php:45
 msgid "+ Add new field"
 msgstr ""
 
-#: includes/templates/fields/appearance-heading.php:18
+#: includes/templates/fields/appearance-heading.php:21
 msgid "Level"
 msgstr ""
 
-#: includes/templates/fields/appearance-separator.php:11
+#: includes/templates/fields/appearance-separator.php:12
 msgid "Width"
 msgstr ""
 
-#: includes/templates/fields/appearance-spacer.php:11
+#: includes/templates/fields/appearance-spacer.php:12
 msgid "Height"
 msgstr ""
 
-#: includes/templates/fields/color-picker.php:19
-#: includes/templates/fields/date-picker.php:19
-#: includes/templates/fields/date-range-picker.php:19
-#: includes/templates/fields/date-time-picker.php:19
-#: includes/templates/fields/file-upload.php:19
-#: includes/templates/fields/select.php:17
-#: includes/templates/fields/text.php:19
-#: includes/templates/fields/time-picker.php:19
+#: includes/templates/fields/color-picker.php:23
+#: includes/templates/fields/date-picker.php:23
+#: includes/templates/fields/date-range-picker.php:23
+#: includes/templates/fields/date-time-picker.php:23
+#: includes/templates/fields/dimensions.php:23
+#: includes/templates/fields/file-upload.php:23
+#: includes/templates/fields/quantity.php:21
+#: includes/templates/fields/select.php:21
+#: includes/templates/fields/text.php:23
+#: includes/templates/fields/time-picker.php:23
 msgid "Hide title"
 msgstr ""
 
-#: includes/templates/fields/color-picker.php:24
-#: includes/templates/fields/date-picker.php:24
-#: includes/templates/fields/date-range-picker.php:24
-#: includes/templates/fields/date-time-picker.php:24
-#: includes/templates/fields/file-upload.php:24
-#: includes/templates/fields/select.php:22
-#: includes/templates/fields/text.php:24
-#: includes/templates/fields/time-picker.php:24
-msgid "Add description"
-msgstr ""
-
-#: includes/templates/fields/color-picker.php:30
-#: includes/templates/fields/date-picker.php:100
-#: includes/templates/fields/date-range-picker.php:39
-#: includes/templates/fields/date-time-picker.php:47
-#: includes/templates/fields/file-upload.php:42
-#: includes/templates/fields/select.php:28
-#: includes/templates/fields/text.php:30
-#: includes/templates/fields/time-picker.php:38
-msgid "Required"
-msgstr ""
-
-#: includes/templates/fields/color-picker.php:35
-#: includes/templates/fields/date-picker.php:104
-#: includes/templates/fields/date-range-picker.php:44
-#: includes/templates/fields/date-time-picker.php:52
-#: includes/templates/fields/file-upload.php:47
-#: includes/templates/fields/text.php:60
-#: includes/templates/fields/time-picker.php:43
-msgid "Adjust price"
-msgstr ""
-
-#: includes/templates/fields/color-picker.php:38
-#: includes/templates/fields/date-picker.php:107
-#: includes/templates/fields/date-range-picker.php:47
-#: includes/templates/fields/date-time-picker.php:55
-#: includes/templates/fields/file-upload.php:50
-#: includes/templates/fields/option.php:41
-#: includes/templates/fields/text.php:63
-#: includes/templates/fields/time-picker.php:46
-msgid "Flat Fee"
-msgstr ""
-
-#: includes/templates/fields/color-picker.php:39
-#: includes/templates/fields/date-picker.php:108
-#: includes/templates/fields/date-range-picker.php:48
-#: includes/templates/fields/date-time-picker.php:56
-#: includes/templates/fields/file-upload.php:51
-#: includes/templates/fields/option.php:42
-#: includes/templates/fields/text.php:64
-#: includes/templates/fields/time-picker.php:47
-msgid "Quantity Synced"
-msgstr ""
-
-#: includes/templates/fields/color-picker.php:40
-#: includes/templates/fields/date-picker.php:109
-#: includes/templates/fields/date-range-picker.php:49
-#: includes/templates/fields/date-time-picker.php:57
-#: includes/templates/fields/file-upload.php:52
-#: includes/templates/fields/option.php:43
-#: includes/templates/fields/text.php:65
-#: includes/templates/fields/time-picker.php:48
-msgid "Custom Formula"
-msgstr ""
-
-#: includes/templates/fields/color-picker.php:42
-#: includes/templates/fields/date-picker.php:111
-#: includes/templates/fields/date-range-picker.php:51
-#: includes/templates/fields/date-time-picker.php:59
-#: includes/templates/fields/file-upload.php:54
-#: includes/templates/fields/option.php:45
-#: includes/templates/fields/text.php:67
-#: includes/templates/fields/time-picker.php:50
-msgid "Set a price using a number (eg. \"10\") or percentage (eg. \"10%\" of product price)"
-msgstr ""
-
-#: includes/templates/fields/color-picker.php:45
-#: includes/templates/fields/date-picker.php:114
-#: includes/templates/fields/date-range-picker.php:54
-#: includes/templates/fields/date-time-picker.php:62
-#: includes/templates/fields/file-upload.php:57
-#: includes/templates/fields/option.php:48
-#: includes/templates/fields/text.php:70
-#: includes/templates/fields/time-picker.php:53
-msgid "You can use: p (product price); q (quantity); l (string length); w (words count); v (value) in the formula, e.g: (p+2)*q/2"
-msgstr ""
-
+#: includes/templates/fields/color-picker.php:29
 #: includes/templates/fields/date-picker.php:29
 #: includes/templates/fields/date-range-picker.php:29
 #: includes/templates/fields/date-time-picker.php:29
+#: includes/templates/fields/dimensions.php:29
+#: includes/templates/fields/file-upload.php:29
+#: includes/templates/fields/quantity.php:27
+#: includes/templates/fields/select.php:27
+#: includes/templates/fields/text.php:29
+#: includes/templates/fields/time-picker.php:29
+msgid "Add description"
+msgstr ""
+
+#: includes/templates/fields/color-picker.php:37
+#: includes/templates/fields/date-picker.php:120
+#: includes/templates/fields/date-range-picker.php:46
+#: includes/templates/fields/date-time-picker.php:54
+#: includes/templates/fields/dimensions.php:37
+#: includes/templates/fields/file-upload.php:55
+#: includes/templates/fields/select.php:35
+#: includes/templates/fields/text.php:37
+#: includes/templates/fields/time-picker.php:45
+msgid "Required"
+msgstr ""
+
+#: includes/templates/fields/color-picker.php:43
+#: includes/templates/fields/date-picker.php:125
+#: includes/templates/fields/date-range-picker.php:52
+#: includes/templates/fields/date-time-picker.php:60
+#: includes/templates/fields/dimensions.php:67
+#: includes/templates/fields/file-upload.php:61
+#: includes/templates/fields/text.php:79
+#: includes/templates/fields/time-picker.php:51
+msgid "Adjust price"
+msgstr ""
+
+#: includes/templates/fields/color-picker.php:47
+#: includes/templates/fields/date-picker.php:129
+#: includes/templates/fields/date-range-picker.php:56
+#: includes/templates/fields/date-time-picker.php:64
+#: includes/templates/fields/dimensions.php:72
+#: includes/templates/fields/file-upload.php:65
+#: includes/templates/fields/option.php:55
+#: includes/templates/fields/text.php:83
+#: includes/templates/fields/time-picker.php:55
+msgid "Flat Fee"
+msgstr ""
+
+#: includes/templates/fields/color-picker.php:48
+#: includes/templates/fields/date-picker.php:130
+#: includes/templates/fields/date-range-picker.php:57
+#: includes/templates/fields/date-time-picker.php:65
+#: includes/templates/fields/dimensions.php:73
+#: includes/templates/fields/file-upload.php:66
+#: includes/templates/fields/option.php:56
+#: includes/templates/fields/text.php:84
+#: includes/templates/fields/time-picker.php:56
+msgid "Quantity Synced"
+msgstr ""
+
+#: includes/templates/fields/color-picker.php:49
+#: includes/templates/fields/date-picker.php:131
+#: includes/templates/fields/date-range-picker.php:58
+#: includes/templates/fields/date-time-picker.php:66
+#: includes/templates/fields/dimensions.php:74
+#: includes/templates/fields/file-upload.php:67
+#: includes/templates/fields/option.php:57
+#: includes/templates/fields/text.php:85
+#: includes/templates/fields/time-picker.php:57
+msgid "Custom Formula"
+msgstr ""
+
+#: includes/templates/fields/color-picker.php:52
+#: includes/templates/fields/date-picker.php:134
+#: includes/templates/fields/date-range-picker.php:61
+#: includes/templates/fields/date-time-picker.php:69
+#: includes/templates/fields/dimensions.php:77
+#: includes/templates/fields/file-upload.php:70
+#: includes/templates/fields/option.php:60
+#: includes/templates/fields/text.php:88
+#: includes/templates/fields/time-picker.php:60
+msgid "Set a price using a number (eg. \"10\") or percentage (eg. \"10%\" of product price)"
+msgstr ""
+
+#: includes/templates/fields/color-picker.php:58
+#: includes/templates/fields/date-picker.php:140
+#: includes/templates/fields/date-range-picker.php:67
+#: includes/templates/fields/date-time-picker.php:75
+#: includes/templates/fields/dimensions.php:83
+#: includes/templates/fields/file-upload.php:76
+#: includes/templates/fields/option.php:66
+#: includes/templates/fields/text.php:94
+#: includes/templates/fields/time-picker.php:66
+msgid "You can use: p (product price); q (quantity); l (string length); w (words count); v (value) in the formula, e.g: (p+2)*q/2"
+msgstr ""
+
+#: includes/templates/fields/condition.php:26
+msgid "is (equal)"
+msgstr ""
+
+#: includes/templates/fields/condition.php:27
+msgid "is not (not equal)"
+msgstr ""
+
+#: includes/templates/fields/condition.php:28
+msgid "less than"
+msgstr ""
+
+#: includes/templates/fields/condition.php:29
+msgid "greater than"
+msgstr ""
+
+#: includes/templates/fields/conditions.php:15
+msgid "Conditional logic"
+msgstr ""
+
+#: includes/templates/fields/date-picker.php:35
+#: includes/templates/fields/date-range-picker.php:35
+#: includes/templates/fields/date-time-picker.php:35
 msgid "Date format"
 msgstr ""
 
-#: includes/templates/fields/date-picker.php:38
+#: includes/templates/fields/date-picker.php:45
 msgid "Block dates"
 msgstr ""
 
-#: includes/templates/fields/date-picker.php:46
+#: includes/templates/fields/date-picker.php:54
 msgid "Monday"
 msgstr ""
 
-#: includes/templates/fields/date-picker.php:51
+#: includes/templates/fields/date-picker.php:60
 msgid "Tuesday"
 msgstr ""
 
-#: includes/templates/fields/date-picker.php:56
+#: includes/templates/fields/date-picker.php:66
 msgid "Wednesday"
 msgstr ""
 
-#: includes/templates/fields/date-picker.php:61
+#: includes/templates/fields/date-picker.php:72
 msgid "Thursday"
 msgstr ""
 
-#: includes/templates/fields/date-picker.php:66
+#: includes/templates/fields/date-picker.php:78
 msgid "Friday"
 msgstr ""
 
-#: includes/templates/fields/date-picker.php:71
+#: includes/templates/fields/date-picker.php:84
 msgid "Saturday"
 msgstr ""
 
-#: includes/templates/fields/date-picker.php:76
+#: includes/templates/fields/date-picker.php:90
 msgid "Sunday"
 msgstr ""
 
-#: includes/templates/fields/date-picker.php:81
+#: includes/templates/fields/date-picker.php:96
 msgid "Past dates"
 msgstr ""
 
-#: includes/templates/fields/date-picker.php:86
+#: includes/templates/fields/date-picker.php:102
 msgid "Future dates"
 msgstr ""
 
-#: includes/templates/fields/date-picker.php:91
+#: includes/templates/fields/date-picker.php:108
 msgid "Selected dates"
 msgstr ""
 
-#: includes/templates/fields/date-time-picker.php:38
-#: includes/templates/fields/time-picker.php:29
+#: includes/templates/fields/date-time-picker.php:44
+#: includes/templates/fields/time-picker.php:35
 msgid "Time format"
 msgstr ""
 
-#: includes/templates/fields/file-upload.php:29
-msgid "Upload file types"
-msgstr ""
-
-#: includes/templates/fields/file-upload.php:31
-msgid "Allowed file types. Separate types by commas."
-msgstr ""
-
-#: includes/templates/fields/file-upload.php:34
-msgid "File size limit (bytes)"
-msgstr ""
-
-#: includes/templates/fields/file-upload.php:35
-msgid "Min"
-msgstr ""
-
-#: includes/templates/fields/file-upload.php:37
-msgid "Max"
-msgstr ""
-
-#: includes/templates/fields/options.php:13
-msgid "Image"
-msgstr ""
-
-#: includes/templates/fields/options.php:15
+#: includes/templates/fields/dimensions.php:43
+#: includes/templates/fields/options.php:21
 msgid "Label"
 msgstr ""
 
-#: includes/templates/fields/options.php:16
-msgid "Value *"
-msgstr ""
-
-#: includes/templates/fields/options.php:17
-msgid "Price"
-msgstr ""
-
-#: includes/templates/fields/options.php:25
-msgid "Add option"
-msgstr ""
-
-#: includes/templates/fields/select.php:36
-#: includes/templates/fields/text.php:50
+#: includes/templates/fields/dimensions.php:44
+#: includes/templates/fields/select.php:44
+#: includes/templates/fields/text.php:64
 msgid "Default value"
 msgstr ""
 
-#: includes/templates/fields/select.php:43
-#: includes/templates/fields/text.php:35
+#: includes/templates/fields/dimensions.php:45
+#: includes/templates/fields/file-upload.php:43
+msgid "Min"
+msgstr ""
+
+#: includes/templates/fields/dimensions.php:46
+#: includes/templates/fields/file-upload.php:47
+msgid "Max"
+msgstr ""
+
+#: includes/templates/fields/dimensions.php:47
+msgid "Step"
+msgstr ""
+
+#: includes/templates/fields/dimensions.php:60
+msgid "Add dimension"
+msgstr ""
+
+#: includes/templates/fields/dimensions.php:69
+msgid "In the custom formula, you can use d1, d2, d3, etc., which correspond to the values of the above dimensions. For example: d1*d2*10. If you use a value that does not exist, it will be 0."
+msgstr ""
+
+#: includes/templates/fields/file-upload.php:35
+msgid "Upload file types"
+msgstr ""
+
+#: includes/templates/fields/file-upload.php:39
+msgid "Allowed file types. Separate types by commas."
+msgstr ""
+
+#: includes/templates/fields/file-upload.php:42
+msgid "File size limit (bytes)"
+msgstr ""
+
+#: includes/templates/fields/options.php:14
+msgid "Image"
+msgstr ""
+
+#: includes/templates/fields/options.php:18
+msgid "Color"
+msgstr ""
+
+#: includes/templates/fields/options.php:22
+msgid "Value *"
+msgstr ""
+
+#: includes/templates/fields/options.php:23
+msgid "Price"
+msgstr ""
+
+#: includes/templates/fields/options.php:34
+msgid "Add option"
+msgstr ""
+
+#: includes/templates/fields/select.php:53
+#: includes/templates/fields/text.php:43
 msgid "Limit"
 msgstr ""
 
-#: includes/templates/fields/select.php:45
+#: includes/templates/fields/select.php:57
 msgid "The maximum number of options can be selected."
 msgstr ""
 
-#: includes/templates/fields/text.php:44
+#: includes/templates/fields/text.php:57
 msgid "Enter a minimum and maximum value for the limit range."
 msgstr ""
 
@@ -603,26 +744,30 @@ msgid "Append"
 msgstr ""
 
 #. translators: file size
-#: templates/fields/file-upload.php:23
+#: templates/fields/file-upload.php:34
+#, php-format
 msgid "min file size %s"
 msgstr ""
 
 #. translators: file size
-#: templates/fields/file-upload.php:27
-#: templates/fields/file-upload.php:29
+#: templates/fields/file-upload.php:38
+#: templates/fields/file-upload.php:40
+#, php-format
 msgid "max file size %s"
 msgstr ""
 
 #. translators: file size
-#: templates/fields/file-upload.php:33
+#: templates/fields/file-upload.php:44
+#, php-format
 msgid "(%s)"
 msgstr ""
 
 #. translators: file size
-#: templates/fields/file-upload.php:35
+#: templates/fields/file-upload.php:46
+#, php-format
 msgid "(%1$s - %2$s)"
 msgstr ""
 
-#: templates/fields/select.php:18
+#: templates/fields/select.php:20
 msgid "Select an option..."
 msgstr ""

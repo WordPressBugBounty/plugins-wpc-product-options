@@ -17,6 +17,6 @@ $display = get_post_meta( get_the_ID(), 'wpcpo-display', true ) ?: 'global';
         </p>
     </div>
     <div class="options_group wpcpo-fields-single-product" style="display: none;">
-		<?php $this->fields_meta(); ?>
+        <?php $this->fields_meta(); ?>
     </div>
 </div>
