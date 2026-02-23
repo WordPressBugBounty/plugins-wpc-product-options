@@ -4,8 +4,8 @@ Donate link: https://wpclever.net
 Tags: woocommerce, wpc, options, product options, product addons
 Requires at least: 4.0
 Tested up to: 6.9
-Version: 3.1.1
-Stable tag: 3.1.1
+Version: 3.1.2
+Stable tag: 3.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,9 @@ Please try other plugins from us:
 5. When adding/editing the product, you can choose the Product Options tab then add some options as you want
 
 == Changelog ==
+
+= 3.1.2 =
+* Added: Tooltip for image radio and image checkbox
 
 = 3.1.1 =
 * Updated: Optimized the code

@@ -6,7 +6,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$df_val = $_GET[ $key ] ?? '';
+$default_value = $_GET[ $key ] ?? '';
 
 if ( empty( $field['options'] ) || ! is_array( $field['options'] ) ) {
     return;
@@ -23,7 +23,7 @@ foreach ( $field['options'] as $option_key => $option ) {
                data-price="<?php echo esc_attr( $option['price'] ); ?>"
                data-price-custom="<?php echo esc_attr( $option['custom_price'] ); ?>"
                value="<?php echo esc_attr( $option['value'] ); ?>"
-               data-color="<?php echo esc_attr( $option['color'] ); ?>" <?php echo esc_attr( ( $field['default_value'] && ( $field['value'] === $option['value'] ) ) || $df_val === $option['value'] ? 'checked' : '' ); ?>>
+               data-color="<?php echo esc_attr( $option['color'] ); ?>" <?php echo esc_attr( ( $field['default_value'] && ( $field['value'] === $option['value'] ) ) || $default_value === $option['value'] ? 'checked' : '' ); ?>>
         <label for="<?php echo esc_attr( $option_key ); ?>">
             <?php
             do_action( 'wpcpo_color_radio_option_before', $option, $field );

@@ -4,6 +4,13 @@
     $(function () {
         // ready
         wpcpo_init();
+
+        // tooltips
+        if (wpcpo_vars.tooltip_library === 'tippy') {
+            tippy('.wpcpo-tippy-tooltip', {
+                allowHTML: true, interactive: true,
+            });
+        }
     });
 
     $(document).on('woosq_loaded', function () {
@@ -373,14 +380,21 @@ function wpcpo_get_field_price($field, product_price, quantity = 1, total = 0) {
 function wpcpo_update_total($total) {
     let qty = parseFloat($total.closest('form.cart').find('[name=quantity]').val()),
         price = parseFloat($total.attr('data-price')), type = $total.data('type'), name = $total.data('product-name'),
-        total = price * qty, fields = $total.closest('.wpcpo-wrapper').find('.wpcpo-option-field').get(), html = '',
+        total = 0, fields = $total.closest('.wpcpo-wrapper').find('.wpcpo-option-field').get(), html = '',
         qty_string = wpcpo_vars.is_rtl ? wpcpo_vars.quantity_symbol + qty : qty + wpcpo_vars.quantity_symbol,
         selected = 0;
+
+    if ($total.attr('data-total') !== undefined) {
+        // Compatible with WPC Price by Quantity
+        total = parseFloat($total.attr('data-total'));
+    } else {
+        total = price * qty;
+    }
 
     html += '<ul>';
     html += `<li>
 <div class="wpcpo-col1"><span>${qty_string}</span> ${name}</div>
-<div class="wpcpo-col2"><strong><span class="amount">${wpcpo_format_price(price * qty)}</span></strong></div>
+<div class="wpcpo-col2"><strong><span class="amount">${wpcpo_format_price(total)}</span></strong></div>
 </li>`;
 
     for (let field of fields) {

@@ -296,10 +296,11 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
                 </div>
                 <div class="wpclever_settings_page_content">
                     <?php if ( $active_tab === 'settings' ) {
-                        $position      = self::get_setting( 'position', 'above_atc' );
-                        $summary_free  = self::get_setting( 'summary_free', 'no' );
-                        $summary_clear = self::get_setting( 'summary_clear', 'no' );
-                        $change_url    = self::get_setting( 'change_url', 'no' );
+                        $position        = self::get_setting( 'position', 'above_atc' );
+                        $tooltip_library = self::get_setting( 'tooltip_library', 'none' );
+                        $summary_free    = self::get_setting( 'summary_free', 'no' );
+                        $summary_clear   = self::get_setting( 'summary_clear', 'no' );
+                        $change_url      = self::get_setting( 'change_url', 'no' );
                         ?>
                         <form method="post" action="options.php">
                             <table class="form-table wpcpo-table">
@@ -317,6 +318,20 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
                                             <option value="none" <?php selected( $position, 'none' ); ?>><?php esc_html_e( 'None (Hide it)', 'wpc-product-options' ); ?></option>
                                         </select>
                                         <span class="description"><?php esc_html_e( 'Choose the position to show product options on a single product page. You can also place the shortcode [wpcpo] inside the add-to-cart form.', 'wpc-product-options' ); ?></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php esc_html_e( 'Tooltip library', 'wpc-product-options' ); ?></th>
+                                    <td>
+                                        <label> <select name="wpcpo_settings[tooltip_library]">
+                                                <option value="hint" <?php selected( $tooltip_library, 'hint' ); ?>><?php esc_html_e( 'Hint.css', 'wpc-product-options' ); ?></option>
+                                                <option value="tippy" <?php selected( $tooltip_library, 'tippy' ); ?>><?php esc_html_e( 'Tippy.js', 'wpc-product-options' ); ?></option>
+                                                <option value="none" <?php selected( $tooltip_library, 'none' ); ?>><?php esc_html_e( 'None (Disable)', 'wpc-product-options' ); ?></option>
+                                            </select> </label>
+                                        <span class="description">Read more about <a
+                                                    href="https://kushagra.dev/lab/hint/" target="_blank">Hint.css</a> and <a
+                                                    href="https://atomiks.github.io/tippyjs/v6/getting-started/"
+                                                    target="_blank">Tippy.js</a>. Use Tippy.js if you want to display the image in the tooltip.</span>
                                     </td>
                                 </tr>
                                 <tr>

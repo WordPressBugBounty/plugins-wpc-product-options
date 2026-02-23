@@ -292,4 +292,41 @@ form.cart [name=wpcpo-hidden-quantity] {
   height: auto;
 }
 
+/* Tippy */
+.wpcpo-tippy-inner {
+  padding: 5px 1px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.wpcpo-tippy-inner .wpcpo-tippy-label {
+  font-weight: 700;
+}
+
+.wpcpo-tippy-inner > span {
+  margin-bottom: 5px;
+}
+
+.wpcpo-tippy-inner > span:last-child {
+  margin-bottom: 0;
+}
+
+.wpcpo-tippy-inner .wpcpo-tippy-image {
+  display: block;
+  width: 100%;
+  min-width: 150px;
+  max-width: 600px;
+}
+
+.wpcpo-tippy-inner .wpcpo-tippy-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
 /*# sourceMappingURL=frontend.css.map */

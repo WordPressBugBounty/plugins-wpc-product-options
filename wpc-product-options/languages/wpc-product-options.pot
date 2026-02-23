@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the WPC Product Options for WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: WPC Product Options for WooCommerce 3.1.1\n"
+"Project-Id-Version: WPC Product Options for WooCommerce 3.1.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpc-product-options\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-02-12T03:36:35+00:00\n"
+"POT-Creation-Date: 2026-02-23T04:45:06+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wpc-product-options\n"
@@ -79,7 +79,7 @@ msgstr ""
 #: includes/class-backend.php:115
 #: includes/class-backend.php:238
 #: includes/class-backend.php:285
-#: includes/class-backend.php:463
+#: includes/class-backend.php:478
 msgid "Product Options"
 msgstr ""
 
@@ -119,17 +119,17 @@ msgid "Settings updated."
 msgstr ""
 
 #: includes/class-backend.php:277
-#: includes/class-backend.php:462
+#: includes/class-backend.php:477
 msgid "Settings"
 msgstr ""
 
 #: includes/class-backend.php:281
-#: includes/class-backend.php:363
+#: includes/class-backend.php:378
 msgid "Localization"
 msgstr ""
 
 #: includes/class-backend.php:290
-#: includes/class-backend.php:464
+#: includes/class-backend.php:479
 msgid "Premium Version"
 msgstr ""
 
@@ -137,153 +137,169 @@ msgstr ""
 msgid "Essential Kit"
 msgstr ""
 
-#: includes/class-backend.php:308
+#: includes/class-backend.php:309
 msgid "General"
 msgstr ""
 
-#: includes/class-backend.php:312
+#: includes/class-backend.php:313
 msgid "Position"
 msgstr ""
 
-#: includes/class-backend.php:315
+#: includes/class-backend.php:316
 msgid "Above the add to cart button"
 msgstr ""
 
-#: includes/class-backend.php:316
+#: includes/class-backend.php:317
 msgid "Under the add to cart button"
 msgstr ""
 
-#: includes/class-backend.php:317
+#: includes/class-backend.php:318
 msgid "None (Hide it)"
 msgstr ""
 
-#: includes/class-backend.php:319
+#: includes/class-backend.php:320
 msgid "Choose the position to show product options on a single product page. You can also place the shortcode [wpcpo] inside the add-to-cart form."
 msgstr ""
 
-#: includes/class-backend.php:323
-msgid "Summary of free options"
-msgstr ""
-
-#: includes/class-backend.php:326
-#: includes/class-backend.php:336
-#: includes/class-backend.php:346
-msgid "No"
+#: includes/class-backend.php:324
+msgid "Tooltip library"
 msgstr ""
 
 #: includes/class-backend.php:327
-#: includes/class-backend.php:337
-#: includes/class-backend.php:347
-msgid "Yes"
+msgid "Hint.css"
+msgstr ""
+
+#: includes/class-backend.php:328
+msgid "Tippy.js"
 msgstr ""
 
 #: includes/class-backend.php:329
+msgid "None (Disable)"
+msgstr ""
+
+#: includes/class-backend.php:338
+msgid "Summary of free options"
+msgstr ""
+
+#: includes/class-backend.php:341
+#: includes/class-backend.php:351
+#: includes/class-backend.php:361
+msgid "No"
+msgstr ""
+
+#: includes/class-backend.php:342
+#: includes/class-backend.php:352
+#: includes/class-backend.php:362
+msgid "Yes"
+msgstr ""
+
+#: includes/class-backend.php:344
 msgid "Display free options on the summary."
 msgstr ""
 
-#: includes/class-backend.php:333
+#: includes/class-backend.php:348
 msgid "\"Clear all\" button"
 msgstr ""
 
-#: includes/class-backend.php:339
+#: includes/class-backend.php:354
 msgid "Display the \"Clear all\" button to clear all selected options."
 msgstr ""
 
-#: includes/class-backend.php:343
+#: includes/class-backend.php:358
 msgid "Change URL (Beta)"
 msgstr ""
 
-#: includes/class-backend.php:349
+#: includes/class-backend.php:364
 msgid "Change the product URL based on selected options."
 msgstr ""
 
-#: includes/class-backend.php:365
+#: includes/class-backend.php:380
 msgid "Leave blank to use the default text and its equivalent translation in multiple languages."
 msgstr ""
 
-#: includes/class-backend.php:369
+#: includes/class-backend.php:384
 msgid "Subtotal"
 msgstr ""
 
-#: includes/class-backend.php:374
-#: includes/class-frontend.php:142
+#: includes/class-backend.php:389
+#: includes/class-frontend.php:151
 msgid "Subtotal:"
 msgstr ""
 
-#: includes/class-backend.php:379
-#: includes/class-backend.php:384
+#: includes/class-backend.php:394
+#: includes/class-backend.php:399
 msgid "Free"
 msgstr ""
 
-#: includes/class-backend.php:389
+#: includes/class-backend.php:404
 msgid "Characters remaining"
 msgstr ""
 
-#: includes/class-backend.php:395
-#: includes/class-frontend.php:143
+#: includes/class-backend.php:410
+#: includes/class-frontend.php:152
 msgid "characters remaining"
 msgstr ""
 
-#: includes/class-backend.php:400
+#: includes/class-backend.php:415
 msgid "Clear all"
 msgstr ""
 
-#: includes/class-backend.php:405
-#: includes/class-frontend.php:141
+#: includes/class-backend.php:420
+#: includes/class-frontend.php:150
 msgid "Clear all options"
 msgstr ""
 
-#: includes/class-backend.php:480
+#: includes/class-backend.php:495
 msgid "Community support"
 msgstr ""
 
-#: includes/class-backend.php:630
+#: includes/class-backend.php:645
 msgctxt "Post Type General Name"
 msgid "Product Options"
 msgstr ""
 
-#: includes/class-backend.php:631
+#: includes/class-backend.php:646
 msgctxt "Post Type Singular Name"
 msgid "Product Option"
 msgstr ""
 
-#: includes/class-backend.php:632
+#: includes/class-backend.php:647
 msgid "Add New Product Option"
 msgstr ""
 
-#: includes/class-backend.php:633
+#: includes/class-backend.php:648
 msgid "Add New"
 msgstr ""
 
-#: includes/class-backend.php:634
+#: includes/class-backend.php:649
 msgid "Edit Product Option"
 msgstr ""
 
-#: includes/class-backend.php:635
+#: includes/class-backend.php:650
 msgid "Update Product Option"
 msgstr ""
 
-#: includes/class-backend.php:636
+#: includes/class-backend.php:651
 msgid "Search Product Option"
 msgstr ""
 
-#: includes/class-backend.php:640
+#: includes/class-backend.php:655
 msgid "Product Option"
 msgstr ""
 
-#: includes/class-backend.php:733
+#: includes/class-backend.php:748
 msgid "Before wrapper"
 msgstr ""
 
-#: includes/class-backend.php:734
+#: includes/class-backend.php:749
 msgid "After wrapper"
 msgstr ""
 
-#: includes/class-backend.php:735
+#: includes/class-backend.php:750
 msgid "Before options"
 msgstr ""
 
-#: includes/class-backend.php:736
+#: includes/class-backend.php:751
 msgid "After options"
 msgstr ""
 
@@ -318,19 +334,19 @@ msgstr ""
 msgid "Select options"
 msgstr ""
 
-#: includes/class-frontend.php:128
+#: includes/class-frontend.php:137
 msgid "Clear"
 msgstr ""
 
-#: includes/class-frontend.php:129
+#: includes/class-frontend.php:138
 msgid "Default"
 msgstr ""
 
-#: includes/class-frontend.php:130
+#: includes/class-frontend.php:139
 msgid "Select Color"
 msgstr ""
 
-#: includes/class-frontend.php:131
+#: includes/class-frontend.php:140
 msgid "Current Color"
 msgstr ""
 

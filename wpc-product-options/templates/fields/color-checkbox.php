@@ -6,7 +6,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$df_val = isset( $_GET[ $key ] ) ? explode( ',', $_GET[ $key ] ) : [];
+$default_value = isset( $_GET[ $key ] ) ? explode( ',', $_GET[ $key ] ) : [];
 
 if ( empty( $field['options'] ) || ! is_array( $field['options'] ) ) {
     return;
@@ -24,7 +24,7 @@ foreach ( $field['options'] as $option_key => $option ) {
                data-price="<?php echo esc_attr( $option['price'] ); ?>"
                data-price-custom="<?php echo esc_attr( $option['custom_price'] ); ?>"
                value="<?php echo esc_attr( $option['value'] ); ?>"
-               data-color="<?php echo esc_attr( $option['color'] ); ?>" <?php echo esc_attr( ( $field['default_value'] && ( $field['value'] === $option['value'] ) ) || in_array( $option['value'], $df_val ) ? 'checked' : '' ); ?>>
+               data-color="<?php echo esc_attr( $option['color'] ); ?>" <?php echo esc_attr( ( $field['default_value'] && ( $field['value'] === $option['value'] ) ) || in_array( $option['value'], $default_value ) ? 'checked' : '' ); ?>>
         <label for="<?php echo esc_attr( $option_key ); ?>">
             <?php
             do_action( 'wpcpo_color_checkbox_option_before', $option, $field );

@@ -6,7 +6,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$df_val = isset( $_GET[ $key ] ) ? explode( ',', $_GET[ $key ] ) : [];
+$default_value = isset( $_GET[ $key ] ) ? explode( ',', $_GET[ $key ] ) : [];
 
 if ( empty( $field['options'] ) || ! is_array( $field['options'] ) ) {
     return;
@@ -26,7 +26,7 @@ foreach ( $field['options'] as $option_key => $option ) {
                    data-price-type="<?php echo esc_attr( $option['price_type'] ); ?>"
                    data-price="<?php echo esc_attr( $option['price'] ); ?>"
                    data-price-custom="<?php echo esc_attr( $option['custom_price'] ); ?>"
-                   value="<?php echo esc_attr( $option['value'] ); ?>" <?php echo esc_attr( ( $field['default_value'] && ( $field['value'] === $option['value'] ) ) || in_array( $option['value'], $df_val ) ? 'checked' : '' ); ?>>
+                   value="<?php echo esc_attr( $option['value'] ); ?>" <?php echo esc_attr( ( $field['default_value'] && ( $field['value'] === $option['value'] ) ) || in_array( $option['value'], $default_value ) ? 'checked' : '' ); ?>>
             <?php echo esc_html( $option_label ); ?>
             <span><?php echo Wpcpo_Frontend::get_label_price( $option, 'option' ); ?></span>
             <input type="hidden" name="<?php echo esc_attr( $option_key . '[label]' ); ?>"

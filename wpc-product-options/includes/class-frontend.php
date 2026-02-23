@@ -95,6 +95,15 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 			wp_enqueue_style( 'wpcdpk', WPCPO_URI . 'assets/libs/wpcdpk/css/datepicker.css' );
 			wp_enqueue_script( 'wpcdpk', WPCPO_URI . 'assets/libs/wpcdpk/js/datepicker.js', [ 'jquery' ], WPCPO_VERSION, true );
 
+			if ( Wpcpo_Backend::get_setting( 'tooltip_library', 'hint' ) === 'hint' ) {
+				wp_enqueue_style( 'hint', WPCPO_URI . 'assets/libs/hint/hint.css' );
+			}
+
+			if ( Wpcpo_Backend::get_setting( 'tooltip_library', 'hint' ) === 'tippy' ) {
+				wp_enqueue_script( 'popper', WPCPO_URI . 'assets/libs/tippy/popper.min.js', [ 'jquery' ], WPCPO_VERSION );
+				wp_enqueue_script( 'tippy', WPCPO_URI . 'assets/libs/tippy/tippy-bundle.umd.min.js', [ 'jquery' ], WPCPO_VERSION );
+			}
+
 			wp_enqueue_style( 'wpcpo-frontend', WPCPO_URI . 'assets/css/frontend.css' );
 
 			// Enqueuing CSS stylesheet for Iris (the easy part)
@@ -147,6 +156,7 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 				'price_decimal_separator'  => wc_get_price_decimal_separator(),
 				'price_thousand_separator' => wc_get_price_thousand_separator(),
 				'trim_zeros'               => apply_filters( 'woocommerce_price_trim_zeros', false ),
+				'tooltip_library'          => Wpcpo_Backend::get_setting( 'tooltip_library', 'none' ),
 				'change_url'               => apply_filters( 'wpcpo_change_url', Wpcpo_Backend::get_setting( 'change_url', 'no' ) === 'yes' ),
 				'summary_free'             => apply_filters( 'wpcpo_summary_free', Wpcpo_Backend::get_setting( 'summary_free', 'no' ) === 'yes' ),
 				'summary_clear'            => apply_filters( 'wpcpo_summary_clear', Wpcpo_Backend::get_setting( 'summary_clear', 'no' ) === 'yes' ),
