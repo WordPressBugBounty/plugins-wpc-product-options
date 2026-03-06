@@ -264,7 +264,8 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 					// file upload
 					if ( isset( $data['type'] ) && $data['type'] === 'file' ) {
 						if ( ! empty( $_FILES[ $key ] ) && ! empty( $_FILES[ $key ]['name'] ) ) {
-							$upload = $this->handle_upload( $_FILES[ $key ] );
+							$_FILES[ $key ]['name'] = sanitize_file_name( $_FILES[ $key ]['name'] );
+							$upload                 = $this->handle_upload( $_FILES[ $key ] );
 
 							if ( $upload && empty( $upload['error'] ) ) {
 								$data['value']        = basename( wc_clean( $upload['url'] ) );
