@@ -17,7 +17,7 @@ if ( empty( $field['options'] ) || ! is_array( $field['options'] ) ) {
             name="<?php echo esc_attr( $key . '[value]' ); ?>"
             id="<?php echo esc_attr( $key ); ?>"
             data-title="<?php echo esc_attr( $field['title'] ); ?>" <?php echo esc_attr( ! empty( $field['required'] ) ? 'required' : '' ); ?>>
-        <option value=""><?php esc_html_e( 'Select an option...', 'wpc-product-options' ); ?></option>
+        <option value=""><?php echo Wpcpo_Backend::localization( 'select_an_option', esc_html__( 'Select an option...', 'wpc-product-options' ) ); ?></option>
         <?php foreach ( $field['options'] as $option_key => $option ) {
             if ( isset( $option['value'] ) && $option['value'] !== '' ) {
                 $option_label = isset( $option['name'] ) && $option['name'] !== '' ? $option['name'] : $option['value'];

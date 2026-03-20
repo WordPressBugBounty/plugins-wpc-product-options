@@ -24,6 +24,7 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
             add_action( 'init', [ $this, 'init' ] );
             add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
             add_action( 'admin_init', [ $this, 'register_settings' ] );
+            add_filter( 'pre_update_option', [ $this, 'last_saved' ], 10, 2 );
             add_action( 'admin_menu', [ $this, 'admin_menu' ] );
             add_filter( 'plugin_action_links', [ $this, 'action_links' ], 10, 2 );
             add_filter( 'plugin_row_meta', [ $this, 'row_meta' ], 10, 2 );
@@ -234,6 +235,15 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
             ] );
         }
 
+        function last_saved( $value, $option ) {
+            if ( $option == 'wpcpo_settings' || $option == 'wpcpo_localization' ) {
+                $value['_last_saved']    = current_time( 'timestamp' );
+                $value['_last_saved_by'] = get_current_user_id();
+            }
+
+            return $value;
+        }
+
         function admin_menu() {
             add_submenu_page( 'wpclever', esc_html__( 'WPC Product Options', 'wpc-product-options' ), esc_html__( 'Product Options', 'wpc-product-options' ), 'manage_options', 'wpclever-wpcpo', [
                     $this,
@@ -366,7 +376,16 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
                                 </tr>
                                 <tr class="submit">
                                     <th colspan="2">
-                                        <?php settings_fields( 'wpcpo_settings' ); ?><?php submit_button(); ?>
+                                        <div class="wpclever_submit">
+                                            <?php
+                                            settings_fields( 'wpcpo_settings' );
+                                            submit_button( '', 'primary', 'submit', false );
+
+                                            if ( function_exists( 'wpc_last_saved' ) ) {
+                                                wpc_last_saved( self::get_settings() );
+                                            }
+                                            ?>
+                                        </div>
                                     </th>
                                 </tr>
                             </table>
@@ -412,6 +431,17 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
                                     </td>
                                 </tr>
                                 <tr>
+                                    <th><?php esc_html_e( 'Select an option...', 'wpc-product-options' ); ?></th>
+                                    <td>
+                                        <label>
+                                            <input type="text" class="regular-text"
+                                                   name="wpcpo_localization[select_an_option]"
+                                                   value="<?php echo esc_attr( self::localization( 'select_an_option' ) ); ?>"
+                                                   placeholder="<?php esc_attr_e( 'Select an option...', 'wpc-product-options' ); ?>"/>
+                                        </label>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <th><?php esc_html_e( 'Clear all', 'wpc-product-options' ); ?></th>
                                     <td>
                                         <label>
@@ -423,7 +453,16 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
                                 </tr>
                                 <tr class="submit">
                                     <th colspan="2">
-                                        <?php settings_fields( 'wpcpo_localization' ); ?><?php submit_button(); ?>
+                                        <div class="wpclever_submit">
+                                            <?php
+                                            settings_fields( 'wpcpo_localization' );
+                                            submit_button( '', 'primary', 'submit', false );
+
+                                            if ( function_exists( 'wpc_last_saved' ) ) {
+                                                wpc_last_saved( get_option( 'wpcpo_localization', [] ) );
+                                            }
+                                            ?>
+                                        </div>
                                     </th>
                                 </tr>
                             </table>
