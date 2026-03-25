@@ -99,5 +99,7 @@ foreach ( $field['options'] as $option_key => $option ) {
         <input type="hidden" name="<?php echo esc_attr( $option_key . '[type]' ); ?>" value="image-checkbox"/>
         <input type="hidden" name="<?php echo esc_attr( $option_key . '[image]' ); ?>"
                value="<?php echo esc_attr( $option['image'] ); ?>"/>
+        <input type="hidden" name="<?php echo esc_attr( $option_key . '[field]' ); ?>"
+               value="<?php echo esc_attr( $key ); ?>"/><!-- // store main key to combine -->
     <?php }
 }

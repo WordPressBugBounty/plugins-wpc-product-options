@@ -353,41 +353,75 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 				return $item_data;
 			}
 
-			foreach ( $cart_item['wpcpo-options'] as $option_key => $option ) {
+			$combined = [];
+			$options  = $cart_item['wpcpo-options'];
+
+			foreach ( $options as $option_key => $option ) {
 				if ( isset( $option['value'] ) && ( $option['value'] !== '' ) ) {
+					if ( apply_filters( 'wpcpo_cart_item_data_combine', false ) && in_array( $option_key, $combined ) ) {
+						continue;
+					}
+
+					$data_value   = [];
+					$data_value[] = self::get_item_data_str( $option_key, $option, $cart_item );
+
+					if ( apply_filters( 'wpcpo_cart_item_data_combine', false ) && ! empty( $option['field'] ) && empty( $option['combined'] ) ) {
+						$combined[] = $option_key;
+
+						// find another option has same field to combine
+						foreach ( $options as $opt_key => $opt ) {
+							if ( ! empty( $opt['field'] ) && $opt['field'] === $option['field'] && $opt_key !== $option_key && ! in_array( $opt_key, $combined ) ) {
+								$combined[] = $opt_key;
+
+								$data_value[] = self::get_item_data_str( $opt_key, $opt, $cart_item );
+							}
+						}
+					}
+
+					$separator = apply_filters( 'wpcpo_cart_item_data_separator', '; ', $option_key, $option, $cart_item );
+
 					$data = [
-						'name'    => $option['title'],
-						'value'   => '<span class="' . esc_attr( 'wpcpo-item-data-value wpcpo-item-data-' . ( $option['type'] ?? 'default' ) ) . '">' . ( isset( $option['label'] ) && $option['label'] !== '' ? $option['label'] : $option['value'] ) . '</span>',
-						'display' => '',
+						'name'  => $option['title'],
+						'value' => '<span class="' . esc_attr( 'wpcpo-item-data-value wpcpo-item-data-' . ( $option['type'] ?? 'default' ) ) . '">' . implode( $separator, $data_value ) . '</span>',
 					];
-
-					if ( ! empty( $option['type'] ) ) {
-						if ( ( $option['type'] === 'color-picker' ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'color-picker' ) ) {
-							$data['value'] = '<span class="wpcpo-item-data-color box-color-picker" style="background: ' . $option['value'] . '"></span> ' . $option['value'];
-						}
-
-						if ( ( $option['type'] === 'image-radio' ) && ! empty( $option['image'] ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'image-radio' ) ) {
-							$data['value'] = '<span class="wpcpo-item-data-image box-image-radio">' . wp_get_attachment_image( $option['image'] ) . '</span>';
-						}
-
-						if ( ( $option['type'] === 'image-checkbox' ) && ! empty( $option['image'] ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'image-checkbox' ) ) {
-							$data['value'] = '<span class="wpcpo-item-data-image box-image-checkbox">' . wp_get_attachment_image( $option['image'] ) . '</span>';
-						}
-
-						if ( ( $option['type'] === 'file' ) && ( isset( $option['url'] ) || isset( $option['file_url'] ) ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'file' ) ) {
-							$data['value'] = '<span class="wpcpo-item-data-file"><a target="_blank" href="' . esc_url( $option['file_url'] ?? self::get_cart_file_link( $option_key, $cart_item['key'] ) ) . '">' . $option['value'] . '</a></span>';
-						}
-					}
-
-					if ( ! empty( $option['display_price'] ) ) {
-						$data['display'] = '<span class="' . esc_attr( 'wpcpo-item-data-display wpcpo-item-data-' . ( $option['type'] ?? 'default' ) ) . '">' . $data['value'] . ' <span class="wpcpo-item-data-price">(' . wc_price( $option['display_price'] ) . ')</span></span>';
-					}
 
 					$item_data[] = apply_filters( 'wpcpo_cart_item_data', $data, $option, $cart_item );
 				}
 			}
 
 			return $item_data;
+		}
+
+		public function get_item_data_str( $option_key, $option, $cart_item ) {
+			$data_value_str = isset( $option['label'] ) && $option['label'] !== '' ? $option['label'] : $option['value'];
+
+			if ( ! empty( $option['type'] ) ) {
+				if ( ( $option['type'] === 'color-picker' ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'color-picker' ) ) {
+					$data_value_str = '<span class="box-color-picker" style="background: ' . $option['value'] . '"></span> ' . $option['value'];
+				}
+
+				if ( ( $option['type'] === 'color-checkbox' ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'color-checkbox' ) ) {
+					$data_value_str = '<span class="box-color-picker" style="background: ' . $option['color'] . '"></span> ' . $option['label'];
+				}
+
+				if ( ( $option['type'] === 'image-radio' ) && ! empty( $option['image'] ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'image-radio' ) ) {
+					$data_value_str = '<span class="box-image-radio">' . wp_get_attachment_image( $option['image'] ) . '</span>';
+				}
+
+				if ( ( $option['type'] === 'image-checkbox' ) && ! empty( $option['image'] ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'image-checkbox' ) ) {
+					$data_value_str = '<span class="box-image-checkbox">' . wp_get_attachment_image( $option['image'] ) . '</span>';
+				}
+
+				if ( ( $option['type'] === 'file' ) && ( isset( $option['url'] ) || isset( $option['file_url'] ) ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'file' ) ) {
+					$data_value_str = '<span class="box-file"><a target="_blank" href="' . esc_url( $option['file_url'] ?? self::get_cart_file_link( $option_key, $cart_item['key'] ) ) . '">' . $option['value'] . '</a></span>';
+				}
+			}
+
+			if ( ! empty( $option['display_price'] ) ) {
+				$data_value_str .= ' <span class="wpcpo-item-data-price">(' . wc_price( $option['display_price'] ) . ')</span>';
+			}
+
+			return $data_value_str;
 		}
 
 		public function order_line_item( $item, $cart_item_key, $values ) {
@@ -398,19 +432,45 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 
 		function order_item_meta( $item_id, $item ) {
 			if ( $options = $item->get_meta( '_wpcpo_options_v2' ) ) {
-				$meta = '<ul class="wpcpo-order-item-options">';
+				$combined = [];
+				$meta     = '<ul class="wpcpo-order-item-options">';
 
 				foreach ( $options as $option_key => $option ) {
-					if ( $option['type'] === 'file' ) {
-						$meta .= '<li><strong>' . esc_html( $option['title'] ) . ':</strong> <a target="_blank" href="' . self::get_order_file_link( $option_key, $item ) . '">' . $option['value'] . '</a> (<a target="_blank" href="' . self::get_order_file_link( $option_key, $item, true ) . '">' . esc_html__( 'download', 'wpc-product-options' ) . '</a>)</li>';
-					} else {
-						$meta .= '<li><strong>' . esc_html( $option['title'] ) . ':</strong> ' . esc_html( isset( $option['label'] ) && $option['label'] !== '' ? $option['label'] : $option['value'] ) . '</li>';
+					if ( apply_filters( 'wpcpo_order_item_data_combine', false ) && in_array( $option_key, $combined ) ) {
+						continue;
 					}
+
+					$data_value   = [];
+					$data_value[] = self::order_item_meta_str( $option_key, $option, $item );
+
+					if ( apply_filters( 'wpcpo_order_item_data_combine', false ) && ! empty( $option['field'] ) && empty( $option['combined'] ) ) {
+						$combined[] = $option_key;
+
+						// find another option has same field to combine
+						foreach ( $options as $opt_key => $opt ) {
+							if ( ! empty( $opt['field'] ) && $opt['field'] === $option['field'] && $opt_key !== $option_key && ! in_array( $opt_key, $combined ) ) {
+								$combined[] = $opt_key;
+
+								$data_value[] = self::order_item_meta_str( $opt_key, $opt, $item );
+							}
+						}
+					}
+
+					$separator = apply_filters( 'wpcpo_order_item_data_separator', '; ', $option_key, $option, $item );
+					$meta      .= '<li><strong>' . esc_html( $option['title'] ) . ':</strong> ' . implode( $separator, $data_value ) . '</li>';
 				}
 
 				$meta .= '</ul>';
 
 				echo apply_filters( 'wpcpo_order_item_meta', $meta, $item );
+			}
+		}
+
+		function order_item_meta_str( $option_key, $option, $item ) {
+			if ( $option['type'] === 'file' ) {
+				return '<a target="_blank" href="' . self::get_order_file_link( $option_key, $item ) . '">' . $option['value'] . '</a> (<a target="_blank" href="' . self::get_order_file_link( $option_key, $item, true ) . '">' . esc_html__( 'download', 'wpc-product-options' ) . '</a>';
+			} else {
+				return esc_html( isset( $option['label'] ) && $option['label'] !== '' ? $option['label'] : $option['value'] );
 			}
 		}
 

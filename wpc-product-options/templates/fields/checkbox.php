@@ -40,6 +40,8 @@ foreach ( $field['options'] as $option_key => $option ) {
             <input type="hidden" name="<?php echo esc_attr( $option_key . '[title]' ); ?>"
                    value="<?php echo esc_attr( $field['title'] ); ?>"/>
             <input type="hidden" name="<?php echo esc_attr( $option_key . '[type]' ); ?>" value="checkbox"/>
+            <input type="hidden" name="<?php echo esc_attr( $option_key . '[field]' ); ?>"
+                   value="<?php echo esc_attr( $key ); ?>"/><!-- // store main key to combine -->
         </label>
     <?php }
 }
