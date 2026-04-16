@@ -136,7 +136,7 @@
         wpcpo_validate($options);
     });
 
-    $(document).on('keyup change', '.wpcpo-option-field-dimension', function () {
+    $(document).on('change', '.wpcpo-option-field-dimension', function () {
         let $this = $(this);
 
         if (parseFloat($this.val()) < parseFloat($this.attr('min'))) {
