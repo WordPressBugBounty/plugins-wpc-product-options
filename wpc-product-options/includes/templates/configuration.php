@@ -13,7 +13,7 @@ $terms     = ( is_array( $terms ) ) ? $terms : [];
                 <option value="none" <?php selected( $apply_for, 'none' ); ?>><?php esc_html_e( 'None', 'woo-product-timer' ); ?></option>
                 <option value="all" <?php selected( $apply_for, 'all' ); ?>><?php esc_html_e( 'All products', 'woo-product-timer' ); ?></option>
                 <?php
-                $taxonomies = get_object_taxonomies( 'product', 'objects' ); //$taxonomies = get_taxonomies( [ 'object_type' => [ 'product' ] ], 'objects' );
+                $taxonomies = get_object_taxonomies( 'product', 'objects' ); 
 
                 foreach ( $taxonomies as $taxonomy ) {
                     echo '<option value="' . esc_attr( $taxonomy->name ) . '" ' . selected( $apply_for, $taxonomy->name, false ) . '>' . esc_html( $taxonomy->label ) . '</option>';
