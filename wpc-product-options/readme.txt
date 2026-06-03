@@ -4,8 +4,8 @@ Donate link: https://wpclever.net
 Tags: woocommerce, wpc, options, product options, product addons
 Requires at least: 4.0
 Tested up to: 7.0
-Version: 3.2.1
-Stable tag: 3.2.1
+Version: 3.2.2
+Stable tag: 3.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,9 @@ Please try other plugins from us:
 5. When adding/editing the product, you can choose the Product Options tab then add some options as you want
 
 == Changelog ==
+
+= 3.2.2 =
+* Fixed: Vulnerability issue reported by NGUYEN DINH HUNG
 
 = 3.2.1 =
 * Fixed: Minor CSS/JS issues in the backend

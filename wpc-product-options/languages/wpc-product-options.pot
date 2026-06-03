@@ -2,40 +2,35 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WPC Product Options for WooCommerce 3.2.1\n"
+"Project-Id-Version: WPC Product Options for WooCommerce 3.2.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpc-product-options\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-28T04:04:31+00:00\n"
+"POT-Creation-Date: 2026-06-03T08:18:43+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.12.0\n"
+"X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: wpc-product-options\n"
 
 #. Plugin Name of the plugin
-#: wpc-product-options.php
 msgid "WPC Product Options for WooCommerce"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: wpc-product-options.php
 msgid "https://wpclever.net/"
 msgstr ""
 
 #. Description of the plugin
-#: wpc-product-options.php
 msgid "WPC Product Options brings about the power of adjusting prices with highly customizable additional fields for products."
 msgstr ""
 
 #. Author of the plugin
-#: wpc-product-options.php
 msgid "WPClever"
 msgstr ""
 
 #. Author URI of the plugin
-#: wpc-product-options.php
 msgid "https://wpclever.net"
 msgstr ""
 
@@ -98,7 +93,6 @@ msgstr ""
 
 #. translators: stars
 #: includes/class-backend.php:265
-#, php-format
 msgid "Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating."
 msgstr ""
 
@@ -309,30 +303,33 @@ msgstr ""
 msgid "After options"
 msgstr ""
 
-#: includes/class-cart.php:207
-#: includes/class-cart.php:227
-#: includes/class-cart.php:234
-#: includes/class-cart.php:241
+#: includes/class-cart.php:66
+#: includes/class-cart.php:120
+msgid "Invalid file path."
+msgstr ""
+
+#: includes/class-cart.php:219
+#: includes/class-cart.php:239
+#: includes/class-cart.php:246
+#: includes/class-cart.php:253
 msgid "You cannot add this product to the cart."
 msgstr ""
 
-#: includes/class-cart.php:228
+#: includes/class-cart.php:240
 msgid "The uploaded file has an incorrect extension."
 msgstr ""
 
 #. translators: file size
-#: includes/class-cart.php:235
-#, php-format
+#: includes/class-cart.php:247
 msgid "The uploaded file must be larger than %s in size."
 msgstr ""
 
 #. translators: file size
-#: includes/class-cart.php:242
-#, php-format
+#: includes/class-cart.php:254
 msgid "The uploaded file exceeds %s in size."
 msgstr ""
 
-#: includes/class-cart.php:471
+#: includes/class-cart.php:517
 msgid "download"
 msgstr ""
 
@@ -767,25 +764,21 @@ msgstr ""
 
 #. translators: file size
 #: templates/fields/file-upload.php:34
-#, php-format
 msgid "min file size %s"
 msgstr ""
 
 #. translators: file size
 #: templates/fields/file-upload.php:38
 #: templates/fields/file-upload.php:40
-#, php-format
 msgid "max file size %s"
 msgstr ""
 
 #. translators: file size
 #: templates/fields/file-upload.php:44
-#, php-format
 msgid "(%s)"
 msgstr ""
 
 #. translators: file size
 #: templates/fields/file-upload.php:46
-#, php-format
 msgid "(%1$s - %2$s)"
 msgstr ""

@@ -60,7 +60,13 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 				if ( isset( WC()->cart->cart_contents[ $cart_item_key ]['wpcpo-options'][ $file_key ]['url'] ) ) {
 					$file_name     = WC()->cart->cart_contents[ $cart_item_key ]['wpcpo-options'][ $file_key ]['value'];
 					$tmp_file_name = WC()->cart->cart_contents[ $cart_item_key ]['wpcpo-options'][ $file_key ]['file'];
-					$mime_type     = false;
+
+					// Security: validate the file path is within the uploads directory
+					if ( ! $this->validate_file_path( $tmp_file_name ) ) {
+						wp_die( esc_html__( 'Invalid file path.', 'wpc-product-options' ), 403 );
+					}
+
+					$mime_type = false;
 
 					if ( function_exists( 'finfo_open' ) ) {
 						$finfo     = finfo_open( FILEINFO_MIME_TYPE );
@@ -108,7 +114,13 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 				if ( ( $options = wc_get_order_item_meta( $order_item_id, '_wpcpo_options_v2' ) ) && isset( $options[ $file_key ] ) ) {
 					$file_name     = $options[ $file_key ]['value'];
 					$tmp_file_name = $options[ $file_key ]['file'];
-					$mime_type     = false;
+
+					// Security: validate the file path is within the uploads directory
+					if ( ! $this->validate_file_path( $tmp_file_name ) ) {
+						wp_die( esc_html__( 'Invalid file path.', 'wpc-product-options' ), 403 );
+					}
+
+					$mime_type = false;
 
 					if ( function_exists( 'finfo_open' ) ) {
 						$finfo     = finfo_open( FILEINFO_MIME_TYPE );
@@ -275,7 +287,9 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 							}
 						}
 					} else {
-						$post_options[ $key ] = $data;
+						// Security: sanitize option data - strip keys that should only come from file uploads
+						unset( $data['file'], $data['url'], $data['file_url'] );
+						$post_options[ $key ] = wc_clean( $data );
 					}
 
 					if ( apply_filters( 'wpcpo_clear_request_data', true, $cart_item_data, $product_id ) ) {
@@ -309,6 +323,38 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 			remove_filter( 'upload_dir', [ $this, 'upload_dir' ] );
 
 			return $upload;
+		}
+
+		/**
+		 * Validate that a file path is within the WordPress uploads directory.
+		 * Prevents arbitrary file read attacks via path traversal.
+		 *
+		 * @param string $file_path The file path to validate.
+		 *
+		 * @return bool True if the path is valid and within uploads directory.
+		 */
+		private function validate_file_path( $file_path ) {
+			if ( empty( $file_path ) || ! is_string( $file_path ) ) {
+				return false;
+			}
+
+			// Resolve the real path to prevent directory traversal (../ etc.)
+			$real_path = realpath( $file_path );
+
+			if ( false === $real_path ) {
+				return false;
+			}
+
+			// The file must be within the WordPress uploads directory
+			$upload_dir = wp_upload_dir();
+			$upload_base = realpath( $upload_dir['basedir'] );
+
+			if ( false === $upload_base ) {
+				return false;
+			}
+
+			// Ensure the resolved path starts with the upload base directory
+			return str_starts_with( $real_path, $upload_base . DIRECTORY_SEPARATOR );
 		}
 
 		public function unique_filename( $dir, $name, $ext ) {
