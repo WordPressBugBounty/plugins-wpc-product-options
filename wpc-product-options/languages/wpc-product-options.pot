@@ -2,39 +2,44 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WPC Product Options for WooCommerce 3.2.2\n"
+"Project-Id-Version: WPC Product Options for WooCommerce 4.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpc-product-options\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-03T08:18:43+00:00\n"
+"POT-Creation-Date: 2026-06-24T04:38:56+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.5.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wpc-product-options\n"
 
 #. Plugin Name of the plugin
+#: wpc-product-options.php
 msgid "WPC Product Options for WooCommerce"
 msgstr ""
 
 #. Plugin URI of the plugin
+#: wpc-product-options.php
 msgid "https://wpclever.net/"
 msgstr ""
 
 #. Description of the plugin
+#: wpc-product-options.php
 msgid "WPC Product Options brings about the power of adjusting prices with highly customizable additional fields for products."
 msgstr ""
 
 #. Author of the plugin
+#: wpc-product-options.php
 msgid "WPClever"
 msgstr ""
 
 #. Author URI of the plugin
+#: wpc-product-options.php
 msgid "https://wpclever.net"
 msgstr ""
 
-#: includes/class-backend.php:89
+#: includes/class-backend.php:87
 #: includes/templates/fields/color-picker.php:14
 #: includes/templates/fields/date-picker.php:14
 #: includes/templates/fields/date-range-picker.php:14
@@ -48,258 +53,259 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: includes/class-backend.php:90
+#: includes/class-backend.php:88
 msgid "Description"
 msgstr ""
 
-#: includes/class-backend.php:91
+#: includes/class-backend.php:89
 msgid "Summary"
 msgstr ""
 
-#: includes/class-backend.php:92
+#: includes/class-backend.php:90
 msgid "Date"
 msgstr ""
 
-#: includes/class-backend.php:106
-#: includes/class-backend.php:133
+#: includes/class-backend.php:104
+#: includes/class-backend.php:131
 #: includes/templates/panel.php:9
 msgid "Fields"
 msgstr ""
 
-#: includes/class-backend.php:107
+#: includes/class-backend.php:105
 #: includes/templates/configuration.php:10
 msgid "Apply"
 msgstr ""
 
-#: includes/class-backend.php:116
-#: includes/class-backend.php:248
-#: includes/class-backend.php:295
-#: includes/class-backend.php:517
+#: includes/class-backend.php:114
+#: includes/class-backend.php:246
+#: includes/class-backend.php:293
+#: includes/class-backend.php:515
 msgid "Product Options"
 msgstr ""
 
-#: includes/class-backend.php:128
+#: includes/class-backend.php:126
 msgid "Configuration"
 msgstr ""
 
-#: includes/class-backend.php:248
-#: includes/class-backend.php:262
+#: includes/class-backend.php:246
+#: includes/class-backend.php:260
 msgid "WPC Product Options"
 msgstr ""
 
-#: includes/class-backend.php:262
+#: includes/class-backend.php:260
 msgid "Premium"
 msgstr ""
 
 #. translators: stars
-#: includes/class-backend.php:265
+#: includes/class-backend.php:263
+#, php-format
 msgid "Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating."
 msgstr ""
 
-#: includes/class-backend.php:268
+#: includes/class-backend.php:266
 msgid "Reviews"
 msgstr ""
 
-#: includes/class-backend.php:270
+#: includes/class-backend.php:268
 msgid "Changelog"
 msgstr ""
 
-#: includes/class-backend.php:272
+#: includes/class-backend.php:270
 msgid "Discussion"
 msgstr ""
 
-#: includes/class-backend.php:280
+#: includes/class-backend.php:278
 msgid "Settings updated."
 msgstr ""
 
-#: includes/class-backend.php:287
-#: includes/class-backend.php:516
+#: includes/class-backend.php:285
+#: includes/class-backend.php:514
 msgid "Settings"
 msgstr ""
 
-#: includes/class-backend.php:291
-#: includes/class-backend.php:397
+#: includes/class-backend.php:289
+#: includes/class-backend.php:395
 msgid "Localization"
 msgstr ""
 
-#: includes/class-backend.php:300
-#: includes/class-backend.php:518
+#: includes/class-backend.php:298
+#: includes/class-backend.php:516
 msgid "Premium Version"
 msgstr ""
 
-#: includes/class-backend.php:303
+#: includes/class-backend.php:301
 msgid "Essential Kit"
 msgstr ""
 
-#: includes/class-backend.php:319
+#: includes/class-backend.php:317
 msgid "General"
 msgstr ""
 
-#: includes/class-backend.php:323
+#: includes/class-backend.php:321
 msgid "Position"
 msgstr ""
 
-#: includes/class-backend.php:326
+#: includes/class-backend.php:324
 msgid "Above the add to cart button"
 msgstr ""
 
-#: includes/class-backend.php:327
+#: includes/class-backend.php:325
 msgid "Under the add to cart button"
 msgstr ""
 
-#: includes/class-backend.php:328
+#: includes/class-backend.php:326
 msgid "None (Hide it)"
 msgstr ""
 
-#: includes/class-backend.php:330
+#: includes/class-backend.php:328
 msgid "Choose the position to show product options on a single product page. You can also place the shortcode [wpcpo] inside the add-to-cart form."
 msgstr ""
 
-#: includes/class-backend.php:334
+#: includes/class-backend.php:332
 msgid "Tooltip library"
 msgstr ""
 
-#: includes/class-backend.php:337
+#: includes/class-backend.php:335
 msgid "Hint.css"
 msgstr ""
 
-#: includes/class-backend.php:338
+#: includes/class-backend.php:336
 msgid "Tippy.js"
 msgstr ""
 
-#: includes/class-backend.php:339
+#: includes/class-backend.php:337
 msgid "None (Disable)"
 msgstr ""
 
-#: includes/class-backend.php:348
+#: includes/class-backend.php:346
 msgid "Summary of free options"
 msgstr ""
 
-#: includes/class-backend.php:351
-#: includes/class-backend.php:361
-#: includes/class-backend.php:371
+#: includes/class-backend.php:349
+#: includes/class-backend.php:359
+#: includes/class-backend.php:369
 msgid "No"
 msgstr ""
 
-#: includes/class-backend.php:352
-#: includes/class-backend.php:362
-#: includes/class-backend.php:372
+#: includes/class-backend.php:350
+#: includes/class-backend.php:360
+#: includes/class-backend.php:370
 msgid "Yes"
 msgstr ""
 
-#: includes/class-backend.php:354
+#: includes/class-backend.php:352
 msgid "Display free options on the summary."
 msgstr ""
 
-#: includes/class-backend.php:358
+#: includes/class-backend.php:356
 msgid "\"Clear all\" button"
 msgstr ""
 
-#: includes/class-backend.php:364
+#: includes/class-backend.php:362
 msgid "Display the \"Clear all\" button to clear all selected options."
 msgstr ""
 
-#: includes/class-backend.php:368
+#: includes/class-backend.php:366
 msgid "Change URL (Beta)"
 msgstr ""
 
-#: includes/class-backend.php:374
+#: includes/class-backend.php:372
 msgid "Change the product URL based on selected options."
 msgstr ""
 
-#: includes/class-backend.php:399
+#: includes/class-backend.php:397
 msgid "Leave blank to use the default text and its equivalent translation in multiple languages."
 msgstr ""
 
-#: includes/class-backend.php:403
+#: includes/class-backend.php:401
 msgid "Subtotal"
 msgstr ""
 
-#: includes/class-backend.php:408
+#: includes/class-backend.php:406
 #: includes/class-frontend.php:151
 msgid "Subtotal:"
 msgstr ""
 
-#: includes/class-backend.php:413
-#: includes/class-backend.php:418
+#: includes/class-backend.php:411
+#: includes/class-backend.php:416
 msgid "Free"
 msgstr ""
 
-#: includes/class-backend.php:423
+#: includes/class-backend.php:421
 msgid "Characters remaining"
 msgstr ""
 
-#: includes/class-backend.php:429
+#: includes/class-backend.php:427
 #: includes/class-frontend.php:152
 msgid "characters remaining"
 msgstr ""
 
-#: includes/class-backend.php:434
-#: includes/class-backend.php:440
+#: includes/class-backend.php:432
+#: includes/class-backend.php:438
 #: templates/fields/select.php:20
 msgid "Select an option..."
 msgstr ""
 
-#: includes/class-backend.php:445
+#: includes/class-backend.php:443
 msgid "Clear all"
 msgstr ""
 
-#: includes/class-backend.php:450
+#: includes/class-backend.php:448
 #: includes/class-frontend.php:150
 msgid "Clear all options"
 msgstr ""
 
-#: includes/class-backend.php:534
+#: includes/class-backend.php:532
 msgid "Community support"
 msgstr ""
 
-#: includes/class-backend.php:684
+#: includes/class-backend.php:682
 msgctxt "Post Type General Name"
 msgid "Product Options"
 msgstr ""
 
-#: includes/class-backend.php:685
+#: includes/class-backend.php:683
 msgctxt "Post Type Singular Name"
 msgid "Product Option"
 msgstr ""
 
-#: includes/class-backend.php:686
+#: includes/class-backend.php:684
 msgid "Add New Product Option"
 msgstr ""
 
-#: includes/class-backend.php:687
+#: includes/class-backend.php:685
 msgid "Add New"
 msgstr ""
 
-#: includes/class-backend.php:688
+#: includes/class-backend.php:686
 msgid "Edit Product Option"
 msgstr ""
 
-#: includes/class-backend.php:689
+#: includes/class-backend.php:687
 msgid "Update Product Option"
 msgstr ""
 
-#: includes/class-backend.php:690
+#: includes/class-backend.php:688
 msgid "Search Product Option"
 msgstr ""
 
-#: includes/class-backend.php:694
+#: includes/class-backend.php:692
 msgid "Product Option"
 msgstr ""
 
-#: includes/class-backend.php:787
+#: includes/class-backend.php:785
 msgid "Before wrapper"
 msgstr ""
 
-#: includes/class-backend.php:788
+#: includes/class-backend.php:786
 msgid "After wrapper"
 msgstr ""
 
-#: includes/class-backend.php:789
+#: includes/class-backend.php:787
 msgid "Before options"
 msgstr ""
 
-#: includes/class-backend.php:790
+#: includes/class-backend.php:788
 msgid "After options"
 msgstr ""
 
@@ -321,11 +327,13 @@ msgstr ""
 
 #. translators: file size
 #: includes/class-cart.php:247
+#, php-format
 msgid "The uploaded file must be larger than %s in size."
 msgstr ""
 
 #. translators: file size
 #: includes/class-cart.php:254
+#, php-format
 msgid "The uploaded file exceeds %s in size."
 msgstr ""
 
@@ -764,21 +772,25 @@ msgstr ""
 
 #. translators: file size
 #: templates/fields/file-upload.php:34
+#, php-format
 msgid "min file size %s"
 msgstr ""
 
 #. translators: file size
 #: templates/fields/file-upload.php:38
 #: templates/fields/file-upload.php:40
+#, php-format
 msgid "max file size %s"
 msgstr ""
 
 #. translators: file size
 #: templates/fields/file-upload.php:44
+#, php-format
 msgid "(%s)"
 msgstr ""
 
 #. translators: file size
 #: templates/fields/file-upload.php:46
+#, php-format
 msgid "(%1$s - %2$s)"
 msgstr ""
