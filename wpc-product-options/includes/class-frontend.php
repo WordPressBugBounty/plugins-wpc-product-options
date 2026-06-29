@@ -92,11 +92,11 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 			}
 
 			// wpcdpk
-			wp_enqueue_style( 'wpcdpk', WPCPO_URI . 'assets/libs/wpcdpk/css/datepicker.css' );
+			wp_enqueue_style( 'wpcdpk', WPCPO_URI . 'assets/libs/wpcdpk/css/datepicker.css', [], WPCPO_VERSION );
 			wp_enqueue_script( 'wpcdpk', WPCPO_URI . 'assets/libs/wpcdpk/js/datepicker.js', [ 'jquery' ], WPCPO_VERSION, true );
 
 			if ( Wpcpo_Backend::get_setting( 'tooltip_library', 'hint' ) === 'hint' ) {
-				wp_enqueue_style( 'hint', WPCPO_URI . 'assets/libs/hint/hint.css' );
+				wp_enqueue_style( 'hint', WPCPO_URI . 'assets/libs/hint/hint.css', [], WPCPO_VERSION );
 			}
 
 			if ( Wpcpo_Backend::get_setting( 'tooltip_library', 'hint' ) === 'tippy' ) {
@@ -104,7 +104,7 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 				wp_enqueue_script( 'tippy', WPCPO_URI . 'assets/libs/tippy/tippy-bundle.umd.min.js', [ 'jquery' ], WPCPO_VERSION );
 			}
 
-			wp_enqueue_style( 'wpcpo-frontend', WPCPO_URI . 'assets/css/frontend.css' );
+			wp_enqueue_style( 'wpcpo-frontend', WPCPO_URI . 'assets/css/frontend.css', [], WPCPO_VERSION );
 
 			// Enqueuing CSS stylesheet for Iris (the easy part)
 			wp_enqueue_style( 'wp-color-picker' );

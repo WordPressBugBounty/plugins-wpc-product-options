@@ -63,6 +63,9 @@ defined( 'ABSPATH' ) || exit;
                         <div class="wpcpo-option-name">
                             <strong><?php echo esc_html( $field['title'] ); ?></strong>
                             <span><?php echo $frontend->get_label_price( $field ); ?></span>
+                            <?php if ( $field['type'] === 'file-upload' ) { ?>
+                                <span class="wpcpo-file-name"></span>
+                            <?php } ?>
                         </div>
                         <?php
                     }

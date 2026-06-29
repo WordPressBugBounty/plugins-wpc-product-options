@@ -124,6 +124,16 @@
             } else {
                 $this.val('');
             }
+        } else if ($this.hasClass('field-uploads')) {
+            // Show selected file name on mobile/desktop
+            let $fileName = $this.closest('.wpcpo-option').find('.wpcpo-file-name');
+            if ($fileName.length) {
+                if (this.files && this.files.length > 0) {
+                    $fileName.text(this.files[0].name);
+                } else {
+                    $fileName.text('');
+                }
+            }
         }
 
         wpcpo_validate($options);

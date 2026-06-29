@@ -136,19 +136,19 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
 
         public function save_product_options( $post_id ) {
             if ( isset( $_POST['wpcpo-fields'] ) ) {
-                update_post_meta( $post_id, 'wpcpo-fields', self::sanitize_array( $this->validate( $_POST['wpcpo-fields'] ) ) );
+                update_post_meta( $post_id, 'wpcpo-fields', self::sanitize_array( $this->validate( wp_unslash( $_POST['wpcpo-fields'] ?? '' ) ) ) );
             }
 
             if ( isset( $_POST['wpcpo-apply-for'] ) ) {
-                update_post_meta( $post_id, 'wpcpo-apply-for', sanitize_text_field( $_POST['wpcpo-apply-for'] ) );
+                update_post_meta( $post_id, 'wpcpo-apply-for', sanitize_text_field( wp_unslash( $_POST['wpcpo-apply-for'] ?? '' ) ) );
             }
 
             if ( isset( $_POST['wpcpo-apply'] ) ) {
-                update_post_meta( $post_id, 'wpcpo-apply', self::sanitize_array( $_POST['wpcpo-apply'] ) );
+                update_post_meta( $post_id, 'wpcpo-apply', self::sanitize_array( wp_unslash( $_POST['wpcpo-apply'] ?? '' ) ) );
             }
 
             if ( isset( $_POST['wpcpo-display'] ) ) {
-                update_post_meta( $post_id, 'wpcpo-display', sanitize_text_field( $_POST['wpcpo-display'] ) );
+                update_post_meta( $post_id, 'wpcpo-display', sanitize_text_field( wp_unslash( $_POST['wpcpo-display'] ?? '' ) ) );
             }
         }
 
@@ -200,10 +200,10 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
 
             wp_enqueue_media();
             wp_enqueue_style( 'wp-color-picker' );
-            wp_enqueue_style( 'hint', WPCPO_URI . 'assets/css/hint.css' );
+            wp_enqueue_style( 'hint', WPCPO_URI . 'assets/css/hint.css', [], WPCPO_VERSION );
 
             // wpcdpk
-            wp_enqueue_style( 'wpcdpk', WPCPO_URI . 'assets/libs/wpcdpk/css/datepicker.css' );
+            wp_enqueue_style( 'wpcdpk', WPCPO_URI . 'assets/libs/wpcdpk/css/datepicker.css', [], WPCPO_VERSION );
             wp_enqueue_script( 'wpcdpk', WPCPO_URI . 'assets/libs/wpcdpk/js/datepicker.js', [ 'jquery' ], WPCPO_VERSION, true );
 
             wp_enqueue_style( 'wpcpo-backend', WPCPO_URI . 'assets/css/backend.css', [ 'woocommerce_admin_styles' ], WPCPO_VERSION );
@@ -250,7 +250,7 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
         }
 
         function admin_menu_content() {
-            $active_tab = sanitize_key( $_GET['tab'] ?? 'settings' );
+            $active_tab = sanitize_key( wp_unslash( $_GET['tab'] ?? 'settings' ) );
             ?>
             <div class="wpclever_settings_page wrap">
                 <div class="wpclever_settings_page_header">
@@ -273,7 +273,7 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
                     </div>
                 </div>
                 <h2></h2>
-                <?php if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] ) { ?>
+                <?php if ( isset( $_GET['settings-updated'] ) && sanitize_text_field( wp_unslash( $_GET['settings-updated'] ?? '' ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
                     <div class="notice notice-success is-dismissible">
                         <p><?php esc_html_e( 'Settings updated.', 'wpc-product-options' ); ?></p>
                     </div>
@@ -539,19 +539,19 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
         }
 
         function ajax_search_term() {
-            if ( ! isset( $_REQUEST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_REQUEST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
+            if ( ! isset( $_REQUEST['nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['nonce'] ) ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
                 die( 'Permissions check failed!' );
             }
 
             $return = [];
 
             $args = [
-                    'taxonomy'   => sanitize_text_field( $_REQUEST['taxonomy'] ),
+                    'taxonomy'   => sanitize_text_field( wp_unslash( $_REQUEST['taxonomy'] ?? '' ) ),
                     'orderby'    => 'id',
                     'order'      => 'ASC',
                     'hide_empty' => false,
                     'fields'     => 'all',
-                    'name__like' => sanitize_text_field( $_REQUEST['q'] ),
+                    'name__like' => sanitize_text_field( wp_unslash( $_REQUEST['q'] ?? '' ) ),
             ];
 
             $terms = get_terms( $args );
@@ -637,42 +637,42 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
         }
 
         public function ajax_add_field() {
-            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
+            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['nonce'] ) ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
                 die( 'Permissions check failed!' );
             }
 
-            $type = sanitize_text_field( $_POST['type'] ?? 'text' );
+            $type = sanitize_text_field( wp_unslash( $_POST['type'] ?? 'text' ) );
             $this->get_field( $type, '', [], true );
             wp_die();
         }
 
         public function ajax_add_option() {
-            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
+            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['nonce'] ) ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
                 die( 'Permissions check failed!' );
             }
 
-            $this->field_id = sanitize_text_field( $_POST['field_id'] );
-            $type           = sanitize_text_field( $_POST['type'] );
+            $this->field_id = sanitize_text_field( wp_unslash( $_POST['field_id'] ?? '' ) );
+            $type           = sanitize_text_field( wp_unslash( $_POST['type'] ?? '' ) );
             $this->get_option( [], $type );
             wp_die();
         }
 
         public function ajax_add_dimension() {
-            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
+            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['nonce'] ) ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
                 die( 'Permissions check failed!' );
             }
 
-            $this->field_id = sanitize_text_field( $_POST['field_id'] );
+            $this->field_id = sanitize_text_field( wp_unslash( $_POST['field_id'] ?? '' ) );
             $this->get_dimension( [] );
             wp_die();
         }
 
         public function ajax_add_condition() {
-            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
+            if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['nonce'] ) ), 'wpcpo-security' ) || ! ( current_user_can( 'manage_options' ) || current_user_can( 'shop_manager' ) ) ) {
                 die( 'Permissions check failed!' );
             }
 
-            $this->field_id = sanitize_text_field( $_POST['field_id'] );
+            $this->field_id = sanitize_text_field( wp_unslash( $_POST['field_id'] ?? '' ) );
             $this->get_condition( [] );
             wp_die();
         }

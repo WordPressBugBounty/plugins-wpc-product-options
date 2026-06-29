@@ -50,8 +50,8 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 		function process_file_link() {
 			// cart file download
 			if ( isset( $_GET['wpcpo-key'], $_GET['wpcpo-cart-item'] ) && isset( $_GET['_wpnonce'] ) && ( false !== wp_verify_nonce( $_GET['_wpnonce'], 'wpcpo_cart_file' ) ) ) {
-				$file_key      = sanitize_text_field( wp_unslash( $_GET['wpcpo-key'] ) );
-				$cart_item_key = sanitize_text_field( wp_unslash( $_GET['wpcpo-cart-item'] ) );
+				$file_key      = sanitize_text_field( wp_unslash( $_GET['wpcpo-key'] ?? '' ) );
+				$cart_item_key = sanitize_text_field( wp_unslash( $_GET['wpcpo-cart-item'] ?? '' ) );
 
 				if ( ! str_starts_with( $file_key, 'wpcpo-' ) ) {
 					$file_key = 'wpcpo-' . $file_key;
@@ -104,8 +104,8 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 
 			// order file download
 			if ( isset( $_GET['wpcpo-key'], $_GET['wpcpo-order-item'] ) && isset( $_GET['_wpnonce'] ) ) {
-				$file_key      = sanitize_text_field( wp_unslash( $_GET['wpcpo-key'] ) );
-				$order_item_id = sanitize_text_field( wp_unslash( $_GET['wpcpo-order-item'] ) );
+				$file_key      = sanitize_text_field( wp_unslash( $_GET['wpcpo-key'] ?? '' ) );
+				$order_item_id = sanitize_text_field( wp_unslash( $_GET['wpcpo-order-item'] ?? '' ) );
 
 				if ( ! str_starts_with( $file_key, 'wpcpo-' ) ) {
 					$file_key = 'wpcpo-' . $file_key;
@@ -364,7 +364,7 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 		public function upload_dir( $path_data ) {
 			global $woocommerce;
 
-			$date_str = date( 'Ymd' );
+			$date_str = gmdate( 'Ymd' );
 			$user_str = md5( $woocommerce->session->get_customer_id() );
 			$folder   = trim( apply_filters( 'wpcpo_upload_folder', $date_str . '/' . $user_str ), '/' );
 

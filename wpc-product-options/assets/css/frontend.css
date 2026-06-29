@@ -329,4 +329,18 @@ form.cart [name=wpcpo-hidden-quantity] {
   padding: 0 !important;
 }
 
+/* Style for selected file name display */
+.wpcpo-file-name {
+  display: inline-block;
+  font-size: 13px;
+  color: #888888;
+  margin-left: 10px;
+  font-weight: normal;
+  vertical-align: middle;
+  word-break: break-all;
+}
+.wpcpo-file-name:empty {
+  display: none;
+}
+
 /*# sourceMappingURL=frontend.css.map */
