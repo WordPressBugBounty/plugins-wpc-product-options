@@ -475,6 +475,13 @@ function wpcpo_validate($options) {
     $options.find('.wpcpo-option-field').each(function () {
         let $this = jQuery(this), $option = $this.closest('.wpcpo-option');
 
+        // Skip validation for options hidden by conditional logic
+        if ($option.data('wpcpo-hidden') === true) {
+            $option.removeClass('wpcpo-has-error');
+            $option.find('.wpcpo-option-field').removeAttr('required');
+            return;
+        }
+
         // Limit Checkbox
         if ($this.is(':checkbox')) {
             let $inputsCheck = $option.find('input:checked'), countCheckbox = $inputsCheck.get();
