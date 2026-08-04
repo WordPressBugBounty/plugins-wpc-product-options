@@ -501,14 +501,16 @@ function wpcpo_validate($options) {
         }
 
         // Required Checkbox & Radio
+        // Note: do NOT use the `required` attribute on checkbox/radio inputs —
+        // image-checkbox and color-checkbox inputs are visually hidden via CSS
+        // and cannot be focused by browser native validation ("not focusable" error).
+        // Validation is handled entirely via wpcpo-has-error class + disabled button.
         if ($this.is(':checkbox') || $this.is(':radio')) {
             let $inputsCheck = $option.find('input:checked'), countCheckbox = $inputsCheck.get();
             if ($option.hasClass('wpcpo-required')) {
                 if (countCheckbox.length > 0) {
-                    $option.find('.wpcpo-option-field').removeAttr('required');
                     $option.removeClass('wpcpo-has-error');
                 } else {
-                    $option.find('.wpcpo-option-field').attr('required', 'required');
                     $option.addClass('wpcpo-has-error');
                     valid = false;
                 }
