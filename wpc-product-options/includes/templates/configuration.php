@@ -4,6 +4,8 @@ defined( 'ABSPATH' ) || exit;
 $apply_for = get_post_meta( get_the_ID(), 'wpcpo-apply-for', true );
 $terms     = get_post_meta( get_the_ID(), 'wpcpo-apply', true );
 $terms     = ( is_array( $terms ) ) ? $terms : [];
+$priority  = get_post_meta( get_the_ID(), 'wpcpo-priority', true );
+$priority  = ( $priority !== '' && $priority !== false ) ? absint( $priority ) : 1;
 ?>
 <table class="form-table">
     <tr>
@@ -37,4 +39,12 @@ $terms     = ( is_array( $terms ) ) ? $terms : [];
             <p class="description"><?php esc_html_e( 'Select which products that you want to apply these options. You still can specify options on a product basis.', 'wpc-product-options' ); ?></p>
         </td>
     </tr>
+    <tr>
+        <th style="width: 80px"><?php esc_html_e( 'Priority', 'wpc-product-options' ); ?></th>
+        <td>
+            <input type="number" name="wpcpo-priority" value="<?php echo esc_attr( $priority ); ?>" min="1" max="100" step="1" class="small-text">
+            <p class="description"><?php esc_html_e( 'When multiple product options apply to a product, they will be displayed from top to bottom in ascending order of priority (lower number = higher position).', 'wpc-product-options' ); ?></p>
+        </td>
+    </tr>
 </table>
+

@@ -100,12 +100,15 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
                 $fields    = get_post_meta( $post_id, 'wpcpo-fields', true );
                 $apply_for = get_post_meta( $post_id, 'wpcpo-apply-for', true );
                 $apply     = (array) get_post_meta( $post_id, 'wpcpo-apply', true );
+                $priority  = get_post_meta( $post_id, 'wpcpo-priority', true );
+                $priority  = ( $priority !== '' && $priority !== false ) ? absint( $priority ) : 1;
 
                 echo '<div>' . esc_html__( 'Fields', 'wpc-product-options' ) . ': ' . ( ! empty( $fields ) && is_array( $fields ) ? count( $fields ) : '0' ) . '</div>';
                 echo '<div>' . esc_html__( 'Apply', 'wpc-product-options' ) . ': ' . ( in_array( $apply_for, [
                                 'all',
                                 'none'
                         ] ) ? $apply_for : $apply_for . ' - ' . ( ! empty( $apply ) ? implode( ', ', $apply ) : '' ) ) . '</div>';
+                echo '<div>' . esc_html__( 'Priority', 'wpc-product-options' ) . ': ' . esc_html( $priority ) . '</div>';
             }
         }
 
@@ -149,6 +152,13 @@ if ( ! class_exists( 'Wpcpo_Backend' ) ) {
 
             if ( isset( $_POST['wpcpo-display'] ) ) {
                 update_post_meta( $post_id, 'wpcpo-display', sanitize_text_field( wp_unslash( $_POST['wpcpo-display'] ?? '' ) ) );
+            }
+
+            // Save priority (1-100, default 1)
+            if ( isset( $_POST['wpcpo-priority'] ) ) {
+                $priority = absint( wp_unslash( $_POST['wpcpo-priority'] ) );
+                $priority = max( 1, min( 100, $priority ) );
+                update_post_meta( $post_id, 'wpcpo-priority', $priority );
             }
         }
 

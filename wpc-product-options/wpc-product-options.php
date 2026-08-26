@@ -3,26 +3,26 @@
 Plugin Name: WPC Product Options for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Product Options brings about the power of adjusting prices with highly customizable additional fields for products.
-Version: 4.0.3
+Version: 4.0.4
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-product-options
 Domain Path: /languages/
 Requires Plugins: woocommerce
 Requires at least: 5.9
-Tested up to: 7.0
+Tested up to: 7.1
 WC requires at least: 3.0
-WC tested up to: 10.9
+WC tested up to: 11.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
-! defined( 'WPCPO_VERSION' ) && define( 'WPCPO_VERSION', '4.0.3' );
+! defined( 'WPCPO_VERSION' ) && define( 'WPCPO_VERSION', '4.0.4' );
 ! defined( 'WPCPO_LITE' ) && define( 'WPCPO_LITE', __FILE__ );
 ! defined( 'WPCPO_FILE' ) && define( 'WPCPO_FILE', __FILE__ );
 ! defined( 'WPCPO_URI' ) && define( 'WPCPO_URI', plugin_dir_url( __FILE__ ) );
 ! defined( 'WPCPO_DIR' ) && define( 'WPCPO_DIR', plugin_dir_path( __FILE__ ) );
-! defined( 'WPCPO_SUPPORT' ) && define( 'WPCPO_SUPPORT', 'https://wpclever.net/support?utm_source=support&utm_medium=wpcpo&utm_campaign=wporg' );
+! defined( 'WPCPO_SUPPORT' ) && define( 'WPCPO_SUPPORT', 'https://wpclever.net/support/?utm_source=support&utm_medium=wpcpo&utm_campaign=wporg' );
 ! defined( 'WPCPO_REVIEWS' ) && define( 'WPCPO_REVIEWS', 'https://wordpress.org/support/plugin/wpc-product-options/reviews/' );
 ! defined( 'WPCPO_CHANGELOG' ) && define( 'WPCPO_CHANGELOG', 'https://wordpress.org/plugins/wpc-product-options/#developers' );
 ! defined( 'WPCPO_DISCUSSION' ) && define( 'WPCPO_DISCUSSION', 'https://wordpress.org/support/plugin/wpc-product-options' );

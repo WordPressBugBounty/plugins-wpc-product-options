@@ -35,10 +35,18 @@ if ( ! class_exists( 'Wpcpo_Frontend' ) ) {
 				foreach ( $posts as $post_id ) {
 					$apply_for = get_post_meta( $post_id, 'wpcpo-apply-for', true ) ?: 'none';
 					$apply     = (array) get_post_meta( $post_id, 'wpcpo-apply', true ) ?: [];
+					$priority  = get_post_meta( $post_id, 'wpcpo-priority', true );
+					$priority  = ( $priority !== '' && $priority !== false ) ? absint( $priority ) : 1;
 
 					self::$options[ $post_id ]['apply_for'] = $apply_for;
 					self::$options[ $post_id ]['apply']     = $apply;
+					self::$options[ $post_id ]['priority']  = $priority;
 				}
+
+				// Sort option groups by priority (ascending)
+				uasort( self::$options, function ( $a, $b ) {
+					return ( $a['priority'] ?? 1 ) - ( $b['priority'] ?? 1 );
+				} );
 			}
 
 			add_shortcode( 'wpcpo', [ $this, 'shortcode' ] );

@@ -3,9 +3,9 @@ Contributors: wpclever
 Donate link: https://wpclever.net
 Tags: woocommerce, wpc, options, product options, product addons
 Requires at least: 5.9
-Tested up to: 7.0
-Version: 4.0.3
-Stable tag: 4.0.3
+Tested up to: 7.1
+Version: 4.0.4
+Stable tag: 4.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,9 @@ Please try other plugins from us:
 5. When adding/editing the product, you can choose the Product Options tab then add some options as you want
 
 == Changelog ==
+
+= 4.0.4 =
+* Added: Priority for product options
 
 = 4.0.3 =
 * Fixed: Requỉred checkbox/radio is not focusable
