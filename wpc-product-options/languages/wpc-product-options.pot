@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WPC Product Options for WooCommerce 4.0.4\n"
+"Project-Id-Version: WPC Product Options for WooCommerce 4.0.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpc-product-options\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-26T09:00:37+00:00\n"
+"POT-Creation-Date: 2026-09-04T07:53:24+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wpc-product-options\n"
@@ -315,34 +315,54 @@ msgid "After options"
 msgstr ""
 
 #: includes/class-cart.php:66
-#: includes/class-cart.php:120
+#: includes/class-cart.php:178
 msgid "Invalid file path."
 msgstr ""
 
-#: includes/class-cart.php:219
-#: includes/class-cart.php:239
-#: includes/class-cart.php:246
-#: includes/class-cart.php:253
+#: includes/class-cart.php:111
+msgid "Invalid order item."
+msgstr ""
+
+#: includes/class-cart.php:132
+msgid "Invalid order."
+msgstr ""
+
+#: includes/class-cart.php:142
+msgid "Invalid security token."
+msgstr ""
+
+#: includes/class-cart.php:169
+msgid "You do not have permission to download this file."
+msgstr ""
+
+#: includes/class-cart.php:182
+msgid "File not found."
+msgstr ""
+
+#: includes/class-cart.php:281
+#: includes/class-cart.php:301
+#: includes/class-cart.php:308
+#: includes/class-cart.php:315
 msgid "You cannot add this product to the cart."
 msgstr ""
 
-#: includes/class-cart.php:240
+#: includes/class-cart.php:302
 msgid "The uploaded file has an incorrect extension."
 msgstr ""
 
 #. translators: file size
-#: includes/class-cart.php:247
+#: includes/class-cart.php:309
 #, php-format
 msgid "The uploaded file must be larger than %s in size."
 msgstr ""
 
 #. translators: file size
-#: includes/class-cart.php:254
+#: includes/class-cart.php:316
 #, php-format
 msgid "The uploaded file exceeds %s in size."
 msgstr ""
 
-#: includes/class-cart.php:517
+#: includes/class-cart.php:579
 msgid "download"
 msgstr ""
 

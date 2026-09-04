@@ -50,8 +50,8 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 		function process_file_link() {
 			// cart file download
 			if ( isset( $_GET['wpcpo-key'], $_GET['wpcpo-cart-item'] ) && isset( $_GET['_wpnonce'] ) && ( false !== wp_verify_nonce( $_GET['_wpnonce'], 'wpcpo_cart_file' ) ) ) {
-				$file_key      = sanitize_text_field( wp_unslash( $_GET['wpcpo-key'] ?? '' ) );
-				$cart_item_key = sanitize_text_field( wp_unslash( $_GET['wpcpo-cart-item'] ?? '' ) );
+				$file_key      = sanitize_text_field( wp_unslash( $_GET['wpcpo-key'] ) );
+				$cart_item_key = sanitize_text_field( wp_unslash( $_GET['wpcpo-cart-item'] ) );
 
 				if ( ! str_starts_with( $file_key, 'wpcpo-' ) ) {
 					$file_key = 'wpcpo-' . $file_key;
@@ -104,11 +104,69 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 
 			// order file download
 			if ( isset( $_GET['wpcpo-key'], $_GET['wpcpo-order-item'] ) && isset( $_GET['_wpnonce'] ) ) {
-				$file_key      = sanitize_text_field( wp_unslash( $_GET['wpcpo-key'] ?? '' ) );
-				$order_item_id = sanitize_text_field( wp_unslash( $_GET['wpcpo-order-item'] ?? '' ) );
+				$file_key      = sanitize_text_field( wp_unslash( $_GET['wpcpo-key'] ) );
+				$order_item_id = absint( $_GET['wpcpo-order-item'] );
+
+				if ( ! $order_item_id ) {
+					wp_die( esc_html__( 'Invalid order item.', 'wpc-product-options' ), 400 );
+				}
 
 				if ( ! str_starts_with( $file_key, 'wpcpo-' ) ) {
 					$file_key = 'wpcpo-' . $file_key;
+				}
+
+				// Retrieve order associated with this order item
+				$order_id = function_exists( 'wc_get_order_id_by_order_item_id' ) ? wc_get_order_id_by_order_item_id( $order_item_id ) : 0;
+				$order    = $order_id ? wc_get_order( $order_id ) : false;
+
+				if ( ! $order && class_exists( 'WC_Order_Factory' ) ) {
+					$order_item = WC_Order_Factory::get_order_item( $order_item_id );
+					if ( $order_item && is_callable( [ $order_item, 'get_order' ] ) ) {
+						$order = $order_item->get_order();
+					} elseif ( $order_item && is_callable( [ $order_item, 'get_order_id' ] ) ) {
+						$order = wc_get_order( $order_item->get_order_id() );
+					}
+				}
+
+				if ( ! $order ) {
+					wp_die( esc_html__( 'Invalid order.', 'wpc-product-options' ), 404 );
+				}
+
+				$nonce               = sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) );
+				$order_key           = sanitize_text_field( wp_unslash( $_GET['order_key'] ?? ( $_GET['wpcpo-order-key'] ?? '' ) ) );
+				$has_valid_order_key = ! empty( $order_key ) && hash_equals( (string) $order->get_order_key(), $order_key );
+				$has_valid_nonce     = false !== wp_verify_nonce( $nonce, 'wpcpo_order_file' );
+
+				// Validate security token: require either a valid nonce or a valid order key
+				if ( ! $has_valid_nonce && ! $has_valid_order_key ) {
+					wp_die( esc_html__( 'Invalid security token.', 'wpc-product-options' ), 403 );
+				}
+
+				// Authorization / Ownership check
+				$is_authorized = false;
+
+				// 1. User has shop manager or admin capabilities
+				if ( current_user_can( 'manage_woocommerce' ) || current_user_can( 'edit_shop_orders' ) ) {
+					$is_authorized = true;
+				}
+
+				// 2. Current logged-in user is the customer who placed the order
+				if ( ! $is_authorized && is_user_logged_in() ) {
+					$current_user_id = get_current_user_id();
+					$customer_id     = (int) $order->get_customer_id();
+
+					if ( ( $customer_id > 0 && $customer_id === $current_user_id ) || current_user_can( 'view_order', $order->get_id() ) ) {
+						$is_authorized = true;
+					}
+				}
+
+				// 3. Guest or email access verified by secret order key
+				if ( ! $is_authorized && $has_valid_order_key ) {
+					$is_authorized = true;
+				}
+
+				if ( ! $is_authorized ) {
+					wp_die( esc_html__( 'You do not have permission to download this file.', 'wpc-product-options' ), 403 );
 				}
 
 				if ( ( $options = wc_get_order_item_meta( $order_item_id, '_wpcpo_options_v2' ) ) && isset( $options[ $file_key ] ) ) {
@@ -118,6 +176,10 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 					// Security: validate the file path is within the uploads directory
 					if ( ! $this->validate_file_path( $tmp_file_name ) ) {
 						wp_die( esc_html__( 'Invalid file path.', 'wpc-product-options' ), 403 );
+					}
+
+					if ( ! file_exists( $tmp_file_name ) ) {
+						wp_die( esc_html__( 'File not found.', 'wpc-product-options' ), 404 );
 					}
 
 					$mime_type = false;
@@ -712,6 +774,16 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 				'wpcpo-key'        => str_replace( 'wpcpo-', '', $file_key ),
 				'wpcpo-order-item' => $order_item->get_id(),
 			];
+
+			$order = is_callable( [ $order_item, 'get_order' ] ) ? $order_item->get_order() : false;
+
+			if ( ! $order && is_callable( [ $order_item, 'get_order_id' ] ) ) {
+				$order = wc_get_order( $order_item->get_order_id() );
+			}
+
+			if ( $order && is_callable( [ $order, 'get_order_key' ] ) ) {
+				$args['order_key'] = $order->get_order_key();
+			}
 
 			if ( $download ) {
 				$args['force_download'] = 1;
