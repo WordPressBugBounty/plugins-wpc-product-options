@@ -335,6 +335,8 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 
 			foreach ( $post_data as $key => $data ) {
 				if ( str_starts_with( $key, 'wpcpo-' ) && isset( $data['value'] ) && $data['value'] !== '' ) {
+					$clean_key = sanitize_text_field( wp_unslash( $key ) );
+
 					// file upload
 					if ( isset( $data['type'] ) && $data['type'] === 'file' ) {
 						if ( ! empty( $_FILES[ $key ] ) && ! empty( $_FILES[ $key ]['name'] ) ) {
@@ -345,13 +347,13 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 								$data['value']        = basename( wc_clean( $upload['url'] ) );
 								$data['file']         = wc_clean( $upload['file'] );
 								$data['url']          = wc_clean( $upload['url'] );
-								$post_options[ $key ] = $data;
+								$post_options[ $clean_key ] = $data;
 							}
 						}
 					} else {
 						// Security: sanitize option data - strip keys that should only come from file uploads
 						unset( $data['file'], $data['url'], $data['file_url'] );
-						$post_options[ $key ] = wc_clean( $data );
+						$post_options[ $clean_key ] = wc_clean( $data );
 					}
 
 					if ( apply_filters( 'wpcpo_clear_request_data', true, $cart_item_data, $product_id ) ) {
@@ -576,7 +578,7 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 
 		function order_item_meta_str( $option_key, $option, $item ) {
 			if ( $option['type'] === 'file' ) {
-				return '<a target="_blank" href="' . self::get_order_file_link( $option_key, $item ) . '">' . $option['value'] . '</a> (<a target="_blank" href="' . self::get_order_file_link( $option_key, $item, true ) . '">' . esc_html__( 'download', 'wpc-product-options' ) . '</a>';
+				return '<a target="_blank" href="' . esc_url( self::get_order_file_link( $option_key, $item ) ) . '">' . $option['value'] . '</a> (<a target="_blank" href="' . esc_url( self::get_order_file_link( $option_key, $item, true ) ) . '">' . esc_html__( 'download', 'wpc-product-options' ) . '</a>';
 			} else {
 				return esc_html( isset( $option['label'] ) && $option['label'] !== '' ? $option['label'] : $option['value'] );
 			}
