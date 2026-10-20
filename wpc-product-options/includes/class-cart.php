@@ -609,18 +609,32 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 				// calculate options price
 				$options_price = 0; // options price
 
+				// $price is the base used to calculate options (percentage, custom formula),
+				// $base_price is the price that the cart line itself will be set to
+				$base_price = $price;
+
 				if ( isset( $cart_item['woosb_price'] ) ) {
-					$price = (float) $cart_item['woosb_price'];
+					// Bundle (auto price): woosb_price is the total of the bundled items after discount.
+					// Bundled items are separate cart lines already priced by the bundle plugin,
+					// so the parent line must only carry the options price on top of its own price (0).
+					$price      = (float) $cart_item['woosb_price'];
+					$base_price = 0.0;
 				}
 
-				/*
-				if ( isset( $cart_item['wooco_price'] ) ) {
+				if ( ! empty( $cart_item['wooco_ids'] ) && isset( $cart_item['wooco_price'] ) && ( $cart_item['wooco_price'] !== '' ) && method_exists( $cart_item['data'], 'get_pricing' ) && ( $cart_item['data']->get_pricing() !== 'only' ) ) {
+					// Composite (include/exclude): wooco_price is the composite total (base price + components after discount).
+					// Component products are separate cart lines already priced by the composite plugin,
+					// so the parent line must only carry its own base price (none for 'exclude') plus the options price.
 					$price = (float) $cart_item['wooco_price'];
+
+					if ( $cart_item['data']->get_pricing() === 'exclude' ) {
+						$base_price = 0.0;
+					}
 				}
-				*/
 
 				if ( isset( $cart_item['wpcpq_price'] ) ) {
-					$price = (float) $cart_item['wpcpq_price'];
+					$price      = (float) $cart_item['wpcpq_price'];
+					$base_price = $price;
 				}
 
 				$total = $price * $quantity; // calculate total for 's'
@@ -677,7 +691,7 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 
 				if ( $options_price != 0 ) {
 					$cart_item['data']->set_regular_price( $regular_price + $options_price );
-					$cart_item['data']->set_price( $price + $options_price );
+					$cart_item['data']->set_price( $base_price + $options_price );
 
 					if ( $is_on_sale ) {
 						$sale_price = (float) apply_filters( 'wpcpo_cart_item_sale_price', $ori_product->get_sale_price(), $cart_item );
@@ -703,11 +717,8 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 				}
 
 				if ( ! empty( $cart_item['woosb_price'] ) ) {
+					// woosb_price is already after the bundle discount (percentage and fixed amount)
 					$calc_price += (float) $cart_item['woosb_price'];
-
-					if ( ! empty( $cart_item['woosb_discount_amount'] ) ) {
-						$calc_price += (float) $cart_item['woosb_discount_amount'];
-					}
 				}
 
 				$price = wc_price( $calc_price );
@@ -729,11 +740,8 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 				}
 
 				if ( ! empty( $cart_item['woosb_price'] ) ) {
+					// woosb_price is already after the bundle discount (percentage and fixed amount)
 					$price += (float) $cart_item['woosb_price'];
-
-					if ( ! empty( $cart_item['woosb_discount_amount'] ) ) {
-						$price += (float) $cart_item['woosb_discount_amount'];
-					}
 				}
 
 				$subtotal = wc_price( $price * (float) $cart_item['quantity'] );
