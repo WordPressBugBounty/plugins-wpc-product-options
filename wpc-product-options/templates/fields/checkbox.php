@@ -20,7 +20,6 @@ foreach ( $field['options'] as $option_key => $option ) {
             <input class="wpcpo-option-field" type="checkbox"
                    id="<?php echo esc_attr( $option_key ); ?>"
                    name="<?php echo esc_attr( $option_key . '[value]' ); ?>"
-                    <?php echo esc_attr( $field['required'] ? 'required' : '' ); ?>
                    data-label="<?php echo esc_attr( $option_label ); ?>"
                    data-title="<?php echo esc_attr( $field['title'] ); ?>" data-enable-price="1"
                    data-price-type="<?php echo esc_attr( $option['price_type'] ); ?>"
