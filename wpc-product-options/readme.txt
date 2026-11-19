@@ -4,7 +4,7 @@ Donate link: https://wpclever.net
 Tags: woocommerce, wpc, options, product options, product addons
 Requires at least: 5.9
 Tested up to: 7.1
-Stable tag: 4.0.8
+Stable tag: 4.0.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -89,6 +89,10 @@ Please try other plugins from us:
 5. When adding/editing the product, you can choose the Product Options tab then add some options as you want
 
 == Changelog ==
+
+= 4.0.9 =
+* Fixed: Vulnerability issue where option prices could be manipulated through the add-to-cart request
+* Fixed: Escape option values in the cart and order item data
 
 = 4.0.8 =
 * Fixed: The required checkbox requires selecting all options

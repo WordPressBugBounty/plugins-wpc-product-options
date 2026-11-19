@@ -23,7 +23,7 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 			add_filter( 'woocommerce_add_to_cart_validation', [ $this, 'add_to_cart_validation' ], 10, 2 );
 
 			// Add item data to the cart
-			add_filter( 'woocommerce_add_cart_item_data', [ $this, 'add_cart_item_data' ], 11, 2 );
+			add_filter( 'woocommerce_add_cart_item_data', [ $this, 'add_cart_item_data' ], 11, 4 );
 
 			// Get item data to display
 			add_filter( 'woocommerce_get_item_data', [ $this, 'get_item_data' ], 10, 2 );
@@ -325,7 +325,7 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 			return $passed;
 		}
 
-		public function add_cart_item_data( $cart_item_data, $product_id ) {
+		public function add_cart_item_data( $cart_item_data, $product_id, $variation_id = 0 ) {
 			if ( ! isset( $_REQUEST ) || empty( $product_id ) || ! empty( $cart_item_data['wpcpo-options'] ) ) {
 				return $cart_item_data;
 			}
@@ -333,31 +333,62 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 			$post_data    = $_REQUEST;
 			$post_options = [];
 
+			// Saved configuration is the only trusted source for option data and prices
+			$fields = $this->get_trusted_fields( $product_id, absint( $variation_id ) );
+
 			foreach ( $post_data as $key => $data ) {
-				if ( str_starts_with( $key, 'wpcpo-' ) && isset( $data['value'] ) && $data['value'] !== '' ) {
+				if ( str_starts_with( $key, 'wpcpo-' ) && is_array( $data ) && isset( $data['value'] ) && $data['value'] !== '' ) {
 					$clean_key = sanitize_text_field( wp_unslash( $key ) );
+
+					if ( apply_filters( 'wpcpo_clear_request_data', true, $cart_item_data, $product_id ) ) {
+						unset( $_REQUEST[ $key ] );
+					}
+
+					// Security: ignore any option that does not exist in the product configuration
+					if ( ! isset( $fields[ $clean_key ] ) && ! $this->is_option_key( $clean_key, $fields ) ) {
+						continue;
+					}
 
 					// file upload
 					if ( isset( $data['type'] ) && $data['type'] === 'file' ) {
+						// Security: only accept uploads for configured file upload fields
+						if ( ( $fields[ $clean_key ]['type'] ?? '' ) !== 'file-upload' ) {
+							continue;
+						}
+
 						if ( ! empty( $_FILES[ $key ] ) && ! empty( $_FILES[ $key ]['name'] ) ) {
 							$_FILES[ $key ]['name'] = sanitize_file_name( $_FILES[ $key ]['name'] );
 							$upload                 = $this->handle_upload( $_FILES[ $key ] );
 
 							if ( $upload && empty( $upload['error'] ) ) {
-								$data['value']        = basename( wc_clean( $upload['url'] ) );
-								$data['file']         = wc_clean( $upload['file'] );
-								$data['url']          = wc_clean( $upload['url'] );
-								$post_options[ $clean_key ] = $data;
+								$data = wc_clean( $data );
+
+								// Security: these keys must only come from the upload result
+								unset( $data['file_url'] );
+
+								$data['value'] = basename( wc_clean( $upload['url'] ) );
+								$data['file']  = wc_clean( $upload['file'] );
+								$data['url']   = wc_clean( $upload['url'] );
+
+								// Security: price data must come from the saved configuration
+								$trusted = $this->get_trusted_option( $clean_key, $data, $fields );
+
+								$post_options[ $clean_key ] = array_merge( $data, (array) $trusted );
 							}
 						}
 					} else {
 						// Security: sanitize option data - strip keys that should only come from file uploads
 						unset( $data['file'], $data['url'], $data['file_url'] );
-						$post_options[ $clean_key ] = wc_clean( $data );
-					}
+						$data = wc_clean( $data );
 
-					if ( apply_filters( 'wpcpo_clear_request_data', true, $cart_item_data, $product_id ) ) {
-						unset( $_REQUEST[ $key ] );
+						// Security: price data must come from the saved configuration, never from the request
+						$trusted = $this->get_trusted_option( $clean_key, $data, $fields );
+
+						if ( $trusted === null ) {
+							continue;
+						}
+
+						$post_options[ $clean_key ] = array_merge( $data, $trusted );
 					}
 				}
 			}
@@ -371,6 +402,190 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 			}
 
 			return $cart_item_data;
+		}
+
+		/**
+		 * Check whether a key is an option key of a saved field (checkbox-like fields).
+		 *
+		 * @param string $key    Submitted key.
+		 * @param array  $fields Saved product fields.
+		 *
+		 * @return bool
+		 */
+		private function is_option_key( $key, $fields ) {
+			foreach ( $fields as $field ) {
+				if ( is_array( $field ) && ! empty( $field['options'] ) && is_array( $field['options'] ) && isset( $field['options'][ $key ] ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		 * Get the saved option configuration of a product. This is the only trusted source of option prices.
+		 *
+		 * @param int $product_id   Parent product ID.
+		 * @param int $variation_id Variation ID.
+		 *
+		 * @return array
+		 */
+		private function get_trusted_fields( $product_id, $variation_id = 0 ) {
+			$fields = Wpcpo_Frontend::get_fields( $product_id );
+
+			return is_array( $fields ) ? $fields : [];
+		}
+
+		/**
+		 * Resolve the submitted option against the saved product configuration.
+		 * Price related data is always taken from the saved configuration, never from the request.
+		 *
+		 * @param string $key    Submitted field/option key.
+		 * @param array  $data   Submitted (cleaned) data.
+		 * @param array  $fields Saved product fields.
+		 *
+		 * @return array|null Trusted data to merge over the submitted data, or null if the key is unknown.
+		 */
+		private function get_trusted_option( $key, $data, $fields ) {
+			$trusted = [
+				'price_type'   => '',
+				'price'        => '',
+				'custom_price' => '',
+			];
+			$source  = null;
+
+			if ( isset( $fields[ $key ] ) && is_array( $fields[ $key ] ) ) {
+				// Field submitted by its own key (text, select, radio, dimensions, ...)
+				$field = $fields[ $key ];
+
+				// File upload fields are stored with the "file" type
+				$trusted['type']  = ( $field['type'] ?? '' ) === 'file-upload' ? 'file' : ( $field['type'] ?? '' );
+				$trusted['title'] = $field['title'] ?? '';
+
+				if ( ! empty( $field['options'] ) && is_array( $field['options'] ) ) {
+					$value = isset( $data['value'] ) && is_scalar( $data['value'] ) ? (string) $data['value'] : '';
+
+					foreach ( $field['options'] as $option ) {
+						if ( isset( $option['value'] ) && (string) $option['value'] === $value ) {
+							$source          = $option;
+							$trusted['label'] = ( isset( $option['name'] ) && $option['name'] !== '' ) ? $option['name'] : $option['value'];
+
+							foreach ( [ 'image', 'color' ] as $extra ) {
+								if ( isset( $option[ $extra ] ) ) {
+									$trusted[ $extra ] = $option[ $extra ];
+								}
+							}
+
+							break;
+						}
+					}
+				} elseif ( ! empty( $field['enable_price'] ) ) {
+					$source = $field;
+				}
+
+				// Dimensions: keep submitted values inside the configured range (no negative values)
+				if ( ( $field['type'] ?? '' ) === 'dimensions' && ! empty( $field['dimensions'] ) && is_array( $field['dimensions'] ) ) {
+					$submitted = isset( $data['dimensions'] ) && is_array( $data['dimensions'] ) ? array_values( $data['dimensions'] ) : [];
+					$clamped   = [];
+
+					foreach ( array_values( $field['dimensions'] ) as $i => $dimension ) {
+						$val = isset( $submitted[ $i ] ) && is_numeric( $submitted[ $i ] ) ? (float) $submitted[ $i ] : 0.0;
+						$val = max( 0.0, $val );
+
+						if ( isset( $dimension['min'] ) && is_numeric( $dimension['min'] ) ) {
+							$val = max( (float) $dimension['min'], $val );
+						}
+
+						if ( isset( $dimension['max'] ) && is_numeric( $dimension['max'] ) && (float) $dimension['max'] > 0 ) {
+							$val = min( (float) $dimension['max'], $val );
+						}
+
+						$clamped[] = $val;
+					}
+
+					$trusted['dimensions'] = $clamped;
+				}
+			} else {
+				// Option submitted by its own key (checkbox, image-checkbox, color-checkbox)
+				$found = false;
+
+				foreach ( $fields as $field_key => $field ) {
+					if ( ! is_array( $field ) || empty( $field['options'] ) || ! is_array( $field['options'] ) || ! isset( $field['options'][ $key ] ) ) {
+						continue;
+					}
+
+					$option = $field['options'][ $key ];
+
+					if ( ! is_array( $option ) || ! isset( $option['value'] ) || $option['value'] === '' ) {
+						return null;
+					}
+
+					$found            = true;
+					$source           = $option;
+					$trusted['type']  = $field['type'] ?? '';
+					$trusted['title'] = $field['title'] ?? '';
+					$trusted['field'] = $field_key;
+					$trusted['value'] = $option['value'];
+					$trusted['label'] = ( isset( $option['name'] ) && $option['name'] !== '' ) ? $option['name'] : $option['value'];
+
+					foreach ( [ 'image', 'color' ] as $extra ) {
+						if ( isset( $option[ $extra ] ) ) {
+							$trusted[ $extra ] = $option[ $extra ];
+						}
+					}
+
+					break;
+				}
+
+				if ( ! $found ) {
+					return null;
+				}
+			}
+
+			if ( is_array( $source ) ) {
+				$trusted['price_type']   = isset( $source['price_type'] ) && is_scalar( $source['price_type'] ) ? (string) $source['price_type'] : '';
+				$trusted['price']        = isset( $source['price'] ) && is_scalar( $source['price'] ) ? (string) $source['price'] : '';
+				$trusted['custom_price'] = isset( $source['custom_price'] ) && is_scalar( $source['custom_price'] ) ? (string) $source['custom_price'] : '';
+			}
+
+			return $trusted;
+		}
+
+		/**
+		 * Re-apply the saved pricing configuration to the options stored in a cart item.
+		 * Unknown options are kept (for display) but never priced.
+		 *
+		 * @param array $options      Cart item options.
+		 * @param int   $product_id   Parent product ID.
+		 * @param int   $variation_id Variation ID.
+		 *
+		 * @return array
+		 */
+		private function sanitize_cart_options( $options, $product_id, $variation_id = 0 ) {
+			if ( ! is_array( $options ) ) {
+				return [];
+			}
+
+			$fields = $this->get_trusted_fields( $product_id, $variation_id );
+
+			foreach ( $options as $key => $data ) {
+				if ( ! is_array( $data ) ) {
+					unset( $options[ $key ] );
+					continue;
+				}
+
+				$trusted = $this->get_trusted_option( (string) $key, $data, $fields );
+
+				if ( $trusted === null ) {
+					$options[ $key ]['price_type']   = '';
+					$options[ $key ]['price']        = '';
+					$options[ $key ]['custom_price'] = '';
+				} else {
+					$options[ $key ] = array_merge( $data, $trusted );
+				}
+			}
+
+			return $options;
 		}
 
 		public function handle_upload( $file ) {
@@ -503,15 +718,15 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 		}
 
 		public function get_item_data_str( $option_key, $option, $cart_item ) {
-			$data_value_str = isset( $option['label'] ) && $option['label'] !== '' ? $option['label'] : $option['value'];
+			$data_value_str = esc_html( isset( $option['label'] ) && $option['label'] !== '' ? $option['label'] : $option['value'] );
 
 			if ( ! empty( $option['type'] ) ) {
 				if ( ( $option['type'] === 'color-picker' ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'color-picker' ) ) {
-					$data_value_str = '<span class="box-color-picker" style="background: ' . $option['value'] . '"></span> ' . $option['value'];
+					$data_value_str = '<span class="box-color-picker" style="background: ' . esc_attr( $option['value'] ) . '"></span> ' . esc_html( $option['value'] );
 				}
 
 				if ( ( $option['type'] === 'color-checkbox' ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'color-checkbox' ) ) {
-					$data_value_str = '<span class="box-color-picker" style="background: ' . $option['color'] . '"></span> ' . $option['label'];
+					$data_value_str = '<span class="box-color-picker" style="background: ' . esc_attr( $option['color'] ?? '' ) . '"></span> ' . esc_html( $option['label'] ?? '' );
 				}
 
 				if ( ( $option['type'] === 'image-radio' ) && ! empty( $option['image'] ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'image-radio' ) ) {
@@ -523,7 +738,7 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 				}
 
 				if ( ( $option['type'] === 'file' ) && ( isset( $option['url'] ) || isset( $option['file_url'] ) ) && apply_filters( 'wpcpo_cart_item_data_makeup', true, 'file' ) ) {
-					$data_value_str = '<span class="box-file"><a target="_blank" href="' . esc_url( $option['file_url'] ?? self::get_cart_file_link( $option_key, $cart_item['key'] ) ) . '">' . $option['value'] . '</a></span>';
+					$data_value_str = '<span class="box-file"><a target="_blank" href="' . esc_url( $option['file_url'] ?? self::get_cart_file_link( $option_key, $cart_item['key'] ) ) . '">' . esc_html( $option['value'] ) . '</a></span>';
 				}
 			}
 
@@ -578,7 +793,7 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 
 		function order_item_meta_str( $option_key, $option, $item ) {
 			if ( $option['type'] === 'file' ) {
-				return '<a target="_blank" href="' . esc_url( self::get_order_file_link( $option_key, $item ) ) . '">' . $option['value'] . '</a> (<a target="_blank" href="' . esc_url( self::get_order_file_link( $option_key, $item, true ) ) . '">' . esc_html__( 'download', 'wpc-product-options' ) . '</a>';
+				return '<a target="_blank" href="' . esc_url( self::get_order_file_link( $option_key, $item ) ) . '">' . esc_html( $option['value'] ) . '</a> (<a target="_blank" href="' . esc_url( self::get_order_file_link( $option_key, $item, true ) ) . '">' . esc_html__( 'download', 'wpc-product-options' ) . '</a>)';
 			} else {
 				return esc_html( isset( $option['label'] ) && $option['label'] !== '' ? $option['label'] : $option['value'] );
 			}
@@ -598,6 +813,9 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 				if ( empty( $cart_item['wpcpo-options'] ) || apply_filters( 'wpcpo_ignore_recalculate_price', false, $cart_item_key, $cart_item ) ) {
 					continue;
 				}
+
+				// Security: never trust prices stored in the cart item, re-apply the saved configuration
+				$cart_item['wpcpo-options'] = $this->sanitize_cart_options( $cart_item['wpcpo-options'], $cart_item['product_id'] ?? $cart_item['data']->get_id(), $cart_item['variation_id'] ?? 0 );
 
 				$product_id    = $cart_item['data']->get_id();
 				$ori_product   = apply_filters( 'wpcpo_cart_item_product', wc_get_product( $product_id ), $cart_item );
@@ -690,12 +908,13 @@ if ( ! class_exists( 'Wpcpo_Cart' ) ) {
 				$cart_item['wpcpo_price'] = $options_price; // store options price only
 
 				if ( $options_price != 0 ) {
-					$cart_item['data']->set_regular_price( $regular_price + $options_price );
-					$cart_item['data']->set_price( $base_price + $options_price );
+					// Prices can never be negative
+					$cart_item['data']->set_regular_price( max( 0, $regular_price + $options_price ) );
+					$cart_item['data']->set_price( max( 0, $base_price + $options_price ) );
 
 					if ( $is_on_sale ) {
 						$sale_price = (float) apply_filters( 'wpcpo_cart_item_sale_price', $ori_product->get_sale_price(), $cart_item );
-						$cart_item['data']->set_sale_price( $sale_price + $options_price );
+						$cart_item['data']->set_sale_price( max( 0, $sale_price + $options_price ) );
 					}
 				}
 
